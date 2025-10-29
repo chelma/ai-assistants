@@ -1,0 +1,14 @@
+# Claude Code generated files
+*.zip
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Temporary files
+*.tmp
+*.bak
+*.backup.*
+
+# Backup files created by install.sh
+*.backup.2*
