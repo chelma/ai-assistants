@@ -1,12 +1,43 @@
 # Chris's Python Coding Style Guide
 
-This document captures Chris's personal Python coding style and engineering philosophy based primarily on analysis of two production repositories GitHub repos: `github.com/chelma/ocsf-playground` and `github.com/arkime/aws-aio`.
+This document captures Chris's personal Python coding style based primarily on analysis of two production repositories: `github.com/chelma/ocsf-playground` and `github.com/arkime/aws-aio`.
+
+---
+
+## How to Use This Guide
+
+**Philosophy Over Prescription**
+
+These patterns represent preferences and observed practices, not rigid rules. The goal is to embody the engineering judgment behind these choices, not just replicate their surface appearance.
+
+**Guiding Principles:**
+
+1. **Match existing project conventions when they differ** - If you're working in a codebase with established patterns that conflict with this guide, try follow the project's conventions for consistency while respecting the priority levels of the individual guidelines in this style guide.
+
+2. **Adapt to context** - Some patterns documented here are project-specific (e.g., LLM prompt engineering, AWS infrastructure). Apply them when relevant, but don't force-fit them into unrelated contexts.
+
+3. **Suggest improvements when warranted** - If you have strong engineering reasons to deviate from these patterns (performance, security, maintainability, new language features), propose alternatives with clear rationale.
+
+4. **Prioritize signal over noise** - These patterns emerged from production code solving real problems. Understand the "why" behind each pattern before applying it.
+
+**When in doubt:** Favor readability, type safety, explicit behavior, and comprehensive testing.
+
+---
+
+## Priority Levels
+
+Patterns are marked with priority indicators:
+
+- **CRITICAL** - Core principles that should always be followed (e.g., test naming conventions, type hints on public APIs)
+- **PREFERRED** - Default choices unless context suggests otherwise (e.g., dataclasses over dicts, pytest over unittest)
+- **OBSERVED** - Patterns extracted from analyzed code; useful as reference but highly context-dependent (e.g., `{function}_interactions/` module naming)
 
 ---
 
 ## 1. Code Organization & Architecture
 
 ### Module Organization
+- **Priority**: OBSERVED
 - **Pattern**: Domain-driven directory structure with clear separation of concerns
 - **Examples**:
   - `backend/{expert_name}_expert/` structure for each AI expert system
@@ -22,6 +53,7 @@ backend/
 ```
 
 ### Separation of Concerns
+- **Priority**: PREFERRED
 - **Pattern**: Dedicated modules for specific responsibilities
 - **Examples**:
   - `expert_def.py` - Expert initialization and invocation
@@ -30,6 +62,7 @@ backend/
   - `validators.py` - Validation logic
 
 ### Package Naming
+- **Priority**: CRITICAL
 - **Pattern**: `snake_case` for packages/modules, descriptive and specific
 - **Examples**: `aws_interactions`, `entities_expert`, `capacity_planning`, `config_wrangling`
 
@@ -38,6 +71,7 @@ backend/
 ## 2. Type System & Annotations
 
 ### Type Hints Usage
+- **Priority**: CRITICAL
 - **Pattern**: Comprehensive type hints on function signatures, including return types
 - **Examples**:
   ```python
@@ -45,6 +79,7 @@ backend/
   ```
 
 ### Custom Types & Type Aliases
+- **Priority**: PREFERRED
 - **Pattern**: Extensive use of TypeVar for generic type bounds on dataclasses
 - **Examples**:
   ```python
@@ -55,11 +90,13 @@ backend/
   ```
 
 ### Typing Module Constructs
+- **Priority**: PREFERRED
 - **Pattern**: Uses `Dict`, `List`, `Type`, `TypeVar`, `Callable`, `Any` from typing
 - **Observation**: Prefers explicit imports from typing module rather than PEP 585 built-in generics
 - **Examples**: `from typing import Dict, Any, Callable, Type`
 
 ### Runtime Type Checking
+- **Priority**: PREFERRED
 - **Pattern**: Manual type validation only in critical paths where there is real risk
 - **Examples**:
   ```python
@@ -69,6 +106,7 @@ backend/
   ```
 
 ### Pydantic for Schema Validation
+- **Priority**: OBSERVED
 - **Pattern**: Uses Pydantic BaseModel for LangChain tool schemas and structured inputs
 - **Examples**:
   ```python
@@ -82,18 +120,50 @@ backend/
 
 ## 3. Documentation Philosophy
 
+### When to Add Docstrings
+- **Priority**: CRITICAL
+- **Pattern**: Add docstrings when:
+  - Function complexity is non-trivial (multiple steps, complex logic)
+  - Part of a public API that other modules/developers will use
+  - Behavior is non-obvious from the function name and signature
+  - Function has important side effects or preconditions
+
+- **Pattern**: Skip docstrings when:
+  - Function name and type signature are self-documenting
+  - Private helper functions with obvious behavior
+  - Simple one-line functions or property getters/setters
+
+**Decision Criteria Examples:**
+
+```python
+# NEEDS docstring: Complex, non-obvious behavior
+def get_ecs_sys_resource_plan(instance_type: str) -> EcsSysResourcePlan:
+    """
+    Creates a capacity plan for the indicated instance type.
+    instance_type: The instance type to plan for
+    """
+
+# NO docstring needed: Name and signature are self-documenting
+def get_cluster_name(self) -> str:
+    return self._cluster_name
+
+# NEEDS docstring: Side effects and expectations
+def call_shell_command(command: str, cwd: str = None, env: Dict[str, str] = None,
+                       request_response_pairs: List[Tuple[str, str]] = []):
+    """
+    Execute a command in a child shell process.
+    The user can optionally supply a list of request/response pairs to handle command invocations that expect
+    a user response. For example:
+        call_shell_command('my_shell_command', request_response_pairs=[('Do you really want to?', 'yes')])
+    """
+```
+
 ### Docstring Style
-- **Pattern**: Minimal docstrings; the most important and complex functions have triple-quoted explanatory comments
-- **Examples**:
-  ```python
-  def get_ecs_sys_resource_plan(instance_type: str) -> EcsSysResourcePlan:
-      """
-      Creates a capacity plan for the indicated instance type.
-      instance_type: The instance type to plan for
-      """
-  ```
+- **Priority**: PREFERRED
+- **Pattern**: Simple triple-quoted explanatory comments, not structured docstrings (no Sphinx/Google/NumPy format)
 
 ### Comment Style
+- **Priority**: CRITICAL
 - **Pattern**: Inline comments explain "why" not "what", to document unintuitive or complex business logic
 - **Examples**:
   ```python
@@ -105,6 +175,7 @@ backend/
   ```
 
 ### Hardcoded Values Documentation
+- **Priority**: CRITICAL
 - **Pattern**: Inline comments explain magic numbers and why values are chosen
 - **Examples**:
   ```python
@@ -114,6 +185,7 @@ backend/
   ```
 
 ### Prompt Engineering for LLMs
+- **Priority**: OBSERVED
 - **Pattern**: Multi-paragraph prompt templates with XML-tagged sections for structured guidance, layered in increasing specificity so that the most tokens possible can be cached between inference API calls
 - **Examples**:
   ```python
@@ -137,6 +209,7 @@ backend/
 **Observation**: Templates use XML tags for structured sections, Python format strings for parameterization, and explicit behavioral constraints
 
 ### String Templates with .format()
+- **Priority**: PREFERRED
 - **Pattern**: Multi-line string constants with `.format()` for parameterization
 - **Examples**:
   ```python
@@ -149,6 +222,7 @@ backend/
 **Observation**: For static templates with dynamic content insertion, use triple-quoted strings with `.format()` called immediately at module level. This pre-renders the template once at import time.
 
 ### Inline Comments for Provenance
+- **Priority**: PREFERRED
 - **Pattern**: Include comments with links to ChatGPT conversations, documentation, and explanations of data origin
 - **Examples**:
   ```python
@@ -168,6 +242,7 @@ backend/
 ## 4. Error Handling & Robustness
 
 ### Custom Exception Hierarchy
+- **Priority**: PREFERRED
 - **Pattern**: Custom exceptions inherit from base Exception with descriptive names
 - **Examples**:
   ```python
@@ -180,12 +255,15 @@ backend/
   class ExpertInvocationError(Exception):
       pass
   ```
+**Observation**: Custom exceptions are easy to define, make exception handling easier, and make stack traces/logs clearer
 
 ### Exception Naming
+- **Priority**: CRITICAL
 - **Pattern**: Descriptive, specific exception names that indicate the problem
 - **Examples**: `TooMuchTraffic`, `NotEnoughStorage`, `InvalidCidr`, `FileNotGenerated`, `AssumeRoleNotSupported`, `RESTOperationFailedException`
 
 ### Logging Approach
+- **Priority**: CRITICAL
 - **Pattern**: Module-level logger instances; consistent use throughout
 - **Examples**:
   ```python
@@ -197,6 +275,7 @@ backend/
   ```
 
 ### Custom Logging Formatter with UTC Timestamps
+- **Priority**: OBSERVED
 - **Pattern**: Custom formatter for UTC timestamps and invisible Unicode line separators to facilitate downstream automated parsing
 - **Examples**:
   ```python
@@ -211,6 +290,7 @@ backend/
   ```
 
 ### Log Levels
+- **Priority**: PREFERRED
 - **Pattern**: Strategic use of info, debug, warning, error levels
 - **Examples**:
   ```python
@@ -225,6 +305,7 @@ backend/
 ## 5. Testing Approach
 
 ### Test Framework Preferences
+- **Priority**: PREFERRED
 - **Pattern**: Preference for Pytest
 - **Examples**:
   ```python
@@ -238,6 +319,7 @@ backend/
   ```
 
 ### Test Naming Convention
+- **Priority**: CRITICAL
 - **Pattern**: `test_WHEN_<action>_<conditions>_THEN_<expected_result>` for comprehensive context
 - **Examples**:
   - `test_WHEN_cmd_cluster_create_called_THEN_cdk_command_correct`
@@ -246,6 +328,7 @@ backend/
 **Observation**: The naming convention makes test purpose immediately clear and provides complete context without needing to read the test body.
 
 ### Mocking Strategy
+- **Priority**: CRITICAL
 - **Pattern**: Use `unittest.mock` with `@mock.patch` decorator and `side_effect` for complex scenarios
 - **Examples**:
   ```python
@@ -276,6 +359,7 @@ backend/
 **Observation**: Mock at the module level to control dependencies, use `side_effect` for sequential returns or exceptions, and verify behavior with `call_args_list`.
 
 ### Test Organization
+- **Priority**: PREFERRED
 - **Pattern**: One test class per production class, with `setUp()` for common initialization
 - **Examples**:
   ```python
@@ -296,6 +380,7 @@ backend/
   ```
 
 ### Assertion Style
+- **Priority**: CRITICAL
 - **Pattern**: Direct equality assertions with `assert expected == actual` order
 - **Examples**:
   ```python
@@ -308,6 +393,7 @@ backend/
 **Observation**: Always put expected value first, actual value second. Use named variables for complex expectations to improve readability.
 
 ### Test Data Organization
+- **Priority**: PREFERRED
 - **Pattern**: Module-level constants for large test data (events, fixtures), method-level for simple test data
 - **Examples**:
   ```python
@@ -331,6 +417,7 @@ backend/
   ```
 
 ### Comprehensive Test Coverage
+- **Priority**: CRITICAL
 - **Pattern**: Test happy path, error conditions, edge cases, and boundary conditions
 - **Examples**:
   ```python
@@ -349,6 +436,7 @@ backend/
   ```
 
 ### Test Scenario Organization
+- **Priority**: PREFERRED
 - **Pattern**: Multiple scenarios within single test function using inline comments `# TEST:` to separate
 - **Examples**:
   ```python
@@ -366,6 +454,7 @@ backend/
 **Observation**: When testing multiple related scenarios, group them in a single test function with clear `# TEST:` comments rather than creating many tiny test functions.
 
 ### Mock Verification Patterns
+- **Priority**: CRITICAL
 - **Pattern**: Verify mock behavior with `call_args_list`, use `mock.ANY` for unimportant parameters
 - **Examples**:
   ```python
@@ -383,6 +472,7 @@ backend/
   ```
 
 ### Exception Testing
+- **Priority**: CRITICAL
 - **Pattern**: Use `pytest.raises` context manager for exception verification
 - **Examples**:
   ```python
@@ -394,6 +484,7 @@ backend/
   ```
 
 ### Module-Level Test Constants
+- **Priority**: PREFERRED
 - **Pattern**: Define test constants at module level for reuse across multiple test functions
 - **Examples**:
   ```python
@@ -410,6 +501,7 @@ backend/
 **Observation**: Reduces duplication and ensures consistent test data across related tests
 
 ### Custom Mock Classes for Complex Test Scenarios
+- **Priority**: PREFERRED
 - **Pattern**: Extend `unittest.mock.Mock` to create custom mock classes with stateful behavior
 - **Examples**:
   ```python
@@ -433,6 +525,7 @@ backend/
 **Observation**: Custom mock classes encapsulate complex mock behavior (like sequence tracking) rather than using nested side_effect lambdas
 
 ### Test Exception Classes for Flow Control
+- **Priority**: PREFERRED
 - **Pattern**: Define custom exceptions at module level to control test execution flow
 - **Examples**:
   ```python
@@ -451,6 +544,7 @@ backend/
 **Observation**: Allows early termination of test execution when verifying specific branches or sections of code
 
 ### pytest Fixtures for Test Data
+- **Priority**: PREFERRED
 - **Pattern**: Use `@pytest.fixture` to define reusable test data and mock objects
 - **Examples**:
   ```python
@@ -472,6 +566,7 @@ backend/
 **Observation**: Fixtures eliminate duplication when multiple tests need similar mock objects
 
 ### pytest tmpdir Fixture for Filesystem Testing
+- **Priority**: PREFERRED
 - **Pattern**: Use pytest's built-in `tmpdir` fixture for temporary file/directory testing
 - **Examples**:
   ```python
@@ -497,22 +592,27 @@ backend/
 ### Naming Conventions
 
 #### Variables & Functions
+- **Priority**: CRITICAL
 - **Pattern**: `snake_case` for variables and functions
 - **Examples**: `expected_traffic`, `cluster_name`, `get_capture_node_capacity_plan`
 
 #### Classes
+- **Priority**: CRITICAL
 - **Pattern**: `PascalCase` for classes
 - **Examples**: `Expert`, `CaptureNodesPlan`, `AwsClientProvider`, `RESTPath`
 
 #### Constants
+- **Priority**: CRITICAL
 - **Pattern**: `SCREAMING_SNAKE_CASE` for module-level constants
-- **Examples**: `MAX_TRAFFIC`, `MINIMUM_TRAFFIC`, `DEFAULT_SPI_DAYS`, `DEFULT_BOTO_CONFIG` [sic]
+- **Examples**: `MAX_TRAFFIC`, `MINIMUM_TRAFFIC`, `DEFAULT_SPI_DAYS`, `DEFAULT_BOTO_CONFIG`
 
 #### Private/Internal
+- **Priority**: CRITICAL
 - **Pattern**: Leading underscore for internal methods and variables
 - **Examples**: `_aws_profile`, `_get_session()`, `_create_regex()`, `_validate()`
 
 ### Line Length
+- **Priority**: PREFERRED
 - **Pattern**: Generally stays under 120 characters; breaks long strings and method chains
 - **Examples**:
   ```python
@@ -524,6 +624,7 @@ backend/
   ```
 
 ### Import Organization
+- **Priority**: CRITICAL
 - **Pattern**: Imports grouped by: stdlib → third-party → local (with blank lines between)
 - **Examples**:
   ```python
@@ -540,6 +641,7 @@ backend/
   ```
 
 ### Comprehensions vs Loops
+- **Priority**: PREFERRED
 - **Pattern**: Prefer list comprehensions for simple transformations
 - **Examples**:
   ```python
@@ -547,6 +649,7 @@ backend/
   ```
 
 ### F-Strings
+- **Priority**: PREFERRED
 - **Pattern**: Use of f-strings for string formatting
 - **Examples**:
   ```python
@@ -555,6 +658,7 @@ backend/
   ```
 
 ### Boolean Expressions for Control Flow
+- **Priority**: PREFERRED
 - **Pattern**: Break complex boolean logic into simpler expressions with clear variable names for intermediate results
 - **Examples**:
   ```python
@@ -565,6 +669,7 @@ backend/
   ```
 
 ### Conditional Assignment Patterns
+- **Priority**: PREFERRED
 - **Pattern**: Use ternary expressions for conditional assignments
 - **Examples**:
   ```python
@@ -580,10 +685,12 @@ backend/
 ## 7. Dependencies & Tooling
 
 ### Standard Library vs Third-Party
+- **Priority**: PREFERRED
 - **Pattern**: Leverages stdlib heavily (logging, abc, dataclasses, typing), brings in third-party for specific needs
 - **Third-party observed**: Django, DRF, Click, boto3, LangChain, requests
 
 ### AWS SDK (boto3) Usage
+- **Priority**: OBSERVED
 - **Pattern**: Encapsulate AWS API calls in dedicated interaction modules with error handling
 - **Examples**:
   ```python
@@ -601,6 +708,7 @@ backend/
 **Observation**: Pattern includes custom exception classes for domain errors, ClientError parsing, pagination handling, and regional API nuances (e.g., us-east-1 special case)
 
 ### CLI Framework
+- **Priority**: OBSERVED
 - **Pattern**: Uses Click for command-line interfaces
 - **Examples**: Extensive use of `@click.command()`, `@click.option()`, `@click.group()`
 
@@ -609,7 +717,8 @@ backend/
 ## 8. Design Patterns & Principles
 
 ### Dataclass Usage
-- **Pattern**: Heavy use of `@dataclass` for data structures; prefers dataclasses over plain classes or dicts
+- **Priority**: PREFERRED
+- **Pattern**: Heavy use of `@dataclass` for data structures; prefer dataclasses over plain classes or dicts
 - **Examples**:
   ```python
   @dataclass
@@ -627,8 +736,10 @@ backend/
       maxCount: int
       minCount: int
   ```
+**Observeration**: Dataclasses provide lightweight typing and reduce boilerplate
 
 ### Serialization Patterns
+- **Priority**: PREFERRED
 - **Pattern**: Dataclasses have `to_dict()` instance methods and `from_dict()` class methods, ternary expressions to conditionally serialize optional fields
 - **Examples**:
   ```python
@@ -647,6 +758,7 @@ backend/
   ```
 
 ### Abstract Base Classes
+- **Priority**: PREFERRED
 - **Pattern**: Uses ABC for defining interfaces/contracts
 - **Examples**:
   ```python
@@ -659,8 +771,10 @@ backend/
       def set_work_item(self, new_work_item: Any):
           pass
   ```
+**Observation**: While we prefer composition over inheritance as a general rule, we use ABCs to create consistent method interfaces and share behavior when that makes sense
 
 ### Client/Provider Pattern
+- **Priority**: OBSERVED
 - **Pattern**: Provider classes encapsulate client initialization and credential management
 - **Examples**:
   ```python
@@ -677,6 +791,7 @@ backend/
   ```
 
 ### Composition Over Inheritance
+- **Priority**: PREFERRED
 - **Pattern**: Dataclasses composed of other dataclasses rather than deep inheritance
 - **Examples**:
   ```python
@@ -692,6 +807,7 @@ backend/
   ```
 
 ### Strategy Pattern with Version Selection
+- **Priority**: PREFERRED
 - **Pattern**: Functions dispatch to different implementations based on version/flavor enum
 - **Examples**:
   ```python
@@ -714,18 +830,21 @@ backend/
 ## 9. Data Handling
 
 ### Data Structure Choices
+- **Priority**: PREFERRED
 - **Pattern**: Prefers dataclasses for structured data, dicts for JSON interop
 - **Examples**: All data models are dataclasses (Entity, EntityMapping, CaptureNodesPlan, etc.)
 
 ### Serialization
-- **Confidence**: High
+- **Priority**: PREFERRED
 - **Pattern**: `to_dict()` methods for serialization, `from_dict()` class methods for deserialization
 - **Examples**: See Design Patterns section
 
 ### Dataclasses vs NamedTuples vs Pydantic
+- **Priority**: PREFERRED
 - **Pattern**: Uses `@dataclass` from stdlib for data models; Pydantic BaseModel for LangChain tool schemas only
 
 ### Nested Dataclass Deserialization
+- **Priority**: PREFERRED
 - **Pattern**: `from_dict()` class methods handle nested dataclass instantiation with **kwargs unpacking
 - **Examples**:
   ```python
@@ -740,6 +859,7 @@ backend/
   ```
 
 ### Printable Wrappers with Attribute Filtering
+- **Priority**: OBSERVED
 - **Pattern**: Extend external dataclasses with printable versions that add `to_dict()` and attribute filtering
 - **Examples**:
   ```python
@@ -775,6 +895,7 @@ backend/
 **Observation**: Pattern adds serialization capabilities to third-party dataclasses without modifying the original library
 
 ### Recursive Data Structures
+- **Priority**: PREFERRED
 - **Pattern**: Dataclasses reference themselves for linked structures (with None termination)
 - **Examples**:
   ```python
@@ -786,6 +907,7 @@ backend/
   ```
 
 ### Immutability
+- **Priority**: PREFERRED
 - **Pattern**: Dataclasses are mutable by default; avoid frozen=True except for critical code sections
 
 ---
@@ -793,6 +915,7 @@ backend/
 ## 10. Async & Concurrency
 
 ### Async/Await Usage
+- **Priority**: PREFERRED
 - **Pattern**: Uses async/await for I/O-bound operations (LLM API calls)
 - **Examples**:
   ```python
@@ -805,6 +928,7 @@ backend/
   ```
 
 ### Async Wrapper Pattern
+- **Priority**: PREFERRED
 - **Pattern**: Sync wrapper function calls `asyncio.run()` for async implementation
 - **Examples**:
   ```python
@@ -816,10 +940,12 @@ backend/
 ## 11. API Design
 
 ### Public vs Private Boundaries
+- **Priority**: CRITICAL
 - **Pattern**: Leading underscore (`_`) for private/internal methods
 - **Examples**: `_create_regex()`, `_validate()`, `_get_session()`, `_perform_async_inference()`
 
 ### Parameter Patterns
+- **Priority**: PREFERRED
 - **Pattern**: Explicit parameters preferred; defaults for optional params; kwargs for flexible APIs
 - **Examples**:
   ```python
@@ -828,14 +954,17 @@ backend/
   ```
 
 ### Return Value Conventions
+- **Priority**: CRITICAL
 - **Pattern**: Returns typed objects (such as dataclasses); uses None for optional returns
 - **Examples**: All functions have explicit return types in signatures
 
 ### Explicit Over Implicit
+- **Priority**: CRITICAL
 - **Pattern**: Explicit parameter passing, explicit imports (no `import *`)
 - **Examples**: All imports are explicit; functions take explicit parameters
 
 ### Callback/Provider Function Parameters
+- **Priority**: PREFERRED
 - **Pattern**: Pass provider functions as parameters for flexibility and testability
 - **Examples**:
   ```python
@@ -847,6 +976,7 @@ backend/
   ```
 
 ### Factory Functions that Return Functions
+- **Priority**: PREFERRED
 - **Pattern**: Factory functions return parameterized closures for creating prompts/messages
 - **Examples**:
   ```python
@@ -859,6 +989,7 @@ backend/
   **Observation**: This pattern encapsulates configuration (ocsf_version, event_name) in outer function and allows parameterization (input_entry) in returned closure
 
 ### Helper Functions with Underscores
+- **Priority**: PREFERRED
 - **Pattern**: Private helper functions prefixed with `_`, often defined at module level
 - **Examples**: `_get_pattern_function_name()`, `_get_helper_code()`, `_get_transformer_wrapper_code()`, `_should_proceed_with_operation()`
 - **Purpose**: Break down complex command functions into smaller, testable units
@@ -868,6 +999,7 @@ backend/
 ## 12. Meta Patterns
 
 ### Module-Level Constants
+- **Priority**: CRITICAL
 - **Pattern**: Constants defined at module top, right after imports
 - **Examples**:
   ```python
@@ -877,11 +1009,12 @@ backend/
   ```
 
 ### Factory Functions
-- **Confidence**: High
+- **Priority**: PREFERRED
 - **Pattern**: `get_*` prefix for factory/provider functions
 - **Examples**: `get_regex_expert()`, `get_categorization_expert()`, `get_capture_node_capacity_plan()`, `get_ecs_sys_resource_plan()`
 
 ### Context Management
+- **Priority**: PREFERRED
 - **Pattern**: Uses context managers (with statements) appropriately
 - **Examples**:
   ```python
@@ -890,6 +1023,7 @@ backend/
   ```
 
 ### Equality Methods
+- **Priority**: PREFERRED
 - **Pattern**: Custom `__eq__` methods on dataclasses for semantic equality
 - **Examples**:
   ```python
@@ -899,6 +1033,7 @@ backend/
   ```
 
 ### Interactive Shell Automation with pexpect
+- **Priority**: OBSERVED
 - **Pattern**: Use pexpect for automating interactive commands with request/response pairs
 - **Examples**:
   ```python
@@ -929,6 +1064,7 @@ backend/
   ```
 
 ### Simple Client Wrappers
+- **Priority**: PREFERRED
 - **Pattern**: Thin wrapper around requests library with consistent logging and error handling
 - **Examples**:
   ```python
@@ -959,9 +1095,72 @@ backend/
 **Observation**: Pattern includes base_url normalization with rstrip('/'), logging before/after each call, and raise_for_status() for error handling
 
 ### String Representations
+- **Priority**: PREFERRED
 - **Pattern**: Custom `__str__` methods for human-readable output
 - **Examples**:
   ```python
   def __str__(self):
       return json.dumps(self.to_dict())
   ```
+
+---
+
+## When to Deviate From This Guide
+
+These patterns emerged from solving specific problems in specific contexts. Deviate when:
+
+### Team/Project Conventions Differ
+- If working in an established codebase with different conventions (e.g., Google-style docstrings, 88-char line length from Black), **follow the existing style** for consistency
+- Propose style guide adoption only if the team is open to it
+
+### Domain Requirements Differ
+- **Performance-critical code**: Frozen dataclasses, specialized data structures, avoiding comprehensions in hot paths
+- **Security-sensitive code**: More defensive programming, comprehensive input validation, audit logging
+- **Public libraries**: More comprehensive docstrings, semantic versioning, deprecation warnings
+
+### Better Engineering Solution Exists
+**When to propose alternatives:**
+- Clear performance or security improvements
+- Significant reduction in complexity
+- Better testability or maintainability
+- Leveraging new language features (Python 3.10+ pattern matching, 3.9+ type hints)
+
+**How to propose:**
+- Explain the engineering trade-off clearly
+- Reference the pattern you're deviating from
+- Document why the deviation is justified
+
+### Examples of Valid Deviations:
+
+```python
+# DEVIATION: Using frozen dataclass for immutability guarantee
+# Reason: This config is shared across threads and must be immutable
+@dataclass(frozen=True)
+class ThreadSafeConfig:
+    max_retries: int
+    timeout: float
+
+# DEVIATION: Using structured docstring format
+# Reason: This is a public library; users need comprehensive API docs
+def process_data(input: DataFrame, filters: List[str]) -> DataFrame:
+    """
+    Process input data with specified filters.
+
+    Args:
+        input: Input DataFrame to process
+        filters: List of filter expressions in SQL WHERE clause format
+
+    Returns:
+        Filtered and processed DataFrame
+
+    Raises:
+        ValueError: If filters contain invalid SQL syntax
+    """
+
+# DEVIATION: Using PEP 585 built-in generics instead of typing module
+# Reason: Python 3.9+ project, modern syntax is clearer
+def merge_configs(configs: list[dict[str, Any]]) -> dict[str, Any]:
+    # Note: Guide prefers typing.List and typing.Dict, but this is valid for 3.9+
+```
+
+The goal is **engineering judgment**, not blind pattern-matching.
