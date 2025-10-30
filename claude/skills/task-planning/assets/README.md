@@ -10,9 +10,12 @@ The `.agents/` directory enables structured collaboration between humans and Cla
 ├── tasks/
 │   ├── <task_name>_plan.md        # Where Human and Claude store their implementation plan for the task
 │   └── <task_name>_implement.md   # Where Claude carefully tracks its progress after each step of the implementation plan
-└── templates/
-    ├── plan_template.md
-    └── implementation_template.md
+├── templates/
+│   ├── plan_template.md
+│   └── implementation_template.md
+└── output/
+    └── <task_name>/                # Task-specific output directory for deliverables and artifacts
+        └── <artifact_files>        # Outputs produced during implementation (final and intermediate)
 ```
 
 ## Workflow
@@ -36,6 +39,35 @@ The `.agents/` directory enables structured collaboration between humans and Cla
 
 Files are named `tasks/<task_name>_plan.md` and `tasks/<task_name>_implement.md` so they appear adjacent when sorted.
 
+## Output Directory
+
+The `output/` directory stores artifacts and deliverables produced during task implementation:
+
+**Purpose:**
+- Separate task metadata (plans/tracking) from actual deliverables (code, documentation, configs)
+- Preserve historical artifacts even after outputs are moved to their final locations
+- Organize multiple outputs per task in dedicated subdirectories
+
+**Organization:**
+- One subdirectory per task: `output/<task_name>/`
+- All artifacts for that task live in its subdirectory
+- Can include final deliverables, intermediate outputs, generated files, etc.
+
+**When to use:**
+- During implementation, write deliverables to `output/<task_name>/`
+- After task completion, deliverables may be moved to their final project locations
+- Original files remain in `output/` as historical reference
+
+**Example:**
+```
+output/
+├── python_coding_style_analysis/
+│   └── python_style.md              # Generated style guide (later split into skill)
+└── authentication_feature/
+    ├── auth_module.py               # Generated authentication module
+    └── migration_script.sql         # Database migration script
+```
+
 ## Key Principles
 
 **For Humans:**
@@ -46,7 +78,8 @@ Files are named `tasks/<task_name>_plan.md` and `tasks/<task_name>_implement.md`
 **For Claude:**
 - Always prompt for GitHub issue if not provided
 - Analyze codebase thoroughly before creating plan
-- Read `templates/implementation_template.md` and use it as the structure for the implementation file you create ()`tasks/<task_name>_implement.md`)
+- Read `templates/implementation_template.md` and use it as the structure for the implementation file you create (`tasks/<task_name>_implement.md`)
 - Carefully document the work performed in implementation file `tasks/<task_name>_implement.md` after each step of the implementation plan
+- Write task deliverables and artifacts to `output/<task_name>/` directory during implementation
 - Stop implementation and ask for human review after you've updated the implementation file at the end of each step of the implementation plan
-- NEVER automatically proceed from one step of an implementation plan to the next step withough Human approval
+- NEVER automatically proceed from one step of an implementation plan to the next step without Human approval

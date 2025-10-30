@@ -69,6 +69,30 @@ This means:
 
 ## Skills
 
+### python-style
+
+Comprehensive Python coding style guidelines extracted from Chris's production codebases.
+
+**Usage**: Automatically invoked when working with Python code:
+- Writing new Python code
+- Reviewing existing Python code
+- Refactoring Python modules
+- Discussing Python architecture
+
+**What it provides**:
+- Core style patterns (code organization, type hints, documentation, error handling, design patterns)
+- Testing patterns (loaded when writing/reviewing tests)
+- Async patterns (loaded when working with async/await code)
+- Priority-based guidance (CRITICAL, PREFERRED, OBSERVED)
+- Context-aware pattern application with project conflict handling
+
+**Structure**:
+- `references/core.md` - Always-loaded core patterns (~850 lines)
+- `references/testing.md` - Conditionally loaded testing patterns (~285 lines)
+- `references/async.md` - Conditionally loaded async patterns (~25 lines)
+
+See `skills/python-style/SKILL.md` for full documentation.
+
 ### task-planning
 
 Structured workflow for planning and implementing features across multiple Claude Code sessions.

@@ -41,9 +41,10 @@ When no `.agents/` directory exists, create the complete structure:
    .agents/
    ├── README.md
    ├── tasks/
-   └── templates/
-       ├── plan_template.md
-       └── implementation_template.md
+   ├── templates/
+   │   ├── plan_template.md
+   │   └── implementation_template.md
+   └── output/
    ```
 
 2. **Copy canonical files from skill assets:**
@@ -57,6 +58,7 @@ When no `.agents/` directory exists, create the complete structure:
    - README.md: Explains the planning workflow
    - templates/: Contains plan and implementation templates
    - tasks/: Will contain your plan and implementation tracking files
+   - output/: Will contain task deliverables and artifacts
 
    Ready to create your first plan!
    ```
@@ -76,6 +78,7 @@ If `.agents/` exists but doesn't match the expected pattern:
    - .agents/templates/plan_template.md
    - .agents/templates/implementation_template.md
    - .agents/tasks/
+   - .agents/output/
 
    Current structure:
    [List what actually exists]
@@ -278,6 +281,7 @@ This skill only handles planning. Implementation follows in a separate session w
 - Claude creates `tasks/<task_name>_implement.md` to track progress
 - Claude follows the plan steps, stopping after each for human review
 - Implementation details are documented in the implement file
+- Task deliverables and artifacts are written to `output/<task_name>/` directory
 
 ## Assets
 
