@@ -40,8 +40,9 @@ Load this reference when:
 
 **v2 (Current standard):**
 - Has `.agents/.version` containing `2`
-- All task files have prefixes: `GH-123-feature_plan.md` or `2025-10-31-feature_plan.md`
-- All files use `*_progress.md` naming
+- All task names include prefix: `GH-123-feature` or `2024-10-30-feature`
+- Files named with full task name: `GH-123-feature_plan.md`, `GH-123-feature_progress.md`
+- Output directories use full task name: `output/GH-123-feature/`
 - Template named `progress_template.md`
 - Template has `Output Directory` field
 - `output/` directory exists
@@ -110,26 +111,37 @@ mv .agents/tasks/add_auth_implement.md .agents/tasks/add_auth_progress.md
 
 #### Migration B: Add Task Name Prefixes
 
+**Important concept:** Task names include the prefix as part of the complete name, not as a separate entity.
+
 **What to do:**
 1. Find all task files without prefixes in `.agents/tasks/`
 2. For each unprefixed task:
    - Ask user: "What prefix should I use for <task_name>? (issue/ticket ID, or I'll use YYYY-MM-DD)"
    - Wait for response
-   - Rename both plan and progress files with prefix:
-     - `<name>_plan.md` → `<PREFIX>-<name>_plan.md`
-     - `<name>_progress.md` → `<PREFIX>-<name>_progress.md`
+   - Construct new full task name: `<PREFIX>-<description>`
+   - Rename both plan and progress files:
+     - `<old_name>_plan.md` → `<new_task_name>_plan.md`
+     - `<old_name>_progress.md` → `<new_task_name>_progress.md`
+   - Rename output directory to match:
+     - `output/<old_name>/` → `output/<new_task_name>/`
    - Update cross-references between plan and progress files
-   - Update any `Output Directory` references to use new prefixed name
+   - Update any `Output Directory` references to use new task name
 
 **Example:**
 ```bash
-# User provides prefix GH-123
+# User provides prefix GH-123, task was "add_auth"
+# New task name: GH-123-add_auth
+
+# Rename files
 mv .agents/tasks/add_auth_plan.md .agents/tasks/GH-123-add_auth_plan.md
 mv .agents/tasks/add_auth_progress.md .agents/tasks/GH-123-add_auth_progress.md
 
-# Update internal cross-references
+# Rename output directory
+mv .agents/output/add_auth .agents/output/GH-123-add_auth
+
+# Update references
 # In plan file: update any self-references
-# In progress file: update Plan field and Output Directory field
+# In progress file: update Plan field and Output Directory field to ../output/GH-123-add_auth/
 ```
 
 #### Migration C: Update Progress Template
@@ -165,6 +177,46 @@ mv .agents/tasks/add_auth_progress.md .agents/tasks/GH-123-add_auth_progress.md
 3. DO NOT move or modify any existing files in output locations
 4. DO NOT create subdirectories (they'll be created during implementation)
 
+#### Migration E: Update README.md
+
+**What to do:**
+1. Read current `.agents/README.md`
+2. Update all references to match v2 conventions:
+   - Change `*_implement.md` → `*_progress.md` throughout
+   - Change `implementation_template.md` → `progress_template.md` throughout
+   - Update file naming convention section to mention prefixes
+   - Update directory structure diagram to show prefixed files
+   - Add `.version` file to directory structure if not present
+3. Preserve any user customizations (custom sections, notes, etc.)
+4. Can use canonical version from `assets/README.md` as reference, but preserve local additions
+
+**Key updates needed:**
+- Line 12: `<task_name>_implement.md` → `<task_name>_progress.md` (where task_name includes prefix)
+- Line 15: `implementation_template.md` → `progress_template.md`
+- Lines 33-35: Update all `*_implement.md` references to `*_progress.md`
+- Line 40: Update naming convention to explain task name format with prefix
+- Lines 81-82: Update template and file references
+- Directory structure: Add `.version` file, clarify that `<task_name>` includes prefix
+- Output directory examples: Show full task names with prefixes
+
+**Example before/after for directory structure:**
+```markdown
+Before (v0):
+├── tasks/
+│   ├── <task_name>_plan.md        (no prefix)
+│   └── <task_name>_implement.md   (no prefix)
+└── output/
+    └── <task_name>/                (no prefix)
+
+After (v2):
+├── .version
+├── tasks/
+│   ├── <task_name>_plan.md        (task_name = GH-123-feature or 2024-10-30-feature)
+│   └── <task_name>_progress.md    (task_name = GH-123-feature or 2024-10-30-feature)
+└── output/
+    └── <task_name>/                (task_name = GH-123-feature or 2024-10-30-feature)
+```
+
 ### Step 4: Update Version File
 
 After successful migration:
@@ -184,12 +236,43 @@ After successful migration:
 
    All task file contents preserved unchanged.
 
-   Ready to proceed with task planning.
+   Please review the migrated structure to ensure everything looks correct.
    ```
 
-### Step 5: Handle Migration Decline
+### Step 5: Offer Backup Cleanup
 
-If user declines migration:
+After user has had a chance to review:
+
+1. **Ask for confirmation:**
+   ```
+   Have you reviewed the migration? If everything looks good, would you like me to remove the backup?
+
+   This will delete: .agents.backup.[timestamp]
+
+   Remove backup? (yes/no)
+   ```
+
+2. **If user confirms (yes):**
+   ```bash
+   rm -rf .agents.backup.[timestamp]
+   ```
+
+   Then inform:
+   ```
+   Backup removed. Migration to v2 complete!
+   ```
+
+3. **If user declines (no):**
+   ```
+   No problem! The backup will remain at .agents.backup.[timestamp]
+
+   You can remove it manually later when ready:
+   rm -rf .agents.backup.[timestamp]
+   ```
+
+### Step 7: Handle Migration Decline
+
+If user declines migration in Step 1:
 
 ```
 No problem! I'll continue with your existing structure.
@@ -217,21 +300,25 @@ This section documents specific steps for each migration path.
 2. Execute Migration B: Add task name prefixes
 3. Execute Migration C: Update progress template (rename + add Output Directory field)
 4. Execute Migration D: Ensure output directory exists
-5. Create `.agents/.version` file containing `2`
+5. Execute Migration E: Update README.md to v2 standard
+6. Create `.agents/.version` file containing `2`
 
 **Example scenario:**
 ```
 Before (v0):
 - tasks/add_auth_plan.md
 - tasks/add_auth_implement.md
+- output/add_auth/
 - templates/implementation_template.md (no Output Directory field)
 
 After (v2):
 - tasks/GH-123-add_auth_plan.md
 - tasks/GH-123-add_auth_progress.md
+- output/GH-123-add_auth/
 - templates/progress_template.md (with Output Directory field)
-- output/ (created)
 - .version (contains: 2)
+
+Note: Task name "GH-123-add_auth" is used consistently everywhere.
 ```
 
 ### Migration Path: v1 → v2
@@ -253,6 +340,7 @@ After (v2):
 - If missing prefixes: Execute Migration B
 - If template needs updates: Execute Migration C
 - If missing output directory: Execute Migration D
+- If README.md has old references: Execute Migration E
 - Update `.agents/.version` to `2`
 
 **Example scenario:**
@@ -291,10 +379,11 @@ When the skill is updated to v3 or beyond, document **incremental paths only**:
 ### What NOT to Modify
 
 **NEVER modify these during migration:**
-- Contents of any `*_plan.md` files (except cross-reference links)
-- Contents of any `*_progress.md` files (except cross-reference links)
+- Contents of any `*_plan.md` files (except cross-reference links to renamed files)
+- Contents of any `*_progress.md` files (except cross-reference links to renamed files)
 - Any files in `.agents/output/` or subdirectories
 - User's custom sections in template files
+- User's custom sections in README.md (preserve additions while updating standard sections)
 
 ### What IS Safe to Modify
 
@@ -303,6 +392,7 @@ When the skill is updated to v3 or beyond, document **incremental paths only**:
 - Cross-reference links between plan and progress files
 - Template files (adding missing fields, updating to canonical structure)
 - Directory structure (creating missing directories)
+- README.md standard sections (updating terminology while preserving user customizations)
 
 ### Always Create Backups
 

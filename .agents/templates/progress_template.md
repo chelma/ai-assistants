@@ -2,6 +2,7 @@
 
 **Status**: in_progress
 **Plan**: [Link to corresponding _plan.md file]
+**Output Directory**: `../output/[task_name]/`
 **Started**: [Date]
 
 ## Progress

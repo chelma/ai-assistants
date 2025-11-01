@@ -178,30 +178,37 @@ Ask the user these questions one at a time (don't overwhelm with all at once):
    What are the key acceptance criteria? (I'll format these as checkboxes)
    ```
 
-### Step 2: Determine Task Name Prefix
+### Step 2: Construct Task Name
 
-Based on the issue/ticket ID response:
+Based on the issue/ticket ID response, construct the full task name:
 
-- **If issue/ticket ID provided:** Use it as the prefix (e.g., `GH-123`, `PROJ-456`)
-- **If no issue/ticket ID:** Use today's date in YYYY-MM-DD format (e.g., `2025-10-31`)
+- **If issue/ticket ID provided:** `<ISSUE-ID>-<description>` (e.g., `GH-123-add_authentication`)
+- **If no issue/ticket ID:** `<YYYY-MM-DD>-<description>` (e.g., `2025-10-31-add_authentication`)
 
-This prefix ensures unique, sortable task names that scale across many plans/implementations.
+**Key concept:** The task name is complete - it includes both the prefix and description as one entity. This full task name will be used everywhere: file names, output directories, and all references.
 
 ### Step 3: Confirm Task Name
 
-Based on the user's task description and prefix, suggest a file name:
+Based on the user's task description and prefix, suggest a task name:
 
 ```
-Based on your description, I'll name this plan:
-  tasks/<PREFIX>-<descriptive_name>_plan.md
+Based on your description, I'll name this task:
+  <PREFIX>-<descriptive_name>
 
 For example:
-  - tasks/GH-123-add_authentication_plan.md (if GitHub issue #123)
-  - tasks/PROJ-456-refactor_api_plan.md (if JIRA ticket PROJ-456)
-  - tasks/2025-10-31-optimize_queries_plan.md (if no tracking ID)
+  - GH-123-add_authentication (if GitHub issue #123)
+  - PROJ-456-refactor_api (if JIRA ticket PROJ-456)
+  - 2025-10-31-optimize_queries (if no tracking ID)
+
+This will create:
+  - tasks/GH-123-add_authentication_plan.md
+  - tasks/GH-123-add_authentication_progress.md (during implementation)
+  - output/GH-123-add_authentication/ (for deliverables)
 
 Does this naming work for you, or would you prefer a different name?
 ```
+
+**Important:** The task name includes the prefix - it's not a separate entity. Use the full task name everywhere (files, output directory, references).
 
 Wait for confirmation or alternative name before proceeding.
 

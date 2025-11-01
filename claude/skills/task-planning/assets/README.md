@@ -6,16 +6,17 @@ The `.agents/` directory enables structured collaboration between humans and Cla
 
 ```
 .agents/
+├── .version                       # Tracks structure version
 ├── README.md                      # This file
 ├── tasks/
 │   ├── <task_name>_plan.md        # Where Human and Claude store their implementation plan for the task
-│   └── <task_name>_implement.md   # Where Claude carefully tracks its progress after each step of the implementation plan
+│   └── <task_name>_progress.md   # Where Claude carefully tracks its progress after each step of the implementation plan
 ├── templates/
 │   ├── plan_template.md
-│   └── implementation_template.md
+│   └── progress_template.md
 └── output/
-    └── <task_name>/                # Task-specific output directory for deliverables and artifacts
-        └── <artifact_files>        # Outputs produced during implementation (final and intermediate)
+    └── <task_name>/               # Task-specific output directory for deliverables and artifacts
+        └── <artifact_files>       # Outputs produced during implementation (final and intermediate)
 ```
 
 ## Workflow
@@ -30,14 +31,25 @@ The `.agents/` directory enables structured collaboration between humans and Cla
 
 ### 2. Implementation (Session 2)
 - **Human**: Starts fresh Claude session, references approved plan file, asks Claude to begin implementation
-- **Claude**: Creates a `tasks/<task_name>_implement.md` file to track progress using the `templates/implementation_template.md` as a starting point
-- **Claude**: Implements following the plan, carefully documenting its progress in the file `tasks/<task_name>_implement.md`.
+- **Claude**: Creates a `tasks/<task_name>_progress.md` file to track progress using the `templates/progress_template.md` as a starting point
+- **Claude**: Implements following the plan, carefully documenting its progress in the file `tasks/<task_name>_progress.md`.
 - **Claude**: Stops after each stage of the implementation plan laid out in `tasks/<task_name>_plan.md`.
 - **Human**: Reviews work of the current stage, then asks Claude to continue with the next stage when comfortable.
 
 ## File Naming Convention
 
-Files are named `tasks/<task_name>_plan.md` and `tasks/<task_name>_implement.md` so they appear adjacent when sorted.
+Files are named: `tasks/<task_name>_plan.md` and `tasks/<task_name>_progress.md`.
+
+**Task name format:**
+The task name includes a prefix for uniqueness and sorting:
+- If GitHub issue or JIRA ticket exists: `<ISSUE-ID>-<description>` (e.g., `GH-123-add_authentication`)
+- Otherwise: `<YYYY-MM-DD>-<description>` (e.g., `2024-10-30-refactor_api`)
+
+This ensures files appear adjacent when sorted and scales across many tasks in repositories with multiple contributors.
+
+**Examples:**
+- `tasks/GH-456-user_dashboard_plan.md` and `tasks/GH-456-user_dashboard_progress.md`
+- `tasks/2024-10-30-optimize_queries_plan.md` and `tasks/2024-10-30-optimize_queries_progress.md`
 
 ## Output Directory
 
@@ -61,9 +73,9 @@ The `output/` directory stores artifacts and deliverables produced during task i
 **Example:**
 ```
 output/
-├── python_coding_style_analysis/
+├── 2024-10-30-python_coding_style_analysis/
 │   └── python_style.md              # Generated style guide (later split into skill)
-└── authentication_feature/
+└── GH-789-authentication_feature/
     ├── auth_module.py               # Generated authentication module
     └── migration_script.sql         # Database migration script
 ```
@@ -76,10 +88,11 @@ output/
 - Always reference GitHub issues when they exist
 
 **For Claude:**
-- Always prompt for GitHub issue if not provided
+- Always prompt for GitHub issue or tracking ID if not provided (use timestamp if none exists)
+- Construct full task name with prefix: `<ISSUE-ID>-<description>` or `<YYYY-MM-DD>-<description>`
 - Analyze codebase thoroughly before creating plan
-- Read `templates/implementation_template.md` and use it as the structure for the implementation file you create (`tasks/<task_name>_implement.md`)
-- Carefully document the work performed in implementation file `tasks/<task_name>_implement.md` after each step of the implementation plan
-- Write task deliverables and artifacts to `output/<task_name>/` directory during implementation
-- Stop implementation and ask for human review after you've updated the implementation file at the end of each step of the implementation plan
+- Read `templates/progress_template.md` and use it as the structure for the progress file you create (`tasks/<task_name>_progress.md`)
+- Carefully document the work performed in progress file `tasks/<task_name>_progress.md` after each step of the implementation plan
+- Write task deliverables and artifacts to `output/<task_name>/` directory during implementation (task_name includes prefix)
+- Stop implementation and ask for human review after you've updated the progress file at the end of each step of the implementation plan
 - NEVER automatically proceed from one step of an implementation plan to the next step without Human approval
