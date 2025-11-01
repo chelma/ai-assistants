@@ -22,16 +22,18 @@ The script will:
 
 ```
 claude/
-├── README.md           # This file
-├── install.sh          # Installation script for symlinking
-├── settings.json       # Global user settings (permissions, env vars)
-├── CLAUDE.md           # User-level instructions loaded at session start
-├── .mcp.json           # MCP server configuration
-├── skills/             # Custom Claude Code skills
-│   └── task-planning/  # Task planning workflow skill
-├── commands/           # Custom slash commands
-├── memories/           # Custom memories
-└── agents/             # Custom subagent definitions
+├── README.md                    # This file
+├── install.sh                   # Installation script for symlinking
+├── settings.json                # Global user settings (permissions, env vars)
+├── CLAUDE.md                    # User-level instructions loaded at session start
+├── .mcp.json                    # MCP server configuration
+├── skills/                      # Custom Claude Code skills
+│   ├── langchain-expert-builder/  # LangChain multi-expert system builder
+│   ├── python-style/            # Python coding style guidelines
+│   └── task-planning/           # Task planning workflow skill
+├── commands/                    # Custom slash commands (empty)
+├── memories/                    # Custom memories (empty)
+└── agents/                      # Custom subagent definitions (empty)
 ```
 
 ## How It Works
@@ -69,6 +71,27 @@ This means:
 
 ## Skills
 
+### langchain-expert-builder
+
+Build LangChain-based multi-expert systems using the Expert-Task-Tool pattern. Provides production-ready Python abstractions and complete reference implementation.
+
+**Usage**: Use when implementing LLM workflows:
+- Structured output requirements (validated, type-safe LLM responses)
+- Multi-turn conversations with validation retry loops
+- Task-specific AI agents (code generation, analysis, classification)
+- Multi-phase expert pipelines
+
+**What it provides**:
+- Copy-paste ready `core/` abstractions (Expert, Task, Tool, ValidationReport)
+- Complete reference implementation (JSON transformer with two-phase workflow)
+- Progressive detail loading pattern (70% token reduction in multi-phase workflows)
+- Multi-stage validation with observability
+- Contrasting LLM configuration examples (creative vs deterministic)
+
+**Key philosophy**: LLMs perform best with narrow scope and deep specialization.
+
+See `skills/langchain-expert-builder/SKILL.md` for full documentation.
+
 ### python-style
 
 Comprehensive Python coding style guidelines extracted from Chris's production codebases.
@@ -97,10 +120,12 @@ See `skills/python-style/SKILL.md` for full documentation.
 
 Structured workflow for planning and implementing features across multiple Claude Code sessions.
 
-**Usage**: Explicitly invoke when planning tasks:
-- "Help me plan this feature"
+**Usage**: Explicitly invoke when the user mentions "task planning":
 - "Use task planning skill"
-- "Create a plan for X"
+- "Help me with task-planning"
+- "Set up task planning workflow"
+
+**Note**: Do NOT use for general planning requests like "help me plan this feature" - use Claude's built-in planning mode for those.
 
 **What it does**:
 - Sets up `.agents/` directory structure in git repositories
