@@ -1,7 +1,23 @@
 """
 Domain models for JSON Transformer Expert.
 
-These dataclasses represent the work items produced by each expert phase.
+PATTERN DEMONSTRATED: Domain dataclasses as work items
+
+These dataclasses represent the work items produced by each expert phase:
+- FieldMapping: Single field mapping (source path → target path + rationale)
+- MappingReport: Collection of mappings + analysis (output of mapping phase)
+- TransformCode: Python code with imports + logic (output of transform phase)
+
+KEY CONCEPTS:
+- All models are dataclasses with type hints (no BaseModel/Pydantic here)
+- Every model has to_json() for serialization
+- Models are pure data containers (no business logic)
+- Separate from Pydantic schemas used in tools (conversion happens in tool functions)
+
+DESIGN CHOICE: Domain models vs Pydantic models
+- Domain models (dataclasses): Internal representation, easy to work with
+- Pydantic models (in tool_def.py): LLM interface, validation schema
+- Tool functions bridge the gap by converting Pydantic → dataclass
 """
 from dataclasses import dataclass
 from typing import Dict, List, Any

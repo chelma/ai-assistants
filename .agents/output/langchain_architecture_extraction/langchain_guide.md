@@ -15,6 +15,22 @@ This guide explains how to build LangChain-based multi-expert systems using the 
 - **Compositional design**: Experts, Tasks, and Tools combine cleanly
 - **Provider flexibility**: Works with any LangChain-compatible LLM
 
+### Core Philosophy: Narrow Scope, Deep Specialization
+
+The multi-expert architecture is built on a foundational principle: **LLMs perform best when given narrowly-scoped domains to operate within**. This is achieved through three mechanisms:
+
+1. **Focused prompts**: Each expert gets a highly specialized system prompt tailored to one specific task type
+2. **Specially-tailored tools**: Tools define precise output schemas, eliminating ambiguity about response format
+3. **Carefully filtered context**: Only relevant information is injected into each expert's prompt (see [Progressive Detail Loading](#progressive-detail-loading))
+
+**Why narrow scope matters**: Generic "do everything" LLM interfaces produce inconsistent results because the model must interpret intent, choose output format, and perform the task simultaneously. By creating task-specific experts, you:
+- Eliminate ambiguity (expert knows its singular purpose)
+- Improve output quality (prompt optimized for one task type)
+- Enable fine-tuning (collect validation data per expert type)
+- Simplify debugging (narrow scope = easier to diagnose failures)
+
+**Development/runtime trade-off**: Spinning up experts is lightweight at runtime (factory creates LLM + tools + prompt) and relatively simple at development time (copy pattern, customize for your domain). The upfront work of creating multiple experts pays dividends in reliability and maintainability.
+
 ### What's a Multi-Expert System?
 
 A multi-expert system uses **multiple LLM "experts"**, each configured for a specific task:
@@ -61,22 +77,19 @@ Follow the [Building Your First Expert](#building-your-first-expert) section bel
 
 ### Expert
 
-An **Expert** encapsulates a complete LLM inference capability:
+**See:** `reference_implementation/core/experts.py:40-51`
 
-```python
-@dataclass
-class Expert:
-    llm: Runnable[LanguageModelInput, BaseMessage]           # LLM with tools bound
-    system_prompt_factory: Callable[[Dict], SystemMessage]  # Dynamic prompt generation
-    tools: ToolBundle                                        # Structured output schema
-```
+An **Expert** encapsulates a complete LLM inference capability with three components:
+- `llm`: LangChain Runnable (LLM with tools bound via `bind_tools()`)
+- `system_prompt_factory`: Callable that generates SystemMessage dynamically
+- `tools`: ToolBundle containing structured output schema(s)
 
 **Why Expert?**
 - Bundles LLM + prompts + tools into a single, reusable unit
 - Enables multiple expert "modes" (analysis, generation, classification)
 - Factory pattern makes configuration changes easy
 
-**Lifecycle**:
+**Lifecycle** (see `experts.py:59-117` for `invoke_expert()` implementation):
 1. Create Expert via factory function (`get_*_expert()`)
 2. Pass Expert + Task to `invoke_expert()`
 3. Expert produces structured output in Task
@@ -85,51 +98,19 @@ class Expert:
 
 ### Task
 
-A **Task** represents work to be performed:
+**See:** `reference_implementation/core/tasks.py:24-103`
 
-```python
-@dataclass
-class Task(ABC):
-    task_id: str
-    context: List[BaseMessage]  # Conversation history (SystemMessage, AIMessage, ToolMessage)
-
-    @abstractmethod
-    def get_work_item(self) -> Any: pass
-
-    @abstractmethod
-    def set_work_item(self, new_work_item: Any): pass
-
-    @abstractmethod
-    def get_tool_name(self) -> str: pass
-
-    @abstractmethod
-    def to_json(self) -> Dict[str, Any]: pass
-```
+A **Task** represents work to be performed with:
+- `task_id`: Unique identifier
+- `context`: List of LangChain messages (conversation history)
+- Abstract methods: `get_work_item()`, `set_work_item()`, `get_tool_name()`, `to_json()`
 
 **Why Task?**
 - Encapsulates input data + result (work item)
 - Maintains conversation context for multi-turn workflows
 - Type-safe work item access (enforced by `set_work_item()`)
 
-**Concrete Example**:
-```python
-@dataclass
-class MappingTask(Task):
-    source_json: str           # Input
-    target_schema: str         # Input
-    mapping_report: MappingReport = None  # Work item (result)
-
-    def get_work_item(self) -> Any:
-        return self.mapping_report
-
-    def set_work_item(self, new_work_item: Any):
-        if not isinstance(new_work_item, MappingReport):
-            raise TypeError("new_work_item must be of type MappingReport")
-        self.mapping_report = new_work_item
-
-    def get_tool_name(self) -> str:
-        return "CreateMappingReport"
-```
+**Concrete example:** See `reference_implementation/json_transformer_expert/task_def.py:18-51` (MappingTask)
 
 <!-- COMMENTARY NEEDED: Please explain when/why you'd want multi-turn conversations vs single-shot. -->
 
@@ -137,29 +118,14 @@ class MappingTask(Task):
 
 ### Tool
 
-Tools define the **structured output schema** using Pydantic:
+**See:** `reference_implementation/json_transformer_expert/tool_def.py:20-75` for complete example
 
-```python
-class FieldMappingInput(BaseModel):
-    source_path: str = Field(description="Dot-delimited path in source JSON...")
-    target_path: str = Field(description="Dot-delimited path in target schema...")
-    rationale: str = Field(description="Explanation of why this mapping makes sense...")
+Tools define the **structured output schema** using Pydantic BaseModel + LangChain StructuredTool.
 
-class CreateMappingReport(BaseModel):
-    """Create a report of field mappings between source JSON and target schema."""
-    mappings: List[FieldMappingInput] = Field(description="List of identified mappings...")
-    data_type_analysis: str = Field(description="Brief analysis of source data type...")
-
-def create_mapping_report(mappings, data_type_analysis) -> MappingReport:
-    # Convert Pydantic models to domain dataclasses
-    return MappingReport(...)
-
-create_mapping_report_tool = StructuredTool.from_function(
-    func=create_mapping_report,
-    name="CreateMappingReport",
-    args_schema=CreateMappingReport
-)
-```
+**Three-part pattern:**
+1. **Pydantic schema**: BaseModel classes with Field descriptions
+2. **Tool function**: Converts Pydantic args → domain dataclasses
+3. **StructuredTool**: Created via `StructuredTool.from_function(func=..., name=..., args_schema=...)`
 
 **Why Pydantic + StructuredTool?**
 - LangChain validates LLM arguments against schema automatically
@@ -167,8 +133,8 @@ create_mapping_report_tool = StructuredTool.from_function(
 - Tool function converts Pydantic input → domain dataclass
 - Guarantees structured output (no parsing errors)
 
-**Field Description Best Practices**:
-- Use constraints: "MUST", "MUST NOT", "exact value"
+**Field description best practices** (see tool_def.py:23-33):
+- Use constraints: "MUST", "exact path that exists"
 - Provide examples: "e.g., 'user.email' not just 'email'"
 - Explain semantics: "represents the source IP address, not destination"
 
@@ -176,173 +142,74 @@ create_mapping_report_tool = StructuredTool.from_function(
 
 ### ToolBundle
 
+**See:** `reference_implementation/core/tools.py:16-43`
+
 **ToolBundle** wraps tools for an Expert:
-
-```python
-@dataclass
-class ToolBundle:
-    task_tool: StructuredTool
-
-    def to_list(self) -> List[StructuredTool]:
-        return [self.task_tool]
-```
+- `task_tool`: The primary StructuredTool
+- `to_list()`: Returns list of tools for `bind_tools()`
 
 **Why ToolBundle?**
 - Consistent interface for `bind_tools()`
 - Current pattern: one tool per Expert
-- Extensible: add `helper_tools` field for multi-tool Experts
+- Extensible: add `helper_tools` field for multi-tool Experts (see extensibility comment in tools.py:27-32)
 
 ---
 
 ## Building Your First Expert
 
+The complete reference implementation is in `reference_implementation/json_transformer_expert/`. Below is a walkthrough of the key files and patterns to adapt for your domain.
+
 ### Step 1: Define Your Domain Models
 
-Create dataclasses for your work items:
+**See:** `reference_implementation/json_transformer_expert/models.py`
 
-```python
-# models.py
-from dataclasses import dataclass
-from typing import List
+Create dataclasses for your work items (e.g., `FieldMapping`, `MappingReport`, `TransformCode`).
 
-@dataclass
-class FieldMapping:
-    source_path: str
-    target_path: str
-    rationale: str
-
-    def to_json(self):
-        return {"source_path": self.source_path, ...}
-
-@dataclass
-class MappingReport:
-    mappings: List[FieldMapping]
-    data_type_analysis: str
-
-    def to_json(self):
-        return {"mappings": [m.to_json() for m in self.mappings], ...}
-```
-
-**Pattern**: All domain models have `to_json()` for serialization.
+**Key patterns:**
+- All domain models are dataclasses with type hints
+- Every model has `to_json()` method for serialization
+- Keep models simple: pure data containers, no business logic
 
 ---
 
 ### Step 2: Implement Your Task
 
-Subclass `Task` with your inputs and work item:
+**See:** `reference_implementation/json_transformer_expert/task_def.py:18-51` (MappingTask) and `task_def.py:55-91` (TransformTask)
 
-```python
-# task_def.py
-from dataclasses import dataclass
-from core.tasks import Task
-from models import MappingReport
-
-@dataclass
-class MappingTask(Task):
-    # Inputs
-    source_json: str
-    target_schema: str
-
-    # Work item (result)
-    mapping_report: MappingReport = None
-
-    def get_work_item(self) -> Any:
-        return self.mapping_report
-
-    def set_work_item(self, new_work_item: Any):
-        if not isinstance(new_work_item, MappingReport):
-            raise TypeError("new_work_item must be of type MappingReport")
-        self.mapping_report = new_work_item
-
-    def get_tool_name(self) -> str:
-        return "CreateMappingReport"  # Must match tool name
-
-    def to_json(self):
-        return {
-            "task_id": self.task_id,
-            "source_json": self.source_json,
-            "target_schema": self.target_schema,
-            "context": [turn.to_json() for turn in self.context],
-            "mapping_report": self.mapping_report.to_json() if self.mapping_report else None
-        }
-```
+Subclass `Task` with:
+- **Input fields**: Domain-specific data (e.g., `source_json`, `target_schema`)
+- **Work item field**: Result type (e.g., `mapping_report: Optional[MappingReport]`)
+- **`get_work_item()`**: Return the work item
+- **`set_work_item()`**: Set with runtime type checking (raise TypeError if wrong type)
+- **`get_tool_name()`**: Return tool name string (must match StructuredTool name)
+- **`to_json()`**: Serialize task state for debugging
 
 ---
 
 ### Step 3: Define Your Tool
 
-Create Pydantic schema + tool function:
+**See:** `reference_implementation/json_transformer_expert/tool_def.py:20-75` (mapping tool) and `tool_def.py:82-125` (transform tool)
 
-```python
-# tool_def.py
-from pydantic import BaseModel, Field
-from langchain_core.tools import StructuredTool
-from core.tools import ToolBundle
-from models import FieldMapping, MappingReport
+Create three components:
+1. **Pydantic input schema**: Nested BaseModel classes for LLM arguments (use Field descriptions heavily)
+2. **Tool function**: Converts Pydantic models → domain dataclasses
+3. **StructuredTool**: Created via `StructuredTool.from_function(func=..., name=..., args_schema=...)`
 
-class FieldMappingInput(BaseModel):
-    source_path: str = Field(description="Dot-delimited path...")
-    target_path: str = Field(description="Dot-delimited path...")
-    rationale: str = Field(description="Explanation...")
-
-class CreateMappingReport(BaseModel):
-    """Create a report of field mappings."""
-    mappings: List[FieldMappingInput] = Field(description="List of mappings...")
-    data_type_analysis: str = Field(description="Brief analysis...")
-
-def create_mapping_report(mappings, data_type_analysis) -> MappingReport:
-    return MappingReport(
-        mappings=[FieldMapping(**m.dict()) for m in mappings],
-        data_type_analysis=data_type_analysis
-    )
-
-create_mapping_report_tool = StructuredTool.from_function(
-    func=create_mapping_report,
-    name="CreateMappingReport",
-    args_schema=CreateMappingReport
-)
-
-def get_mapping_tool_bundle() -> ToolBundle:
-    return ToolBundle(task_tool=create_mapping_report_tool)
-```
+**Field description best practices** (from tool_def.py:23-33):
+- Use constraints: "MUST", "exact path that exists"
+- Provide format examples: "e.g., 'user.email'"
+- Explain semantics: "represents the source IP address, not destination"
 
 ---
 
 ### Step 4: Write Prompt Template
 
-Create prompt template with XML tags for structure:
+**See:** `reference_implementation/json_transformer_expert/prompting/templates.py`
 
-```python
-# prompting/templates.py
-
-mapping_prompt_template = """You are an AI assistant specialized in analyzing JSON data.
-
-Your goal is to identify field mappings between source JSON and target schema.
-
-<guidelines>
-- Analyze the source JSON structure carefully
-- Identify ALL fields that can map to target schema
-- Provide clear rationale for each mapping
-- Use exact dot-delimited paths
-</guidelines>
-
-<source_json>
-{source_json}
-</source_json>
-
-<target_schema>
-{target_schema}
-</target_schema>
-
-Create a comprehensive mapping report.
-"""
-```
-
-**Template Best Practices**:
-- Use XML tags for semantic sections
-- Explicit constraints: "ALWAYS", "MUST", "NEVER"
-- Provide context in placeholders
-- Keep focused on single task
+Create multi-section templates with XML tags:
+- Use `<guidelines>`, `<source_json>`, `<target_schema>` for structure
+- Include explicit constraints: "ALWAYS", "MUST", "NEVER"
+- Use placeholders: `{source_json}`, `{target_schema}`
 
 <!-- COMMENTARY NEEDED: Please explain when to use single-section vs multi-section templates, and whether XML tags are required or just a convention. -->
 
@@ -350,91 +217,88 @@ Create a comprehensive mapping report.
 
 ### Step 5: Create Prompt Factory
 
-Factory function for dynamic prompt generation:
+**See:** `reference_implementation/json_transformer_expert/prompting/generation.py:19-36` (mapping factory) and `generation.py:39-69` (transform factory with progressive detail)
 
-```python
-# prompting/generation.py
-from langchain_core.messages import SystemMessage
-from prompting.templates import mapping_prompt_template
+Create factory functions that:
+- Take domain inputs as arguments
+- Return `SystemMessage` with formatted prompt
+- Support dynamic context injection (e.g., filtering schemas based on earlier results)
 
-def get_mapping_system_prompt_factory():
-    def factory(source_json: str, target_schema: str) -> SystemMessage:
-        return SystemMessage(
-            content=mapping_prompt_template.format(
-                source_json=source_json,
-                target_schema=target_schema
-            )
-        )
-    return factory
-```
-
-**Why Factory Pattern?**
-- Separates prompt logic from Expert creation
-- Enables late binding (inputs provided at invocation time)
-- Easy to test prompt generation independently
-- Supports dynamic context injection (e.g., fetching schemas)
+**Why factory pattern?** Enables late binding, testability, and dynamic context loading.
 
 ---
 
 ### Step 6: Wire Together in Expert Factory
 
-Create Expert factory that assembles everything:
+**See:** `reference_implementation/json_transformer_expert/expert_def.py:32-85` (mapping expert) and `expert_def.py:88-140` (transform expert)
 
-```python
-# expert_def.py
-from core.experts import Expert
-from tool_def import get_mapping_tool_bundle
-from prompting.generation import get_mapping_system_prompt_factory
+Create `get_*_expert()` functions that:
+1. Get tool bundle
+2. Configure LLM client (TODO in reference impl - replace with your provider)
+3. Bind tools: `llm.bind_tools(tool_bundle.to_list())`
+4. Return `Expert(llm=llm_w_tools, system_prompt_factory=..., tools=...)`
 
-def get_mapping_expert() -> Expert:
-    tool_bundle = get_mapping_tool_bundle()
-
-    # TODO: Configure your LLM client
-    # Example for AWS Bedrock:
-    # from langchain_aws import ChatBedrockConverse
-    # llm = ChatBedrockConverse(
-    #     model="us.anthropic.claude-3-7-sonnet-20250219-v1:0",
-    #     temperature=1,  # Creative analysis
-    #     max_tokens=30000,
-    #     ...
-    # )
-    # llm_w_tools = llm.bind_tools(tool_bundle.to_list())
-
-    return Expert(
-        llm=llm_w_tools,
-        system_prompt_factory=get_mapping_system_prompt_factory(),
-        tools=tool_bundle
-    )
-```
+**LLM config examples** in comments show temp=1 (creative) vs temp=0 (deterministic) patterns.
 
 ---
 
 ### Step 7: Invoke Your Expert
 
-Use `invoke_expert()` to run inference:
+**See:** `reference_implementation/json_transformer_expert/README.md:33-57` (Phase 1 workflow) and `README.md:62-85` (Phase 2 workflow)
+
+The invocation workflow has five distinct steps that wire together all the abstractions:
+
+**Complete invocation pattern** (reference: `/Users/chris.helma/workspace/personal/ocsf-playground/playground/playground_api/views.py:303-325`):
 
 ```python
+from langchain_core.messages import HumanMessage
 from core.experts import invoke_expert
-from expert_def import get_mapping_expert
-from task_def import MappingTask
+from your_expert.expert_def import get_your_expert
+from your_expert.task_def import YourTask
 
-# Create expert
-expert = get_mapping_expert()
+# 1. Get Expert (factory creates LLM + tools + prompt factory)
+expert = get_your_expert()
 
-# Create task
-task = MappingTask(
-    task_id="map-001",
-    context=[],  # Empty for first invocation
-    source_json='{"user": "john@example.com"}',
-    target_schema='{"email": "string"}'
+# 2. Generate SystemMessage via prompt factory
+system_message = expert.system_prompt_factory(
+    input_data=your_input_data,
+    other_context=additional_params
 )
 
-# Invoke expert
-task = invoke_expert(expert, task)
+# 3. Build conversation turns (SystemMessage + HumanMessage trigger)
+turns = [
+    system_message,
+    HumanMessage(content="Please perform the task.")
+]
 
-# Access result
-print(task.mapping_report)
+# 4. Create Task with input data + conversation context + empty work item
+task = YourTask(
+    task_id=task_id,
+    input=your_input_data,
+    context=turns,
+    work_item=None  # Will be populated by invoke_expert()
+)
+
+# 5. Invoke Expert (runs LLM inference, captures tool call, sets work item)
+result = invoke_expert(expert, task)
+
+# 6. Access structured result via work item
+output = result.get_work_item()
 ```
+
+**Key invocation insights:**
+
+1. **Prompt factory separation**: The `expert.system_prompt_factory()` is called *explicitly* by you, not by `invoke_expert()`. This gives you control over when/how context is loaded.
+
+2. **Conversation turns pattern**: The `context` field is a list of LangChain messages. You construct the initial conversation with `[SystemMessage, HumanMessage]`, then pass it to the Task. Multi-turn workflows append additional turns.
+
+3. **HumanMessage trigger**: The `HumanMessage("Please perform the task.")` acts as the LLM trigger. The exact content doesn't matter much—the SystemMessage contains the real instructions. The HumanMessage just signals "start now."
+
+4. **Task initialization**: Tasks are created with `work_item=None`. The `invoke_expert()` function captures the LLM's tool call and uses `task.set_work_item()` to populate it (see `core/experts.py:59-117` for implementation).
+
+5. **Result access**: After invocation, `result.get_work_item()` returns the structured output (validated by Pydantic, converted by your tool function to domain dataclass).
+
+**Why this matters**: This explicit wiring gives you fine-grained control over context loading (progressive detail), multi-turn refinement, and separates concerns cleanly (factory creates expert, you orchestrate invocation).
 
 ---
 
@@ -448,13 +312,22 @@ print(task.mapping_report)
 llm_w_tools = llm.bind_tools(tool_bundle.to_list())
 ```
 
-**Why?**
-- Guarantees structured output (no parsing errors)
-- LangChain validates tool arguments automatically
-- Eliminates "LLM didn't follow instructions" failures
-- Tool call = task completion
+**Core rationale**: Tools turn response format from prose instructions into API specifications. Instead of asking the LLM to "return a JSON object with these fields...", you define a Pydantic schema that LangChain enforces automatically. This eliminates the entire class of "LLM didn't follow format instructions" failures.
 
-**Trade-off**: Every expert invocation MUST produce a tool call. This pattern doesn't support free-form responses.
+**Why this works:**
+- **No parsing ambiguity**: Tool schema is an API contract, not a natural language description
+- **Automatic validation**: LangChain validates tool arguments against Pydantic schema before your code sees them
+- **Type safety**: Pydantic enforces field types, required/optional status, nested structures
+- **Clear success signal**: Tool call = task completion (no need to parse free-form response for success indicators)
+- **Structured debugging**: Validation failures produce clear error messages (e.g., "field X missing", "expected int got string")
+
+**The alternative (prose instructions)**: Asking LLMs to follow format instructions in natural language leads to:
+- Inconsistent formatting (sometimes they add extra fields, sometimes they nest differently)
+- Parsing failures (malformed JSON, inconsistent key names)
+- Ambiguous success (did they complete the task or just acknowledge it?)
+- Version drift (same prompt produces different structures over time)
+
+**Trade-off**: Every expert invocation MUST produce a tool call. This pattern doesn't support free-form responses. If you need both structured output AND free-form explanation, use two separate experts or add an optional "explanation" field to your tool schema.
 
 ---
 
@@ -494,29 +367,19 @@ llm = ChatBedrockConverse(
 
 **Pattern**: Inject less context in later prompts based on earlier results.
 
+**See:** `reference_implementation/json_transformer_expert/prompting/generation.py:39-69` for complete implementation
+
 **Example**: JSON Transformer Expert
 - **Mapping phase**: Full source JSON + full target schema (~5000 tokens)
 - **Transform phase**: Full source JSON + **filtered** target schema (~1500 tokens)
   - Filtered to only paths identified in mapping phase
   - Reduces tokens by 70%, focuses LLM attention
 
-**Implementation**:
-```python
-def get_transform_system_prompt_factory():
-    def factory(source_json, target_schema, field_mappings):
-        # Filter schema to only mapped paths
-        mapped_paths = {m['target_path'] for m in field_mappings}
-        filtered_schema = filter_schema(target_schema, mapped_paths)
-
-        return SystemMessage(
-            content=transform_prompt_template.format(
-                source_json=source_json,
-                target_schema_filtered=filtered_schema,  # ← Reduced context
-                field_mappings=json.dumps(field_mappings)
-            )
-        )
-    return factory
-```
+**Key technique** (from generation.py:51-59):
+- Extract mapped paths from phase 1 results
+- Filter target schema to only include those paths
+- Pass filtered schema in phase 2 prompt
+- Result: Smaller context, focused LLM attention
 
 **When to use**: Multi-phase workflows where later phases can use results from earlier phases to reduce context.
 
@@ -524,40 +387,43 @@ def get_transform_system_prompt_factory():
 
 ### Multi-Stage Validation
 
-**Pattern**: Validate LLM output through progressive stages.
+**Pattern**: Validate LLM output through progressive stages, accumulating detailed results in a `ValidationReport`.
 
-**Stages**:
-1. **Syntax validation**: Can Python parse it?
-2. **Loading validation**: Does it define expected functions?
-3. **Invocation validation**: Does it run without errors?
-4. **Output validation**: Does output match schema?
+**See:** `reference_implementation/json_transformer_expert/validators.py:26-139` for complete implementation
 
-**Implementation** (see `reference_implementation/json_transformer_expert/validators.py`):
-```python
-report = ValidationReport(input=code, output={}, report_entries=[], passed=False)
-try:
-    # Stage 1: Syntax
-    module = load_code(code)
-    report.append_entry("Syntax valid", logger.info)
+**Four-stage validation** (from validators.py:38-69):
+1. **Syntax validation**: Can Python parse it? (uses `exec()` with ModuleType)
+2. **Loading validation**: Does it define expected functions? (uses `hasattr()`)
+3. **Invocation validation**: Does it run without errors? (calls the function)
+4. **Output validation**: Does output match schema? (type/structure checks)
 
-    # Stage 2: Loading
-    if not hasattr(module, 'transform'):
-        raise PythonLogicNotInModuleError("Missing 'transform'")
-    report.append_entry("Module structure valid", logger.info)
+**Key patterns:**
+- Use `ValidationReport` (from `core/validation_report.py`) to accumulate results
+- Define custom exceptions in your expert's validators.py for semantic clarity
+- `report.append_entry()` provides dual logging (logger + report)
+- Early exit on failure with `report.passed = False`
 
-    # Stage 3: Invocation
-    output = module.transform(input_data)
-    report.append_entry("Executed successfully", logger.info)
+**The role of ValidationReport - three critical use cases:**
 
-    # Stage 4: Output
-    validate_output_schema(output)
-    report.append_entry("Output valid", logger.info)
+1. **Human debugging**: Detailed report entries show exactly where/why LLM output failed
+   - Example: "✗ Syntax error on line 23: unexpected indent"
+   - Humans can fix prompts, adjust schemas, or improve examples
 
-    report.passed = True
-except Exception as e:
-    report.append_entry(f"Failed: {e}", logger.error)
-    report.passed = False
-```
+2. **LLM self-correction**: Feed ValidationReport back to same expert for retry (see [Multi-Turn Conversations](#multi-turn-conversations))
+   - Example: "Validation failed: Missing required field 'timestamp'. Please revise."
+   - LLM sees structured feedback, attempts correction in next turn
+
+3. **Model tuning dataset**: ValidationReport + Task context = complete training example
+   - **Input**: Task.context (system prompt + user message)
+   - **Output**: Task work item (LLM's structured response)
+   - **Label**: ValidationReport.passed (True/False) + report_entries (diagnostic details)
+   - **Use case**: Collect thousands of (prompt, response, validation) tuples across production usage
+   - **Benefit**: Fine-tune model on your specific expert's task to improve baseline success rate
+
+**Why capture both input and output:**
+- Task holds conversation history (input context)
+- ValidationReport holds performance assessment (output quality)
+- Together they form complete observability: "Given this prompt, LLM produced this output, which passed/failed for these reasons"
 
 **When to use**: When LLM generates executable code or structured data that must meet specific constraints.
 
@@ -580,34 +446,81 @@ task = invoke_expert(expert, task)
 ```
 
 **Use cases**:
-- Refinement: "Here's validation feedback, revise your output"
-- Clarification: "Missing information detected, ask follow-up question"
-- Iteration: "Iterate on design until constraints satisfied"
+- **Validation-driven refinement**: "Here's validation feedback, revise your output"
+- **Clarification dialogs**: "Missing information detected, ask follow-up question"
+- **Iterative improvement**: "Iterate on design until constraints satisfied"
 
-<!-- COMMENTARY NEEDED: Please explain when multi-turn is better than creating a new task, and any gotchas with context accumulation. -->
+**Common pattern - validation retry loop**:
+```python
+MAX_RETRIES = 3
+for attempt in range(MAX_RETRIES):
+    task = invoke_expert(expert, task)
+    validation_report = validate(task.get_work_item())
+
+    if validation_report.passed:
+        break
+
+    # Append validation feedback to conversation
+    feedback_message = HumanMessage(
+        content=f"Validation failed:\n{validation_report.to_json()}\nPlease revise."
+    )
+    task.context.append(feedback_message)
+```
+
+**When to use multi-turn vs new task:**
+- **Multi-turn**: When you want the LLM to "remember" its previous attempt and refine it (same problem, iterative improvement)
+- **New task**: When the problem/context has fundamentally changed (different input data, different requirements)
+
+**Context accumulation gotchas:**
+- Each turn adds tokens (SystemMessage + AIMessage + ToolMessage ≈ 500-5000 tokens)
+- Long conversations may hit context limits (monitor total token count)
+- Validation reports in feedback should be concise (detailed logs bloat context)
+
+---
+
+### Multi-Tool Experts
+
+**Pattern**: Experts can expose multiple tools for closely related outcomes from the same specialized prompt.
+
+**Current implementation**: Each expert has one primary tool (see `core/tools.py:16-43` for ToolBundle)
+
+**When to use multiple tools**: When a single specialized expert could produce different but closely related structured outputs. Examples:
+
+1. **Retry with different strategy**:
+   - Tool 1: `submit_solution` - Primary solution attempt
+   - Tool 2: `request_clarification` - Ask for more information if task is ambiguous
+
+2. **Validation-aware generation**:
+   - Tool 1: `generate_code` - Initial code generation
+   - Tool 2: `revise_code` - Revision given validation feedback (includes extra fields for what changed)
+
+3. **Hierarchical results**:
+   - Tool 1: `high_confidence_result` - Solution with confidence ≥ 0.8
+   - Tool 2: `low_confidence_result` - Solution with confidence < 0.8 (includes uncertainty fields)
+
+**Implementation guidance**:
+- Extend `ToolBundle` to accept list of tools (currently single `task_tool`)
+- All tools must produce compatible work item types (or use discriminated union in Task)
+- Tool selection is LLM's choice based on prompt instructions
+- See `core/tools.py:27-32` for extensibility comment
+
+**Why this is rare in current architecture**: The narrow-scope philosophy usually means "one expert, one output type". Multi-tool experts are appropriate when the *prompt* is identical but *outcome format* varies slightly based on runtime conditions the LLM detects (e.g., confidence level, data quality).
 
 ---
 
 ### Chaining Multiple Experts
 
-Two-phase pattern from JSON Transformer example:
+**See:** `reference_implementation/json_transformer_expert/README.md:29-104` for complete two-phase workflow
 
-```python
-# Phase 1: Mapping
-mapping_expert = get_mapping_expert()
-mapping_task = MappingTask(task_id="map-001", context=[], ...)
-mapping_task = invoke_expert(mapping_expert, mapping_task)
+**Two-phase pattern** from JSON Transformer example:
+1. **Phase 1 (Mapping)**: Analysis expert produces mappings
+2. **Phase 2 (Transform)**: Code generation expert uses mappings to generate transform code
 
-# Phase 2: Transform (uses mapping results)
-transform_expert = get_transform_expert()
-transform_task = TransformTask(
-    task_id="transform-001",
-    context=[],
-    mappings=[m.to_json() for m in mapping_task.mapping_report.mappings],  # ← Pass results
-    ...
-)
-transform_task = invoke_expert(transform_expert, transform_task)
-```
+**Key principles:**
+- Each phase is independent (separate Expert + Task)
+- Results passed explicitly via Task initialization (e.g., `mappings=...`)
+- Each phase can have different LLM config (temp=1 vs temp=0)
+- Progressive detail loading: Phase 2 gets filtered context based on Phase 1 results
 
 **Pattern**: Each phase is independent, results passed explicitly between phases.
 
@@ -615,17 +528,16 @@ transform_task = invoke_expert(transform_expert, transform_task)
 
 ### Async Batch Processing
 
-Infrastructure is in place for batch processing (currently used for single tasks):
+**See:** `reference_implementation/core/inference.py:59-112` for implementation
 
-```python
-# Current usage (single task)
-inference_result = perform_inference(expert.llm, [inference_task])[0]
+Infrastructure is in place for batch processing (currently used for single tasks in `invoke_expert()`).
 
-# Future scaling (multiple tasks)
-inference_results = perform_inference(expert.llm, [task1, task2, task3])
-```
+**How it works** (from inference.py:80-112):
+- `perform_inference()` wraps async implementation with `asyncio.run()`
+- `_perform_async_inference()` uses `asyncio.gather()` for parallel LLM invocations
+- Returns list of `InferenceResult` objects matching input order
 
-The `perform_inference()` function uses `asyncio.gather()` for parallel execution.
+**Current usage:** Single-task batches (future: parallelize multiple tasks)
 
 <!-- COMMENTARY NEEDED: Please explain when batching makes sense and whether this works with all LLM providers. -->
 

@@ -1,9 +1,29 @@
 """
 Tool definitions for JSON Transformer Expert.
 
-Defines the Pydantic schemas and StructuredTools for each phase:
-1. CreateMappingReport: Mapping phase tool
-2. GenerateTransformCode: Transform phase tool
+PATTERN DEMONSTRATED: Pydantic schemas + StructuredTool creation
+
+This file shows the three-part tool definition pattern:
+1. Pydantic input schema (BaseModel with Field descriptions)
+2. Tool function (converts Pydantic args → domain dataclasses)
+3. StructuredTool (wraps function + schema for LangChain)
+
+TOOLS DEFINED:
+- CreateMappingReport: Mapping phase tool (temp=1, creative)
+- GenerateTransformCode: Transform phase tool (temp=0, deterministic)
+
+KEY CONCEPTS:
+- Field descriptions are prompts to the LLM (be specific!)
+- Use constraints: "MUST", "exact path that exists"
+- Provide format examples: "e.g., 'user.email'"
+- Tool function signature matches Pydantic schema fields
+- Tool name in StructuredTool.from_function() must match Task.get_tool_name()
+
+FIELD DESCRIPTION BEST PRACTICES (see lines 23-33):
+- Explain what format/structure is expected
+- Give concrete examples in the description
+- Use directive language: "Must be...", "Include ALL..."
+- Explain semantic meaning: "represents X, not Y"
 """
 from typing import List
 from pydantic import BaseModel, Field

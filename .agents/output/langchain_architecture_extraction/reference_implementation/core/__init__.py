@@ -14,11 +14,6 @@ from core.tasks import Task
 from core.tools import ToolBundle
 from core.inference import InferenceRequest, InferenceResult, perform_inference
 from core.validation_report import ValidationReport
-from core.validators import (
-    PythonLogicInvalidSyntaxError,
-    PythonLogicNotInModuleError,
-    PythonLogicNotExecutableError,
-)
 
 __all__ = [
     # Expert abstractions
@@ -35,7 +30,4 @@ __all__ = [
     "perform_inference",
     # Validation
     "ValidationReport",
-    "PythonLogicInvalidSyntaxError",
-    "PythonLogicNotInModuleError",
-    "PythonLogicNotExecutableError",
 ]

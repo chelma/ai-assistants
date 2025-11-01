@@ -1,7 +1,28 @@
 """
 Prompt templates for JSON Transformer Expert.
 
-Multi-section templates with XML-style tags for clarity.
+PATTERN DEMONSTRATED: Multi-section prompt templates with XML tags
+
+This file shows prompt template structure:
+- XML-style tags (<guidelines>, <source_json>, etc.) for semantic sections
+- Explicit constraints and directives ("ALWAYS", "MUST", "NEVER")
+- Placeholders for dynamic content ({source_json}, {target_schema})
+- Clear goal statement at the top
+- Concise final instruction
+
+KEY CONCEPTS:
+- XML tags help LLMs understand structure (not required, but helpful)
+- Separate guidelines from data sections
+- Use imperative language for instructions
+- Keep templates focused on single task
+- Placeholders match factory function parameters
+
+TEMPLATE BEST PRACTICES:
+- Start with role/goal: "You are an AI assistant specialized in..."
+- Use <guidelines> for behavioral rules
+- Use semantic tags for data sections: <source_json>, <target_schema>
+- End with clear call to action: "Create a comprehensive mapping report"
+- Avoid redundancy: say it once clearly, not multiple times
 """
 
 # ============================================================================

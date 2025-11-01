@@ -1,26 +1,79 @@
 """
 Validation for LLM-generated transform code.
 
-Demonstrates multi-stage validation pattern:
+PATTERN DEMONSTRATED: Multi-stage validation with ValidationReport
+
+This file shows how to validate LLM-generated Python code through progressive stages:
 1. Syntax validation (can Python parse it?)
 2. Loading validation (does it define expected functions?)
 3. Invocation validation (does it run without errors?)
 4. Output validation (does output match expected structure?)
+
+KEY CONCEPTS:
+- ValidationReport accumulates results across stages
+- Custom exceptions (PythonLogicInvalidSyntaxError, etc.) provide semantic clarity
+- Each stage builds on previous stage (early exit on failure)
+- report.append_entry() provides dual logging (logger + report entries)
+- Use ModuleType to create isolated namespace for exec()
+
+WHEN TO USE THIS PATTERN:
+- Validating LLM-generated code (Python, SQL, regex, etc.)
+- Multi-stage validation where later stages depend on earlier stages
+- Need structured validation reports for debugging or user feedback
+- Want to distinguish between different failure modes (syntax vs logic vs runtime)
+
+DESIGN CHOICE: Why custom exceptions?
+- Semantic clarity: "PythonLogicNotInModuleError" vs generic "ValueError"
+- Enables precise error handling downstream
+- Self-documenting: exception name explains what went wrong
 """
 import logging
 from types import ModuleType
 from typing import Dict, Any
 
 from core.validation_report import ValidationReport
-from core.validators import (
-    PythonLogicInvalidSyntaxError,
-    PythonLogicNotInModuleError,
-    PythonLogicNotExecutableError
-)
 from json_transformer_expert.models import TransformCode
 
 
 logger = logging.getLogger(__name__)
+
+
+# ============================================================================
+# CUSTOM EXCEPTIONS FOR PYTHON CODE VALIDATION
+# ============================================================================
+
+class PythonLogicInvalidSyntaxError(Exception):
+    """
+    Raised when LLM-generated Python code has syntax errors.
+
+    Example:
+        exec(llm_code)  # SyntaxError
+        → raise PythonLogicInvalidSyntaxError("Syntax error: invalid syntax on line 5")
+    """
+    pass
+
+
+class PythonLogicNotInModuleError(Exception):
+    """
+    Raised when expected function/class is missing from LLM-generated module.
+
+    Example:
+        module = load_code(llm_code)
+        if not hasattr(module, 'transform'):
+            raise PythonLogicNotInModuleError("Missing 'transform' function")
+    """
+    pass
+
+
+class PythonLogicNotExecutableError(Exception):
+    """
+    Raised when expected function exists but is not callable.
+
+    Example:
+        if not callable(module.transform):
+            raise PythonLogicNotExecutableError("'transform' must be callable")
+    """
+    pass
 
 
 class TransformCodeValidator:

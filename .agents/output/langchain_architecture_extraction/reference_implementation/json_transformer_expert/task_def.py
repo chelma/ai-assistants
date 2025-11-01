@@ -1,12 +1,25 @@
 """
 Task definitions for JSON Transformer Expert.
 
-Concrete Task implementations for the two-phase workflow:
+PATTERN DEMONSTRATED: Concrete Task implementations for multi-phase workflow
+
+This file shows how to implement Task subclasses for a two-phase expert system:
 1. MappingTask: Identify field mappings between source JSON and target schema
 2. TransformTask: Generate Python code to perform the transformation
+
+KEY CONCEPTS:
+- Tasks encapsulate inputs + work item (result)
+- set_work_item() enforces type safety at runtime with isinstance() check
+- get_tool_name() must match the StructuredTool name exactly
+- to_json() enables serialization for debugging/persistence
+
+WHEN TO USE THIS PATTERN:
+- Multi-phase workflows where each phase has distinct inputs/outputs
+- Type-safe result handling (TypeError if wrong type passed to set_work_item)
+- Need to serialize task state for debugging or cross-process communication
 """
 from dataclasses import dataclass
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Optional
 
 from langchain_core.messages import BaseMessage
 
@@ -28,7 +41,7 @@ class MappingTask(Task):
     """
     source_json: str
     target_schema: str
-    mapping_report: MappingReport = None
+    mapping_report: Optional[MappingReport] = None
 
     def get_work_item(self) -> Any:
         return self.mapping_report
@@ -67,7 +80,7 @@ class TransformTask(Task):
     source_json: str
     target_schema: str
     mappings: List[Dict[str, str]]  # Serialized FieldMapping objects
-    transform_code: TransformCode = None
+    transform_code: Optional[TransformCode] = None
 
     def get_work_item(self) -> Any:
         return self.transform_code

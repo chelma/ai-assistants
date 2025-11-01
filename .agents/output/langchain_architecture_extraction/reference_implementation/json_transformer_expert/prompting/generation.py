@@ -1,9 +1,29 @@
 """
 Prompt generation (factory pattern) for JSON Transformer Expert.
 
-Demonstrates progressive detail loading:
-- Mapping phase: Full source + full target schema
-- Transform phase: Full source + FILTERED target schema (only mapped paths)
+PATTERN DEMONSTRATED: Prompt factory functions with progressive detail loading
+
+This file shows how to create system prompt factories that:
+1. Return a callable that takes dynamic inputs
+2. Generate SystemMessage with formatted template
+3. Support progressive detail loading (reduce context in later phases)
+
+PROGRESSIVE DETAIL LOADING EXAMPLE:
+- Mapping phase: Full source + full target schema (~5000 tokens)
+- Transform phase: Full source + FILTERED target schema (~1500 tokens)
+  → 70% token reduction by filtering to only mapped paths
+
+KEY CONCEPTS:
+- Factory functions enable late binding (inputs provided at invocation time)
+- Inner function captures template via closure
+- Progressive detail: Later phases use results from earlier phases to filter context
+- SystemMessage wraps the formatted prompt string
+
+WHY FACTORY PATTERN?
+- Separates prompt logic from Expert creation
+- Easy to test prompt generation independently
+- Supports dynamic context injection (e.g., fetching schemas, filtering data)
+- Enables progressive detail loading without complex state management
 """
 import json
 from typing import Callable, List
