@@ -9,10 +9,10 @@
 
 - [✅] Phase 1: Task Planning Setup
 - [✅] Phase 2: Reconnaissance
-- [✅] Phase 3: Iterative Analysis
-- [✅] Phase 4: Critical Review
-- [✅] Phase 5: Refinement (Initial Draft)
-- [⏳] Phase 6: Human Collaboration - Principles & Rationale
+- [⏳] Phase 3: Iterative Analysis (REWIND: Adding priority tags + human review)
+- [ ] Phase 4: Critical Review (Will re-execute using priorities)
+- [ ] Phase 5: Refinement (Will re-execute focusing on CRITICAL patterns)
+- [ ] Phase 6: Human Collaboration - Principles & Rationale
 - [ ] Phase 7: Token Optimization
 - [ ] Phase 8: Process Documentation
 - [ ] Phase 9: Final Deliverables Review
@@ -240,99 +240,166 @@ Key strengths include **separation of concerns** (AWS SDK calls isolated from bu
 
 ---
 
-### Phase 3: Iterative Analysis ✅
-- ✅ Iteration 1: Implementation code analysis (~1,203 lines)
-- ✅ Iteration 2: Test code analysis (~1,687 lines)
+### Phase 3: Iterative Analysis ✅ → ⏳ (REWIND in progress)
+- ✅ Iteration 1: Implementation code analysis (~1,203 lines) - COMPLETE
+- ✅ Iteration 2: Test code analysis (~1,687 lines) - COMPLETE
+- ⏳ NEW Step 3.3: Add PRIORITY tags to patterns - IN PROGRESS (50% complete)
+- [ ] NEW Step 3.4: Human review of priority classifications - PENDING
 
-**Outcome**: Both iterations complete. Created comprehensive patterns.md (22 pattern categories, 2,475 lines total). Iteration 1 analyzed all 11 implementation files and extracted 11 production patterns (~1,248 lines). Iteration 2 analyzed all 10 test files and extracted 11 testing patterns (~1,227 lines appended). Total analyzed: 2,890 lines (1,203 implementation + 1,687 tests). Incremental artifact building workflow successfully tested - patterns.md grew across iterations without context overflow.
+**Original Outcome (2025-11-01)**: Both iterations complete. Created comprehensive patterns.md (22 pattern categories, 2,475 lines total). Iteration 1 analyzed all 11 implementation files and extracted 11 production patterns (~1,248 lines). Iteration 2 analyzed all 10 test files and extracted 11 testing patterns (~1,227 lines appended). Total analyzed: 2,890 lines (1,203 implementation + 1,687 tests). Incremental artifact building workflow successfully tested - patterns.md grew across iterations without context overflow.
 
----
+**REWIND DECISION (2025-11-02)**: During Phase 6 preparation, discovered that requesting "why" explanations for all 22 patterns (31 TODO markers total) would be overwhelming. This revealed a critical gap in the extract-architecture workflow: no mechanism to distinguish architecturally significant patterns from implementation details.
 
-### Phase 4: Critical Review ✅
-- ✅ Read accumulated patterns.md (not re-reading all source code)
-- ✅ Review pattern catalog for completeness
-- ✅ Determine deliverables needed (prescriptive guide + reference implementation)
-- ✅ Plan refinement work
+**Why rewinding**: Testing the newly-designed Pattern Priority Classification System (Skill Improvement #2) requires experiencing the workflow from Phase 3 forward. Retrofitting priorities onto deliverables already created with "treat everything equally" mental model would not provide authentic test of the new workflow.
 
-**Outcome**: Critical review complete. patterns.md (2,475 lines, 22 pattern categories) provides comprehensive **descriptive** pattern catalog but lacks **prescriptive** guidance for applying patterns to new projects. Identified 3 deliverables needed per plan: (1) Prescriptive guide (aws_sdk_pattern_guide.md) with step-by-step workflow, quick start, design principles; (2) Reference implementation (core/ + example_service/) with domain-agnostic AwsClientProvider and example wrapper; (3) Reorganize patterns.md to references/ for on-demand loading. Ready for Phase 5 refinement.
+**Rewind scope**:
+- Phase 3: Add PRIORITY tags to existing pattern catalog files, human review/approval
+- Phase 4-5: Delete existing deliverables, re-execute phases using priority-driven scoping
+- Phase 6: Should reduce from 31 TODOs to ~8-10 CRITICAL pattern explanations
 
----
+**What's preserved**: Analysis work (all 2,890 lines reviewed, patterns extracted) and pattern catalog files (patterns_implementation.md + patterns_testing.md). Adding priority metadata, not re-analyzing code.
 
-### Phase 5: Refinement (Initial Draft) ✅
-- ✅ Create initial prescriptive guide draft with step-by-step workflow
-- ✅ Create reference implementation (AwsClientProvider core + example wrapper)
-- ✅ Move patterns.md to references/ directory
-- ✅ Mark ambiguities with [TODO: WHY?] markers
+**Step 3.3 Progress (Priority Tagging)**:
+- ✅ patterns_implementation.md (11 patterns tagged, human reviewed) - **COMPLETE**
+  - **Priority breakdown**: 6 CRITICAL, 3 PREFERRED, 2 OBSERVED
+  - **Human adjustments**: Changed Pattern 8 (Enum-Based Status) from PREFERRED → CRITICAL; added notes about python-style skill coverage for patterns 5 and 7
+  - **CRITICAL patterns**: Factory Pattern, Dependency Injection, Service Wrapper Structure, Error Handling, Dataclasses, Enum-Based Status
+  - **PREFERRED patterns**: Session & Credential Management, Pagination, Abstract Base Classes
+  - **OBSERVED patterns**: Resource vs Client, Logging
+- ✅ patterns_testing.md (11 patterns tagged, human reviewed) - **COMPLETE**
+  - **Priority breakdown**: 4 CRITICAL, 4 PREFERRED, 3 OBSERVED
+  - **Human adjustments**: Updated Pattern 12 to reference python-style guide skill
+  - **CRITICAL patterns**: Mocking AwsClientProvider, Mocking boto3 Clients, Error Scenario Testing, Pagination Testing
+  - **PREFERRED patterns**: Assertion Patterns, Side Effects for Sequential Calls, Patching Strategies, Testing Domain Objects (ABCs)
+  - **OBSERVED patterns**: Test Naming Convention, Test Structure (AAA), Multi-Scenario Testing
 
-**Outcome**: Phase 5 complete after comprehensive re-review. Initial work had critical gap (missed testing patterns), corrected through file splitting and complete re-review.
+**Step 3.4 (Human Review)**: ✅ **COMPLETE** - Human approved all priority classifications
 
-**Process Note**: Initial Phase 5 work only read first ~350 lines of 2,474 line patterns.md file due to token limits. This caused missing all testing patterns (12-22). User feedback prompted splitting file into patterns_implementation.md (1,238 lines) and patterns_testing.md (1,236 lines), enabling complete review and gap identification.
+**Overall Priority Summary (22 patterns total)**:
+- **10 CRITICAL patterns** (6 implementation + 4 testing) - Must be in guide
+- **7 PREFERRED patterns** (3 implementation + 4 testing) - Lighter treatment
+- **5 OBSERVED patterns** (2 implementation + 3 testing) - References/ only
 
-**Final Deliverables** (9 files):
-
-1. **Prescriptive Guide** (`aws_sdk_pattern_guide.md`, 630 lines):
-   - Quick Start with 3-step pattern overview
-   - Core Concepts: AwsClientProvider, Service Wrappers, AwsEnvironment
-   - 10-step "Building Your First AWS Integration" workflow
-   - Key Design Decisions with trade-offs
-   - Advanced Patterns and Common Pitfalls
-   - **23 `[TODO: WHY?]` / `[TODO: PRINCIPLE?]` markers** for human collaboration
-   - Coverage: All 11 implementation patterns, basic testing overview
-
-2. **Reference Implementation** (`reference_implementation/`, 5 files):
-   - `core/aws_client_provider.py` (267 lines) - Factory with all credential modes
-   - `core/aws_environment.py` (35 lines) - Context dataclass
-   - `example_service/s3_wrapper.py` (339 lines) - S3 wrapper demonstrating 7 patterns
-   - `tests/test_s3_wrapper_comprehensive.py` (400 lines) - **NEW**: All 11 testing patterns
-   - `tests/README.md` (60 lines) - **NEW**: Testing guide and running instructions
-   - `README.md` (44 lines) - Structure overview
-   - **8 TODO markers in code** + extensive pattern documentation
-
-3. **Pattern Catalog** (`references/`, 2 files - SPLIT):
-   - `patterns_implementation.md` (1,238 lines) - Patterns 1-11 (implementation)
-   - `patterns_testing.md` (1,236 lines) - Patterns 12-22 (testing)
-   - **Splitting enabled complete reading** and gap identification
-   - Progressive disclosure: Detailed catalog separate from lean guide
-
-4. **Review Documentation** (`PHASE5_REVIEW.md`):
-   - Completeness analysis of all 22 patterns across deliverables
-   - Gap identification and justification
-   - Recommendations for Phase 6 human collaboration
-
-**Pattern Coverage Analysis** (22 patterns total):
-- **Implementation Patterns (1-11)**:
-  - Guide: 8/11 full, 3/11 minimal ✅
-  - Reference: 7/11 demonstrated, 4/11 intentional gaps (covered in patterns catalog)
-- **Testing Patterns (12-22)**:
-  - Guide: Basic overview only (points to test examples)
-  - Test Examples: 10/11 full, 1/11 reference only ✅ **Gap filled**
-
-**Intentional Gaps** (token optimization trade-offs):
-1. Dataclass returns (Pattern 7) - Covered in patterns.md, not demonstrated
-2. Resource interface (Pattern 9) - Covered in patterns.md, not demonstrated
-3. Abstract Base Classes (Pattern 11) - Covered in patterns.md, too complex for minimal reference
-4. ABC Testing (Pattern 22) - Covered in patterns.md, requires ABC implementation first
-
-**Ambiguities Marked** (31 total across guide + code):
-- **High Priority** (4): Core architectural principles
-- **Medium Priority** (4): Design decision rationale
-- **Low Priority** (3): Tactical implementation choices
-- **Code TODOs** (8): Specific implementation questions
-- See PHASE5_REVIEW.md for complete list with prioritization
-
-**Key Improvement**: Test examples file (test_s3_wrapper_comprehensive.py) fills critical gap from initial Phase 5 work. Now provides complete coverage of all 11 testing patterns with working code.
-
-**Ready for Phase 6**: Human collaboration on 31 marked ambiguities to add "why" explanations and design principles.
+**Current status**: Phase 3 complete with approved priority classifications. Ready for Phase 4 re-execution using priority-driven approach.
 
 ---
 
-### Phase 6: Human Collaboration - Principles & Rationale [ ]
-- [ ] Present initial guide and reference implementation to human
-- [ ] Human provides rationale behind design decisions
-- [ ] Incorporate human feedback into guide and reference implementation
-- [ ] Iterative refinement until human satisfied with depth of "why" explanations
+### Phase 4: Critical Review ✅ → ✅ (RE-EXECUTED with Priority-Driven Approach)
+- ✅ Read pattern catalog files with priority tags (not re-reading all source code)
+- ✅ Review CRITICAL vs PREFERRED vs OBSERVED classifications
+- ✅ Determine deliverables needed using priority-driven scoping
+- ✅ Plan refinement work focused on CRITICAL patterns
 
-**Outcome**: [To be filled]
+**Original Outcome (2025-11-01)**: Critical review complete. patterns.md (2,475 lines, 22 pattern categories) provides comprehensive **descriptive** pattern catalog but lacks **prescriptive** guidance for applying patterns to new projects. Identified 3 deliverables needed per plan: (1) Prescriptive guide (aws_sdk_pattern_guide.md) with step-by-step workflow, quick start, design principles; (2) Reference implementation (core/ + example_service/) with domain-agnostic AwsClientProvider and example wrapper; (3) Reorganize patterns.md to references/ for on-demand loading. Ready for Phase 5 refinement.
+
+**Priority-Driven Re-Execution Outcome (2025-11-02)**: Critical review complete using priority classifications. Pattern catalog (2,474 lines split into 2 files) now has PRIORITY tags distinguishing architectural patterns from implementation details.
+
+**Deliverables identified (priority-scoped)**:
+1. **Prescriptive Guide** (`aws_sdk_pattern_guide.md`)
+   - Focus on 10 CRITICAL patterns (6 implementation + 4 testing)
+   - Light coverage of 2 key PREFERRED patterns (Session Management #3, Pagination Implementation #6)
+   - Omit 5 OBSERVED patterns (stay in references/ only)
+   - Expected TODO markers: ~12-15 (down from original 31)
+
+2. **Reference Implementation** (`reference_implementation/`)
+   - Core: AwsClientProvider factory + AwsEnvironment context
+   - Example: One service wrapper (S3) demonstrating CRITICAL implementation patterns
+   - Tests: Comprehensive suite demonstrating 4 CRITICAL testing patterns
+   - README: Structure overview + pattern mapping
+
+3. **Pattern Catalog** (already exists in `references/`)
+   - Keep as-is with priority tags for on-demand deeper dives
+
+**Key difference from original**: Focused deliverables targeting 10 CRITICAL patterns vs treating all 22 equally. This should dramatically reduce human collaboration burden in Phase 6.
+
+---
+
+### Phase 5: Refinement ✅ → ✅ (RE-EXECUTED with Priority-Driven Approach)
+- ✅ Create prescriptive guide focused on CRITICAL patterns
+- ✅ Create reference implementation demonstrating all 10 CRITICAL patterns
+- ✅ Create README with pattern mapping
+- ✅ Mark CRITICAL design decisions with [TODO: WHY?] markers
+
+**Original Outcome (2025-11-01)**: Phase 5 complete after comprehensive re-review. Initial work had critical gap (missed testing patterns), corrected through file splitting and complete re-review.
+
+**Original Process Note**: Initial Phase 5 work only read first ~350 lines of 2,474 line patterns.md file due to token limits. This caused missing all testing patterns (12-22). User feedback prompted splitting file into patterns_implementation.md (1,238 lines) and patterns_testing.md (1,236 lines), enabling complete review and gap identification. This led to Skill Improvement #1 (File Size Constraints).
+
+**Original Deliverables** (9 files - ALL DELETED for rewind):
+1. Prescriptive Guide (`aws_sdk_pattern_guide.md`, 630 lines) - 23 TODO markers, all 22 patterns covered
+2. Reference Implementation (`reference_implementation/`, 5 files) - Demonstrated 7/11 implementation + 10/11 testing patterns
+3. Pattern Catalog (`references/`, 2 files) - Preserved for priority tagging
+4. Review Documentation (`PHASE5_REVIEW.md`) - Deleted
+
+**Problem discovered**: 31 TODO markers requesting "why" for all patterns was overwhelming (led to Skill Improvement #2: Pattern Priority Classification System).
+
+**Priority-Driven Re-Execution Outcome (2025-11-02)**: Phase 5 complete using priority-focused approach.
+
+**New Deliverables (4 files created)**:
+1. **Prescriptive Guide** (`aws_sdk_pattern_guide.md`, ~550 lines)
+   - Focuses on 10 CRITICAL patterns (6 implementation + 4 testing)
+   - Light coverage of 2 PREFERRED patterns (Session Management, Pagination)
+   - 14 [TODO: WHY?] markers targeting CRITICAL architectural decisions
+   - Quick start, adoption workflow, design principles sections
+
+2. **Reference Implementation** (`reference_implementation/`, 4 files, ~509 lines total)
+   - `core/aws_client_provider.py` (104 lines) - Factory with session management
+   - `core/aws_environment.py` (19 lines) - Optional context dataclass
+   - `aws_interactions/s3_interactions.py` (180 lines) - S3 wrapper demonstrating all 6 CRITICAL implementation patterns
+   - `tests/test_s3_interactions.py` (225 lines) - Test suite demonstrating all 4 CRITICAL testing patterns
+
+3. **Reference Implementation README** (`reference_implementation/README.md`, ~350 lines)
+   - Pattern-to-file-line mapping table
+   - Code examples for each CRITICAL pattern
+   - Usage instructions
+   - Integration guidance
+
+4. **Pattern Catalog** (`references/`, 2 files - preserved from Phase 3)
+   - patterns_implementation.md (1,238 lines) with PRIORITY tags
+   - patterns_testing.md (1,236 lines) with PRIORITY tags
+
+**Key Improvements Over Original**:
+- **Reduced TODO burden**: 14 markers (down from 31) focusing on architectural "why" questions
+- **Focused deliverables**: Guide covers 10 CRITICAL patterns deeply vs 22 patterns shallowly
+- **Complete coverage**: Reference implementation demonstrates ALL 10 CRITICAL patterns (original missed 4 testing patterns)
+- **Better organization**: Clear separation between CRITICAL (guide), PREFERRED (light mention), OBSERVED (references/ only)
+
+**Ready for Phase 6**: Human collaboration on 14 focused TODO markers explaining CRITICAL architectural decisions.
+
+---
+
+### Phase 6: Human Collaboration - Principles & Rationale ✅
+- ✅ Present initial guide and reference implementation to human
+- ✅ Human provides rationale behind design decisions (14 architectural questions answered)
+- ✅ Incorporate human feedback into guide
+- ✅ Iterative refinement complete
+
+**Outcome (2025-11-02)**: Phase 6 complete. Human provided architectural rationale for all 14 [TODO: WHY?] markers in the guide.
+
+**Questions Answered**:
+1. Why use factory pattern vs direct boto3 client creation
+2. Why create new session per call vs caching
+3. Why wrap ClientError in domain exceptions
+4. Why return enums vs raw boto3 dictionaries
+5. Why mock provider vs @mock.patch
+6. Why use getter methods vs single `get_client(service_name)` method
+7. Why pass provider as parameter vs global instance
+8. Why use module-level functions vs classes
+9. Why not let ClientError propagate
+10. Why convert boto3 responses to dataclasses
+11. Why use enums vs booleans/string constants
+12. Why mocking provider is easier than patching boto3
+13. Benefit of replicating exact boto3 response structures in mocks
+14. Why test error scenarios separately vs only happy path
+15. Benefits of testing pagination with 2+ pages (softened to optional)
+
+**Key Themes in Rationale**:
+- **Style consistency**: Many decisions align with python-style guide (module-level functions, explicit exceptions, type safety)
+- **Testability**: Provider injection and mocking strategy driven by preference for obvious, understandable tests
+- **Production experience**: Error handling patterns driven by real customer-facing issues that had to be debugged
+- **Pragmatism**: Session-per-call vs caching, pagination testing - practical trade-offs acknowledged
+- **Insulation layer philosophy**: Domain objects (DTOs, enums, exceptions) create buffer between application code and AWS API changes
+
+**Documentation Quality**: Guide now provides complete architectural context for all CRITICAL design decisions, making it genuinely prescriptive rather than just descriptive.
 
 ---
 
@@ -403,7 +470,45 @@ Key strengths include **separation of concerns** (AWS SDK calls isolated from bu
 ## Skill Improvements Discovered
 
 ### Improvements for extract-architecture Skill
-[To be documented as improvements emerge]
+
+**1. File Size Constraints for Pattern Documentation** (discovered in Phase 5)
+- **Problem**: Created 2,474-line patterns.md file during iterative analysis (Phase 3) that couldn't be fully read back into context during refinement phase (Phase 5). Only first ~350 lines readable due to token limits, causing complete miss of testing patterns (sections 12-22).
+- **Root cause**: No guidance on maximum file size for pattern documentation; incremental artifact building workflow encouraged appending to single file without size limits.
+- **Solution**: Add explicit file size constraints and splitting guidance to Step 3 (Iterative Analysis Phase) in extract-architecture SKILL.md
+- **Where to add**: Step 3.2 "Document Patterns" section
+- **Key changes**:
+  - Add file size guideline: "Keep pattern documentation files under ~1,500 lines to ensure they can be fully read back into context (typical Read tool limit with line numbers is ~2,000 lines, but leave buffer for future growth)"
+  - Add splitting strategy: "If patterns.md exceeds ~1,500 lines, split into logical sections (e.g., patterns_implementation.md and patterns_testing.md, or by architectural layer)"
+  - Add guidance on when to split: "Split DURING iteration if you project the file will exceed 1,200 lines when complete, not after the fact"
+  - Update Step 4.1 (Critical Review): "Read accumulated pattern files (may be split across multiple files)"
+  - Update Step 5.1-5.2 (Refinement): "Reference pattern catalog files (may need to read multiple files if split)"
+- **Why it matters**: Pattern catalog is primary input for refinement phase; if it can't be fully read, deliverables will have critical gaps. The 2-file split (patterns_implementation.md + patterns_testing.md) successfully resolved this, but should have been done proactively during Phase 3, not reactively in Phase 5.
+- **Status**: Discovered during Phase 5 gap analysis; will document in Phase 8 Process Documentation
+
+**2. Pattern Priority Classification System** (discovered in Phase 6)
+- **Problem**: Iterative analysis extracts ALL patterns from codebase (22 patterns in this case), but not all are architecturally significant. Current workflow treats all patterns equally, leading to: (1) Deliverables bloated with non-essential patterns, (2) Overwhelming human collaboration phase (31 TODO markers requesting "why" explanations for everything), (3) Lost focus on truly important architectural decisions.
+- **Root cause**: No mechanism to distinguish architecturally significant patterns (core design decisions) from implementation details (incidental choices) or stylistic preferences during analysis phase.
+- **Solution**: Add pattern priority classification system to Step 3 (Iterative Analysis Phase) with human review checkpoint after each iteration
+- **Where to add**:
+  - Step 3.2 "Document Patterns" - Add priority tagging
+  - NEW Step 3.3 "Pattern Priority Review" - Human review checkpoint
+  - Step 4.1 (Critical Review) - Use priorities for deliverable scoping
+  - Step 6 (Human Collaboration) - Only request "why" for CRITICAL patterns
+  - Step 7 (Token Optimization) - Use priorities to guide trimming
+- **Key changes**:
+  - **Step 3.2 (Document Patterns)**: Claude adds `[PRIORITY: CRITICAL/PREFERRED/OBSERVED]` tag to each pattern with initial guess based on:
+    - CRITICAL: Patterns in core abstractions, used across many files, define architectural structure (e.g., "Why factory pattern for client creation?")
+    - PREFERRED: Stylistic choices that improve pattern but aren't essential (e.g., "Why module-level functions vs classes?")
+    - OBSERVED: Implementation details, one-off choices, domain-specific logic not part of architecture
+  - **NEW Step 3.3 (Pattern Priority Review)**: After each iteration, human reviews priority tags in patterns file, adjusts as needed, approves before next iteration continues
+  - **Step 4.1 (Critical Review)**: Use priorities to scope deliverables - CRITICAL → must be in guide, PREFERRED → maybe in guide, OBSERVED → references/ only
+  - **Step 5 (Refinement)**: Reference implementation demonstrates CRITICAL + key PREFERRED patterns only
+  - **Step 6 (Human Collaboration)**: Only request "why" explanations for CRITICAL patterns (and unclear PREFERRED), dramatically reducing TODO marker burden
+  - **Step 7 (Token Optimization)**: Aggressively move OBSERVED patterns to references/, keep CRITICAL in guide
+- **Naming rationale**: Reuses CRITICAL/PREFERRED/OBSERVED from python-style skill for consistency across skills; users already understand this mental model
+- **Why it matters**: Reduces Phase 6 human burden from 31 TODOs to ~8-10 critical explanations. Human provides architectural guidance early (Phase 3) instead of discovering late (Phase 6) that 2/3 of work was on non-essential patterns. Deliverables naturally focus on what matters.
+- **Trade-offs**: Adds iteration overhead (human review after each iteration) but frontloads architectural decisions where they belong; requires discipline to not over-classify as CRITICAL
+- **Status**: Discovered during Phase 6 preparation; will document in Phase 8 Process Documentation
 
 ### Improvements for task-planning Skill
 [To be documented as improvements emerge]

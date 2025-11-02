@@ -24,6 +24,8 @@
 
 ## 1. Factory Pattern
 
+**[PRIORITY: CRITICAL]** - Core architectural decision defining the entire pattern
+
 ### Purpose
 Centralize boto3 client creation to manage credentials, sessions, regions, and cross-account role assumption in one place.
 
@@ -71,6 +73,8 @@ def get_ec2(self):
 ---
 
 ## 2. Dependency Injection
+
+**[PRIORITY: CRITICAL]** - Core architectural decision enabling testability and modularity
 
 ### Purpose
 Service wrapper functions accept `AwsClientProvider` as parameter, enabling testability and separating AWS SDK calls from business logic.
@@ -127,6 +131,8 @@ def put_event_metrics(metrics: ArkimeEventMetric, aws_client_provider: AwsClient
 ---
 
 ## 3. Session & Credential Management
+
+**[PRIORITY: PREFERRED]** - Important implementation detail, but specific modes depend on deployment context
 
 ### Purpose
 Handle AWS credential sourcing, region selection, and cross-account role assumption in a unified way.
@@ -235,6 +241,8 @@ def get_aws_env(self) -> AwsEnvironment:
 ---
 
 ## 4. Service Wrapper Structure
+
+**[PRIORITY: CRITICAL]** - Core architectural decision on how service wrappers are organized
 
 ### Purpose
 Provide consistent, predictable structure across all AWS service wrapper modules.
@@ -371,6 +379,8 @@ def operation_name(resource_id: str, aws_provider: AwsClientProvider) -> ReturnT
 
 ## 5. Error Handling & Custom Exceptions
 
+**[PRIORITY: CRITICAL]** - Core pattern for handling AWS SDK errors in domain-friendly way.  Also - included in the `python-style` guide skill.
+
 ### Purpose
 Map boto3 `ClientError` exceptions to domain-specific exceptions with meaningful context.
 
@@ -502,6 +512,8 @@ except ClientError as ex:
 
 ## 6. Pagination Patterns
 
+**[PRIORITY: PREFERRED]** - Common pattern, but specific implementation depends on AWS service pagination style
+
 ### Purpose
 Handle AWS API pagination to retrieve complete result sets exceeding single-response limits.
 
@@ -608,6 +620,8 @@ for page in page_iterator:
 ---
 
 ## 7. Data Transfer Objects (Dataclasses)
+
+**[PRIORITY: PREFERRED]** - Improves type safety and API clarity, but not architecturally essential.  Also - included in the `python-style` guide skill.
 
 ### Purpose
 Return structured, typed data from service wrappers instead of raw boto3 response dictionaries.
@@ -729,6 +743,8 @@ return VpcDetails(
 ---
 
 ## 8. Enum-Based Status Classification
+
+**[PRIORITY: CRITICAL]** - Provides type safety and self-documenting code.
 
 ### Purpose
 Classify AWS resource states or operation outcomes into typed, exhaustive categories.
@@ -853,6 +869,8 @@ This enables CloudWatch metric math and alarming on specific outcomes.
 
 ## 9. Resource vs Client Interfaces
 
+**[PRIORITY: OBSERVED]** - Implementation detail; most wrappers use client interface exclusively
+
 ### Purpose
 Choose between boto3 client (low-level API) and resource (high-level, object-oriented API) interfaces based on operation needs.
 
@@ -932,6 +950,8 @@ def get_s3_resource(self):
 ---
 
 ## 10. Logging Patterns
+
+**[PRIORITY: OBSERVED]** - Standard practice, not specific to this architecture
 
 ### Purpose
 Provide visibility into AWS operations for debugging and operational monitoring.
@@ -1051,6 +1071,8 @@ while True:
 ---
 
 ## 11. Abstract Base Classes for Domain Objects
+
+**[PRIORITY: OBSERVED]** - Domain-specific pattern for events/metrics, not essential to AWS SDK interaction architecture
 
 ### Purpose
 Define contracts for polymorphic domain objects (events, metrics) with shared structure but varying implementations.

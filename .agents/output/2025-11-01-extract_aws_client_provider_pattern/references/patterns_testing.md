@@ -24,6 +24,8 @@ This section documents testing patterns observed across the comprehensive test s
 
 ## 12. Test Naming Convention
 
+**[PRIORITY: OBSERVED]** - Standard per the `python-style` guide Claude Skill, not core to testing architecture
+
 ### Purpose
 Provide descriptive, searchable test names that clearly communicate test intent.
 
@@ -92,6 +94,8 @@ def test_WHEN_get_enis_of_subnet_called_AND_no_enis_THEN_empty_list():
 ---
 
 ## 13. Mocking AwsClientProvider
+
+**[PRIORITY: CRITICAL]** - Core testing pattern enabling dependency injection testing strategy
 
 ### Purpose
 Enable testing service wrapper functions by mocking the provider and controlling boto3 client behavior.
@@ -173,6 +177,8 @@ mock_aws_provider.get_aws_env.return_value = test_env
 ---
 
 ## 14. Mocking boto3 Clients
+
+**[PRIORITY: CRITICAL]** - Core pattern for testing AWS SDK interactions without making real API calls
 
 ### Purpose
 Control boto3 client behavior to test different AWS API responses and errors.
@@ -277,6 +283,8 @@ Tests replicate actual boto3 response structures:
 ---
 
 ## 15. Test Structure (AAA Pattern)
+
+**[PRIORITY: OBSERVED]** - Standard testing practice, not specific to AWS SDK testing architecture
 
 ### Purpose
 Organize test code into clear sections: Arrange (setup), Act (execute), Assert (verify).
@@ -402,6 +410,8 @@ assert mock.call_count == 3
 
 ## 16. Assertion Patterns
 
+**[PRIORITY: PREFERRED]** - Important for verification strategy but standard pytest patterns
+
 ### Purpose
 Verify function behavior comprehensively and clearly.
 
@@ -521,6 +531,8 @@ assert expected_value == actual_value  # Consistent across all tests
 
 ## 17. Error Scenario Testing
 
+**[PRIORITY: CRITICAL]** - Essential pattern for testing error handling and custom exception mapping
+
 ### Purpose
 Verify service wrappers properly handle AWS errors and raise domain-specific exceptions.
 
@@ -617,6 +629,8 @@ with pytest.raises(ec2i.MirrorDoesntExist):
 ---
 
 ## 18. Pagination Testing
+
+**[PRIORITY: CRITICAL]** - Essential for verifying pagination implementation correctness
 
 ### Purpose
 Verify service wrappers correctly handle AWS API pagination with NextToken.
@@ -736,6 +750,8 @@ assert expected_result == result
 ---
 
 ## 19. Multi-Scenario Testing
+
+**[PRIORITY: OBSERVED]** - Test organization technique, not architecturally significant
 
 ### Purpose
 Test multiple related scenarios in a single test function to reduce boilerplate.
@@ -858,6 +874,8 @@ with pytest.raises(ExpectedException):
 ---
 
 ## 20. Side Effects for Sequential Calls
+
+**[PRIORITY: PREFERRED]** - Important mocking technique that enables CRITICAL patterns (pagination, error testing)
 
 ### Purpose
 Simulate different behaviors across multiple calls to the same mocked method.
@@ -982,6 +1000,8 @@ side_effect = [expected_response, FailedTest()]
 
 ## 21. Patching Strategies
 
+**[PRIORITY: PREFERRED]** - Useful testing technique but alternative to dependency injection
+
 ### Purpose
 Replace imports, module-level functions, or attributes during tests without modifying mocks directly.
 
@@ -1097,6 +1117,8 @@ def test_name(param3, param2, param1):
 ---
 
 ## 22. Testing Domain Objects (ABCs)
+
+**[PRIORITY: PREFERRED]** - Important for testing ABC implementations, but depends on CRITICAL pattern #11
 
 ### Purpose
 Verify domain objects (events, metrics) correctly implement ABC contracts and produce expected data structures.
