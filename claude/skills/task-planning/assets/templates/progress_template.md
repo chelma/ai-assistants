@@ -1,11 +1,38 @@
 # Implementation: [Task Name]
 
+<!--
+RESUMABILITY: This file is the authoritative state document. When starting a fresh
+Claude Code session (/compact, new day, etc.), Claude will read this file to understand:
+- What's been completed (checked boxes, phase outcomes)
+- Current blockers and decisions made
+- Where to pick up next
+
+For complex multi-phase work, consider grouping progress by phase and documenting
+outcomes: what was accomplished, key decisions, metrics, what's next.
+
+See .agents/README.md sections "Resumability" and "Documenting Phase Outcomes" for details.
+-->
+
 **Status**: in_progress
 **Plan**: [Link to corresponding _plan.md file]
 **Output Directory**: `../output/[task_name]/`
 **Started**: [Date]
 
 ## Progress
+
+<!--
+For simple linear work, check off steps as you complete them.
+For complex multi-phase work, consider organizing by phase:
+
+### Phase 1: [Name] ✅/⏳/[ ]
+- [✅] Step 1
+- [✅] Step 2
+
+**Outcome**: What was accomplished, key decisions, what's next
+
+### Phase 2: [Name] ⏳
+- [ ] Step 3
+-->
 
 - [ ] [Step 1 from plan]
 - [ ] [Step 2 from plan]

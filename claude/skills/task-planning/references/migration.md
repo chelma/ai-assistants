@@ -2,12 +2,12 @@
 
 This guide provides detailed instructions for migrating older `.agents/` directory structures to the current standard.
 
-**Current Skill Version:** 2
+**Current Skill Version:** 3
 
 ## When to Use This Guide
 
 Load this reference when:
-- Local `.agents/.version` is less than skill version (2)
+- Local `.agents/.version` is less than skill version (3)
 - `.agents/.version` file is missing (treat as v0)
 - User requests migration to latest standards
 
@@ -18,10 +18,10 @@ Load this reference when:
    - If missing: Treat as **v0** (legacy, pre-versioning)
 
 2. **Compare with skill version:**
-   - Skill version: **2**
-   - If `local_version < 2`: Migration needed
-   - If `local_version == 2`: No migration needed
-   - If `local_version > 2`: Unexpected (user is ahead of skill)
+   - Skill version: **3**
+   - If `local_version < 3`: Migration needed
+   - If `local_version == 3`: No migration needed
+   - If `local_version > 3`: Unexpected (user is ahead of skill)
 
 ## Version History
 
@@ -38,7 +38,7 @@ Load this reference when:
 - May have some task prefixes OR progress naming (not both)
 - Inconsistent structure from partial manual updates
 
-**v2 (Current standard):**
+**v2:**
 - Has `.agents/.version` containing `2`
 - All task names include prefix: `GH-123-feature` or `2024-10-30-feature`
 - Files named with full task name: `GH-123-feature_plan.md`, `GH-123-feature_progress.md`
@@ -46,6 +46,17 @@ Load this reference when:
 - Template named `progress_template.md`
 - Template has `Output Directory` field
 - `output/` directory exists
+
+**v3 (Current standard):**
+- Has `.agents/.version` containing `3`
+- All v2 structural conventions maintained (no file/directory renames)
+- README.md includes three new sections:
+  - Resumability: Progress Files as State Documents
+  - Documenting Phase Outcomes
+  - Documenting Skill Improvements
+- progress_template.md includes strategic comments:
+  - Resumability reminder at top
+  - Phase-based organization example in Progress section
 
 ## Migration Workflow
 
@@ -359,18 +370,100 @@ After (v2):
 - .version (contains: 2)
 ```
 
+### Migration Path: v2 → v3
+
+**Applies to:** Structures at v2 standard that need guidance additions
+
+**Changes in v3:**
+- No file or directory renames (structure unchanged)
+- README.md gets three new sections with advanced guidance
+- progress_template.md gets strategic comments for resumability and phase organization
+
+**Required changes:**
+1. Reconcile README.md with canonical version (adds new sections)
+2. Reconcile progress_template.md with canonical version (adds comments)
+3. Update `.agents/.version` to `3`
+
+**Migration approach:**
+
+This migration is simpler than previous ones - it's purely **template reconciliation** since there are no structural changes.
+
+**Step-by-step:**
+
+1. **Create backup** (following standard backup procedure from Step 2)
+
+2. **README.md reconciliation:**
+   - Read current `.agents/README.md`
+   - Read canonical `assets/README.md`
+   - Identify that three sections are new in canonical version:
+     - "Resumability: Progress Files as State Documents"
+     - "Documenting Phase Outcomes"
+     - "Documenting Skill Improvements"
+   - Present user with options:
+     - Replace local README with canonical (adds all three sections)
+     - Show diff and let user manually merge
+     - Keep local version (skip this update)
+   - Preserve any user customizations in non-standard sections
+
+3. **progress_template.md reconciliation:**
+   - Read current `.agents/templates/progress_template.md`
+   - Read canonical `assets/templates/progress_template.md`
+   - Identify that comments are new in canonical version:
+     - Resumability reminder comment at top
+     - Phase-based organization example in Progress section
+   - Present user with options:
+     - Replace local template with canonical (adds comments)
+     - Show diff and let user manually merge
+     - Keep local version (skip this update)
+   - Preserve any user customizations
+
+4. **Update version file:**
+   ```bash
+   echo "3" > .agents/.version
+   ```
+
+5. **Report completion:**
+   ```
+   Migration to v3 complete! Changes made:
+   - README.md: Added three guidance sections (Resumability, Phase Outcomes, Skill Improvements)
+   - progress_template.md: Added strategic comments for resumability and phase organization
+   - Updated .version file (v2 → v3)
+
+   Backup created at: .agents.backup.[timestamp]
+
+   All task files unchanged. New sections provide optional advanced guidance for
+   complex multi-phase work and skill improvement tracking.
+   ```
+
+**Note:** Since v2→v3 only updates guidance (no structural changes), users can safely stay on v2 if they prefer. The reconciliation system will offer updates when they run the skill.
+
+**Example scenario:**
+```
+Before (v2):
+- README.md: Basic workflow sections
+- templates/progress_template.md: Basic template without comments
+- .version: 2
+
+After (v3):
+- README.md: + Resumability, Phase Outcomes, Skill Improvements sections
+- templates/progress_template.md: + Strategic comments
+- .version: 3
+
+No files renamed, no directories changed.
+```
+
 ### Future Migration Paths
 
-When the skill is updated to v3 or beyond, document **incremental paths only**:
-
-**v2 → v3:** (Not yet defined)
-- [When v3 is created, document what changes and how to migrate from v2]
+When the skill is updated to v4 or beyond, document **incremental paths only**:
 
 **v3 → v4:** (Not yet defined)
 - [When v4 is created, document what changes and how to migrate from v3]
 
-**Multi-hop migrations (e.g., v1 → v4):**
-- Apply incremental paths sequentially: v1→v2, then v2→v3, then v3→v4
+**v4 → v5:** (Not yet defined)
+- [When v5 is created, document what changes and how to migrate from v4]
+
+**Multi-hop migrations (e.g., v0 → v4):**
+- Apply incremental paths sequentially: v0→v2 (bootstrap), then v2→v3, then v3→v4
 - Each step updates `.version` file and creates timestamped backup
 - Claude handles chaining automatically
 

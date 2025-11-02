@@ -96,3 +96,131 @@ output/
 - Write task deliverables and artifacts to `output/<task_name>/` directory during implementation (task_name includes prefix)
 - Stop implementation and ask for human review after you've updated the progress file at the end of each step of the implementation plan
 - NEVER automatically proceed from one step of an implementation plan to the next step without Human approval
+
+## Resumability: Progress Files as State Documents
+
+The progress file (`tasks/<task_name>_progress.md`) serves as the **authoritative state document** for resuming work across sessions. This is critical because:
+
+- Claude Code sessions restart frequently (/compact every 2-3 hours, new sessions daily)
+- Conversation history is not preserved between sessions
+- The progress file + plan file + output artifacts = complete resumable state
+
+**What makes a progress file resumable:**
+
+When starting a fresh Claude Code session, Claude should be able to read only the plan and progress files to understand:
+1. **What's been completed** - Checked boxes, phase outcomes, delivered artifacts
+2. **Current state** - What's in progress, what's blocked, what's next
+3. **Key decisions made** - Important choices with rationale documented
+4. **Deviations from plan** - Why the actual path differs from the original plan
+5. **Context for continuation** - Enough detail to pick up work without conversation history
+
+**Best practices for maintaining resumability:**
+
+- Update progress file after completing each implementation step
+- Document outcomes clearly (what was accomplished, not just "step done")
+- Note key decisions and their rationale as they're made
+- Keep "Deviations from Plan" and "Blockers" sections current
+- For multi-day work, ensure each session ends with clear "where to pick up next"
+
+**Philosophy:** Could a fresh Claude session pick up from here? If not, document more detail.
+
+## Documenting Phase Outcomes
+
+For complex, multi-phase tasks, consider organizing progress by phase and documenting clear phase outcomes. This provides natural checkpoints for resumability and knowledge capture.
+
+**When to use phase-based organization:**
+
+- Multi-day or multi-week tasks with distinct stages
+- Tasks requiring different types of work (research → design → implementation → validation)
+- Complex workflows where progress tracking benefits from higher-level structure
+- Tasks following a specific methodology (e.g., architectural extraction, system design)
+
+**Phase outcome pattern:**
+
+When completing a phase, document:
+1. **What was accomplished** - Deliverables created, work completed (concrete, specific)
+2. **Key decisions made** - Important choices with rationale
+3. **Metrics** (if applicable) - Lines analyzed, files created, reductions achieved, questions answered
+4. **What's next** - State for next phase, dependencies, prerequisites
+
+**Example phase structure:**
+
+```markdown
+### Phase 2: Reconnaissance ✅
+- ✅ Create progress file
+- ✅ Launch Explore agent for codebase survey
+- ✅ Document repository statistics
+- ✅ Create iteration plan
+
+**Outcome**: Comprehensive reconnaissance completed. Identified 1,575 lines of
+AWS SDK interaction code across 11 service wrappers. Created 2-iteration plan:
+Iteration 1 analyzes ALL implementation code (1,203 lines), Iteration 2 analyzes
+ALL test code (1,687 lines). This validates the incremental artifact building workflow.
+```
+
+**Benefits:**
+- Clear checkpoints for resuming work after breaks
+- Documents architectural decisions and rationale
+- Provides process documentation for future similar tasks
+- Enables easier handoff between sessions or team members
+
+**Note:** Simple tasks don't need this level of structure. Use phase-based organization when it adds value, not as a default.
+
+## Documenting Skill Improvements
+
+As you work on tasks, you may discover improvements to the skills you're using (task-planning, extract-architecture, or custom skills). Documenting these insights ensures they feed back into skill evolution.
+
+**When to document skill improvements:**
+
+- You discover a gap in skill guidance (missing step, unclear instruction)
+- You identify a workflow improvement through real-world use
+- You find a better way to structure templates or organize work
+- You encounter a problem that reveals a missing capability
+
+**Where to document:**
+
+In the progress file, add a section (typically near the end):
+
+```markdown
+## Skill Improvements Discovered
+
+### Improvements for [skill-name] Skill
+
+**1. [Improvement Title]**
+- **Problem**: What gap or issue did you encounter?
+- **Root cause**: Why did this happen? What's missing from current skill?
+- **Solution**: What should be added/changed?
+- **Where to add**: Which file(s) or section(s) of the skill?
+- **Why it matters**: Impact on skill usability or effectiveness
+- **Status**: discovered / validated / implemented
+```
+
+**Structure elements:**
+- **Which skill** - Name of the skill being improved
+- **What improvement** - Specific change to guidance, templates, or workflow
+- **Where to add** - File paths and sections for implementation
+- **Why it matters** - Rationale and impact
+- **Status** - Track from discovery through validation to implementation
+
+**Example:**
+
+```markdown
+**1. File Size Constraints for Pattern Documentation**
+- **Problem**: Created 2,474-line patterns.md file that couldn't be fully
+  read back into context during refinement phase
+- **Root cause**: No guidance on maximum file size for pattern documentation
+- **Solution**: Add explicit file size constraints (~1,500 lines) and splitting
+  guidance to Step 3 (Iterative Analysis Phase)
+- **Where to add**: Step 3.2 "Document Patterns" section in extract-architecture SKILL.md
+- **Why it matters**: Pattern catalog is primary input for refinement; if it
+  can't be fully read, deliverables will have critical gaps
+- **Status**: validated (tested in AWS SDK extraction task)
+```
+
+**Benefits:**
+- Captures learnings in structured, actionable format
+- Provides clear implementation guidance for skill updates
+- Ensures improvements discovered during one task benefit future work
+- Creates feedback loop for continuous skill evolution
+
+**Note:** Most tasks won't discover skill improvements - that's normal. This section is optional and should only be used when genuine insights emerge.

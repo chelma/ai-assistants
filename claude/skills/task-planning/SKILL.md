@@ -11,12 +11,13 @@ This skill helps establish and maintain a structured planning workflow in git re
 
 **When to use this skill:** Only when the user explicitly mentions "task planning" or "task-planning" in their request. Do NOT use for general planning requests - those should use Claude's built-in planning mode.
 
-**Current Version:** 2
+**Current Version:** 3
 
 **Version History:**
 - **v0**: Legacy (pre-versioning) - no task prefixes, `*_implement.md` files
 - **v1**: Partial updates (some prefixes or progress naming adopted)
-- **v2**: Current standard - task prefixes, `*_progress.md` files, output directory, `progress_template.md`
+- **v2**: Task prefixes, `*_progress.md` files, output directory, `progress_template.md`
+- **v3**: Added resumability guidance, skill improvement tracking, phase outcome patterns (README sections + template comments)
 
 ## Workflow Decision Tree
 
@@ -28,7 +29,7 @@ When this skill is invoked, follow this decision tree:
 
 2. **Check Version**
    - Read `.agents/.version` file (if missing, treat as v0 - legacy)
-   - Compare local version with skill version (currently v2)
+   - Compare local version with skill version (currently v3)
    - If `local_version < skill_version` → Go to "Offer Migration"
    - If `local_version == skill_version` → Go to "Validate Structure"
    - If `local_version > skill_version` → Warn user (they're ahead, unexpected)
@@ -351,3 +352,15 @@ Detailed guidance loaded on-demand for specific scenarios:
 - `references/reconciliation.md` - **Load when:** Local template files differ from canonical versions. Provides interactive reconciliation workflow with multiple merge strategies.
 
 **Progressive loading pattern:** The main SKILL.md contains workflow logic and decision points. References contain detailed "how-to" guidance loaded only when needed, keeping context efficient.
+
+## Versioning Philosophy
+
+Version increments signal substantive changes to skill capability, guidance, or structure. Changes warranting version bumps include:
+- New sections in README or templates
+- Structural changes to `.agents/` layout
+- Workflow or philosophical shifts
+- Coordinated improvements that evolve skill capability
+
+Typo fixes, minor clarifications, and single-example additions typically don't warrant version bumps.
+
+**When in doubt:** If users should review the changes, bump the version.
