@@ -1,12 +1,38 @@
 """
 S3 interactions - Service wrapper functions for S3 operations.
 
-Demonstrates all CRITICAL implementation patterns:
-- Pattern 2: Dependency Injection (aws_provider parameter)
-- Pattern 3: Service Wrapper Structure (module-level functions)
-- Pattern 4: Error Handling & Custom Exceptions (ClientError → domain exceptions)
-- Pattern 5: Data Transfer Objects (dataclasses for structured returns)
-- Pattern 6: Enum-Based Status Classification (BucketStatus enum)
+CRITICAL PATTERNS DEMONSTRATED:
+
+Pattern 2: Dependency Injection
+    - All functions accept aws_provider parameter (never global)
+    - See: get_bucket_status() line 53-54, create_bucket() line 98-99
+
+Pattern 3: Service Wrapper Structure
+    - Module-level functions (stateless)
+    - Three-step flow: get client → call AWS SDK → transform to domain object
+    - See: Any wrapper function (lines 53-226)
+
+Pattern 4: Error Handling & Custom Exceptions
+    - Map ClientError to domain exceptions (BucketDoesNotExist, BucketNameNotAvailable)
+    - Inspect error codes, raise domain exceptions for expected errors
+    - Re-raise ClientError for unexpected errors (don't swallow)
+    - See: get_bucket_status() lines 82-95, create_bucket() lines 120-135
+
+Pattern 5: Data Transfer Objects (Dataclasses)
+    - Return S3Object dataclass, not raw boto3 dict
+    - Domain-focused field names (key, size_bytes vs Key, Size)
+    - See: S3Object definition lines 42-49, usage lines 208-214
+
+Pattern 6: Enum-Based Status Classification
+    - BucketStatus enum for tri-state status (not boolean or string)
+    - Enum values are snake_case strings
+    - See: BucketStatus definition lines 33-39, usage lines 80, 87, 89
+
+WHEN TO USE THIS PATTERN:
+- Any Python application needing testable AWS SDK interactions
+- Multi-service AWS integrations requiring centralized credential management
+- Projects where domain exceptions > raw ClientError for error handling
+- Applications needing type-safe interfaces to AWS services
 """
 from dataclasses import dataclass
 from enum import Enum

@@ -41,130 +41,55 @@ The AWS Client Provider pattern centralizes boto3 client creation through a **fa
 
 ### 1. Create the Factory
 
+**See:** `reference_implementation/core/aws_client_provider.py` for complete implementation
+
+**Key structure:**
+- `__init__`: Store configuration (profile, region, compute mode, role ARN)
+- `_get_session()`: Create boto3 session with credential logic (lines 46-83)
+- `get_<service>()`: Getter methods for each AWS service (lines 85-100)
+
+**Pattern:**
 ```python
-# core/aws_client_provider.py
-import boto3
-
 class AwsClientProvider:
-    def __init__(self, aws_profile: str = "default", aws_region: str = None,
-                 aws_compute: bool = False, assume_role_arn: str = None):
-        self.aws_profile = aws_profile
-        self.aws_region = aws_region
-        self.aws_compute = aws_compute
-        self.assume_role_arn = assume_role_arn
-
-    def _get_session(self):
-        """Create boto3 session with optional role assumption."""
-        if self.aws_compute and not self.assume_role_arn:
-            # Use EC2 instance profile credentials
-            return boto3.Session(region_name=self.aws_region)
-
-        # Use named profile from ~/.aws/credentials
-        session = boto3.Session(
-            profile_name=self.aws_profile,
-            region_name=self.aws_region
-        )
-
-        if self.assume_role_arn:
-            # Assume cross-account role
-            sts_client = session.client("sts")
-            assumed = sts_client.assume_role(
-                RoleArn=self.assume_role_arn,
-                RoleSessionName="aws-client-provider-session"
-            )
-            credentials = assumed["Credentials"]
-            session = boto3.Session(
-                aws_access_key_id=credentials["AccessKeyId"],
-                aws_secret_access_key=credentials["SecretAccessKey"],
-                aws_session_token=credentials["SessionToken"],
-                region_name=self.aws_region
-            )
-
-        return session
+    def _get_session(self) -> boto3.Session:
+        # Handle EC2 instance profile OR named profile OR role assumption
 
     def get_s3(self):
-        """Get boto3 S3 client."""
-        session = self._get_session()
-        return session.client("s3")
-
-    def get_ec2(self):
-        """Get boto3 EC2 client."""
-        session = self._get_session()
-        return session.client("ec2")
-
-    # Add getter for each AWS service you use...
+        return self._get_session().client("s3")
 ```
 
 **Why create a new session per call?** Session overhead is light, and applications often need to create clients targeting different regions and credential sets within the same lifecycle. Creating a fresh session each time is simpler than implementing caching logic to handle multiple region/credential combinations. The slight performance cost is negligible compared to the complexity of managing a session cache.
 
 ### 2. Create Service Wrappers
 
+**See:** `reference_implementation/aws_interactions/s3_interactions.py` for complete S3 wrapper implementation
+
+**File structure:**
+1. **Import dependencies** (lines 1-17)
+2. **Define domain exceptions** (lines 20-30): `BucketDoesNotExist`, `BucketNameNotAvailable`
+3. **Define domain enums** (lines 33-39): `BucketStatus` with three states
+4. **Define domain DTOs** (lines 42-49): `S3Object` dataclass
+5. **Write wrapper functions** (lines 52+): Accept `aws_provider`, return domain objects
+
+**Pattern:**
 ```python
-# aws_interactions/s3_interactions.py
-from dataclasses import dataclass
-from enum import Enum
-from botocore.exceptions import ClientError
-from core.aws_client_provider import AwsClientProvider
+def wrapper_function(domain_param: str, aws_provider: AwsClientProvider) -> DomainType:
+    """Business-focused docstring."""
+    # 1. Get boto3 client from provider
+    client = aws_provider.get_s3()
 
-# Domain exception (not boto3 ClientError)
-class BucketDoesNotExist(Exception):
-    pass
-
-# Domain status enum (not raw boto3 response)
-class BucketStatus(Enum):
-    EXISTS_HAVE_ACCESS = "exists_have_access"
-    EXISTS_NO_ACCESS = "exists_no_access"
-    DOES_NOT_EXIST = "does_not_exist"
-
-# Domain DTO (structured return value)
-@dataclass
-class BucketInfo:
-    name: str
-    region: str
-    creation_date: str
-
-def get_bucket_status(bucket_name: str, aws_provider: AwsClientProvider) -> BucketStatus:
-    """
-    Check if S3 bucket exists and is accessible.
-
-    Args:
-        bucket_name: Name of the S3 bucket
-        aws_provider: Factory for creating boto3 clients
-
-    Returns:
-        BucketStatus enum indicating existence and access
-
-    Raises:
-        ClientError: For unexpected AWS errors (not 403/404)
-    """
-    s3_client = aws_provider.get_s3()
-
+    # 2. Call AWS SDK
     try:
-        s3_client.head_bucket(Bucket=bucket_name)
-        return BucketStatus.EXISTS_HAVE_ACCESS
+        response = client.some_operation(Param=domain_param)
+        return DomainEnum.SUCCESS
+
+    # 3. Handle errors & map to domain exceptions
     except ClientError as e:
         error_code = e.response["Error"]["Code"]
-        if error_code == "403":
-            return BucketStatus.EXISTS_NO_ACCESS
-        elif error_code == "404":
-            return BucketStatus.DOES_NOT_EXIST
+        if error_code == "404":
+            raise DomainException("Not found") from e
         else:
-            # Unexpected error, re-raise
-            raise
-
-def create_bucket(bucket_name: str, aws_provider: AwsClientProvider) -> None:
-    """Create S3 bucket, handling already-exists case."""
-    s3_client = aws_provider.get_s3()
-
-    try:
-        s3_client.create_bucket(Bucket=bucket_name)
-    except ClientError as e:
-        if "BucketAlreadyOwnedByYou" in str(e):
-            # Idempotent: bucket exists and we own it, nothing to do
-            pass
-        else:
-            # Map to domain exception
-            raise BucketDoesNotExist(f"Cannot create bucket: {bucket_name}") from e
+            raise  # Re-raise unexpected errors
 ```
 
 **Why wrap boto3 ClientError in domain exceptions?** Using very specific custom exceptions makes error handling clearer in catch blocks and produces more obvious stack traces. When calling code catches `BucketDoesNotExist`, it's immediately clear what went wrong and what business condition occurred, whereas catching generic `ClientError` and inspecting error codes scatters AWS-specific logic throughout the codebase. This approach aligns with the python-style guide's preference for explicit, domain-focused error handling.
@@ -194,44 +119,25 @@ def main():
 
 ### 4. Test Without AWS
 
+**See:** `reference_implementation/tests/test_s3_interactions.py` for complete test suite demonstrating all testing patterns
+
+**Pattern:**
 ```python
-# tests/test_s3_interactions.py
-from unittest import mock
-import pytest
-from aws_interactions import s3_interactions
-from botocore.exceptions import ClientError
-
-def test_get_bucket_status_when_exists():
-    # Arrange: Mock the provider and boto3 client
+def test_wrapper_function():
+    # Arrange: Create mock boto3 client
     mock_s3_client = mock.Mock()
-    mock_s3_client.head_bucket.return_value = {"ResponseMetadata": {"HTTPStatusCode": 200}}
+    mock_s3_client.some_operation.return_value = {"Result": "data"}
 
+    # Arrange: Create mock provider
     mock_provider = mock.Mock()
     mock_provider.get_s3.return_value = mock_s3_client
 
     # Act: Call wrapper with mock provider
-    result = s3_interactions.get_bucket_status("test-bucket", mock_provider)
+    result = wrapper_function("param", mock_provider)
 
-    # Assert: Verify boto3 call and return value
-    assert result == s3_interactions.BucketStatus.EXISTS_HAVE_ACCESS
-    mock_s3_client.head_bucket.assert_called_once_with(Bucket="test-bucket")
-
-def test_get_bucket_status_when_not_exists():
-    # Arrange: Mock ClientError for 404
-    mock_s3_client = mock.Mock()
-    mock_s3_client.head_bucket.side_effect = ClientError(
-        error_response={"Error": {"Code": "404"}},
-        operation_name="HeadBucket"
-    )
-
-    mock_provider = mock.Mock()
-    mock_provider.get_s3.return_value = mock_s3_client
-
-    # Act
-    result = s3_interactions.get_bucket_status("test-bucket", mock_provider)
-
-    # Assert
-    assert result == s3_interactions.BucketStatus.DOES_NOT_EXIST
+    # Assert: Verify calls and result
+    mock_s3_client.some_operation.assert_called_once_with(Expected="args")
+    assert result == expected_value
 ```
 
 **Why mock the provider instead of patching boto3?** This is a style preference that makes tests more obvious and understandable. Creating a mock object and passing it into methods under test is more explicit than patching underlying libraries with decorators. You can see exactly what behavior is being controlled without having to trace through patch decorators and understand import-time vs runtime behavior.
@@ -246,22 +152,11 @@ These 10 patterns form the architectural foundation. Understanding these is esse
 
 **What**: Centralized factory class that creates boto3 clients on-demand.
 
-**Structure**:
-```python
-class AwsClientProvider:
-    def __init__(self, aws_profile, aws_region, aws_compute, assume_role_arn):
-        # Store configuration
-
-    def _get_session(self) -> boto3.Session:
-        # Create session with credentials/role assumption
-
-    def get_<service>(self) -> boto3.Client:
-        # Return boto3 client for specific service
-```
+**See**: `reference_implementation/core/aws_client_provider.py:9-101` for complete implementation
 
 **Key Design Decisions**:
-- Getter methods (`get_s3()`, `get_ec2()`, etc.) create clients on-demand
-- Private `_get_session()` method centralizes session/credential logic
+- Getter methods (`get_s3()`, `get_ec2()`, etc.) create clients on-demand (lines 85-100)
+- Private `_get_session()` method centralizes session/credential logic (lines 46-83)
 - Session creation happens per-call (not cached)
 
 **Why use getter methods instead of `get_client(service_name: str)`?** Having separate methods (`get_s3()`, `get_ec2()`, etc.) is more explicit and makes mocking easier in tests. The lightweight nature of these methods (they'll practically never change) means there's minimal maintenance burden, and the explicit approach allows customizing setup for services requiring oddball configurations without complicating a generic method with conditional logic.
@@ -274,24 +169,16 @@ class AwsClientProvider:
 
 **What**: Service wrapper functions accept `AwsClientProvider` as a parameter.
 
-**Structure**:
-```python
-def wrapper_function(domain_arg: str, aws_provider: AwsClientProvider) -> DomainObject:
-    client = aws_provider.get_<service>()
-    # Use client...
-```
+**See**: `reference_implementation/aws_interactions/s3_interactions.py` - all functions demonstrate this pattern
 
 **Key Design Decisions**:
 - Provider is **always** a function parameter (never global, never imported module-level)
 - Provider parameter typically last in signature (after domain parameters)
 - Functions request specific client via `aws_provider.get_<service>()`
 
-**Why pass provider as parameter instead of using a global?** Passing the provider as a parameter makes mocking trivial during unit tests - you just create a mock provider and pass it in. This avoids the complexity of patching module-level globals and makes test setup explicit. It also provides flexibility to use different providers for different contexts (different AWS accounts, regions, or credential sets) without global state management.
+**Example**: See `s3_interactions.py:53-54` (function signature), line 74 (getting client)
 
-**Benefits**:
-- **Testability**: Mock provider in tests without patching imports
-- **Flexibility**: Different providers for different contexts (test vs prod, different accounts)
-- **Explicit dependencies**: Clear which AWS services a function uses
+**Why pass provider as parameter instead of using a global?** Passing the provider as a parameter makes mocking trivial during unit tests - you just create a mock provider and pass it in. This avoids the complexity of patching module-level globals and makes test setup explicit. It also provides flexibility to use different providers for different contexts (different AWS accounts, regions, or credential sets) without global state management.
 
 **Reference**: See `references/patterns_implementation.md` Pattern 2 for full details.
 
@@ -301,31 +188,12 @@ def wrapper_function(domain_arg: str, aws_provider: AwsClientProvider) -> Domain
 
 **What**: Consistent structure for functions that wrap boto3 calls.
 
-**Structure**:
-```python
-def service_operation(domain_params, aws_provider: AwsClientProvider) -> DomainType:
-    """
-    Business-focused docstring (not AWS API details).
+**See**: `reference_implementation/aws_interactions/s3_interactions.py:53-96` (get_bucket_status), lines 99-120 (create_bucket), lines 140-173 (list_bucket_objects)
 
-    Args:
-        domain_params: Business concept parameters
-        aws_provider: Factory for boto3 clients
-
-    Returns:
-        Domain object (DTO, enum, or simple type)
-
-    Raises:
-        Domain exceptions (not ClientError directly)
-    """
-    # 1. Get boto3 client from provider
-    client = aws_provider.get_<service>()
-
-    # 2. Make AWS SDK call(s)
-    response = client.some_operation(Param=domain_params)
-
-    # 3. Transform response to domain object
-    return DomainObject(...)
-```
+**Three-step pattern**:
+1. Get boto3 client from provider
+2. Make AWS SDK call(s)
+3. Transform response to domain object (or handle errors)
 
 **Key Design Decisions**:
 - Functions are **module-level** (not class methods)
@@ -342,36 +210,17 @@ def service_operation(domain_params, aws_provider: AwsClientProvider) -> DomainT
 
 **What**: Map boto3 `ClientError` to domain-specific exceptions.
 
-**Structure**:
-```python
-class DomainException(Exception):
-    """Raised when domain condition occurs (e.g., ResourceNotFound)."""
-    pass
-
-def wrapper_function(...):
-    try:
-        client.aws_operation(...)
-    except ClientError as e:
-        error_code = e.response["Error"]["Code"]
-        if error_code == "SpecificAwsError":
-            raise DomainException("User-friendly message") from e
-        else:
-            raise  # Re-raise unexpected errors
-```
+**See**:
+- Exception definitions: `reference_implementation/aws_interactions/s3_interactions.py:20-30`
+- Error handling examples: Lines 82-95 (get_bucket_status), lines 112-119 (create_bucket)
 
 **Key Design Decisions**:
-- Inspect `error_code` from `e.response["Error"]["Code"]`
-- Raise **domain exceptions** for expected AWS errors
-- **Re-raise ClientError** for unexpected errors (don't swallow)
-- Use `raise ... from e` to preserve stack trace
+- Inspect `error_code` from `e.response["Error"]["Code"]` (line 84)
+- Raise **domain exceptions** for expected AWS errors (lines 115-119)
+- **Re-raise ClientError** for unexpected errors (line 95) - don't swallow
+- Use `raise ... from e` to preserve stack trace (line 119)
 
 **Why wrap in custom exceptions instead of propagating ClientError?** This goes back to the general philosophy of exception handling explained in the python-style guide: very specific custom exceptions make error handling clearer in catch blocks and produce more obvious stack traces. When production code catches `BucketDoesNotExist`, developers immediately understand what business condition occurred without having to inspect AWS error codes. This approach centralizes AWS-specific error handling logic in wrappers rather than scattering it across calling code.
-
-**Common Error Patterns**:
-- `404` / `ResourceNotFound` → `DomainResourceDoesNotExist`
-- `403` / `AccessDenied` → Log and return status or raise domain exception
-- `BucketAlreadyOwnedByYou` → Idempotent success (no exception)
-- `Unexpected errors` → Re-raise ClientError unchanged
 
 **Reference**: See `references/patterns_implementation.md` Pattern 5 for full details.
 
@@ -381,38 +230,16 @@ def wrapper_function(...):
 
 **What**: Use Python `@dataclass` for structured return values instead of raw boto3 dicts.
 
-**Structure**:
-```python
-from dataclasses import dataclass
-
-@dataclass
-class NetworkInterface:
-    """Domain representation of AWS ENI."""
-    vpc_id: str
-    subnet_id: str
-    eni_id: str
-    interface_type: str
-
-def get_network_interfaces(...) -> list[NetworkInterface]:
-    response = client.describe_network_interfaces(...)
-
-    interfaces = []
-    for eni in response["NetworkInterfaces"]:
-        interfaces.append(NetworkInterface(
-            vpc_id=eni["VpcId"],
-            subnet_id=eni["SubnetId"],
-            eni_id=eni["NetworkInterfaceId"],
-            interface_type=eni["InterfaceType"]
-        ))
-
-    return interfaces
-```
+**See**:
+- DTO definition: `reference_implementation/aws_interactions/s3_interactions.py:42-49` (S3Object)
+- Usage: Lines 151-159 (transforming boto3 response to dataclass)
 
 **Key Design Decisions**:
 - Use `@dataclass` decorator (not plain classes or TypedDict)
 - Field names are **domain-focused** (may differ from boto3 response keys)
 - Include only fields needed by calling code (not entire boto3 response)
-- Dataclasses are **immutable** (`frozen=False` by default, but treat as immutable)
+
+**Example transformation** (lines 151-159): `boto3 dict → S3Object(key=..., size_bytes=..., last_modified=...)`
 
 **Why convert to dataclasses instead of returning raw dictionaries?** Converting boto3 responses to dataclasses provides type safety, enables customization, and creates an insulating layer between your codebase and third-party library changes. This is the usual reason you create an intermediate layer: boto3 response structures serve AWS's needs, while dataclasses serve your application's needs. The type hints enable IDE autocomplete and catch errors at development time rather than runtime. It also documents exactly which fields your code actually uses rather than exposing the entire boto3 response surface area.
 
@@ -424,27 +251,9 @@ def get_network_interfaces(...) -> list[NetworkInterface]:
 
 **What**: Use Python `Enum` for status/outcome classification instead of strings or booleans.
 
-**Structure**:
-```python
-from enum import Enum
-
-class BucketStatus(Enum):
-    EXISTS_HAVE_ACCESS = "exists_have_access"
-    EXISTS_NO_ACCESS = "exists_no_access"
-    DOES_NOT_EXIST = "does_not_exist"
-
-def get_bucket_status(...) -> BucketStatus:
-    try:
-        client.head_bucket(Bucket=bucket_name)
-        return BucketStatus.EXISTS_HAVE_ACCESS
-    except ClientError as e:
-        if e.response["Error"]["Code"] == "403":
-            return BucketStatus.EXISTS_NO_ACCESS
-        elif e.response["Error"]["Code"] == "404":
-            return BucketStatus.DOES_NOT_EXIST
-        else:
-            raise
-```
+**See**:
+- Enum definition: `reference_implementation/aws_interactions/s3_interactions.py:33-39` (BucketStatus)
+- Usage: Lines 80, 87, 89 (returning enum values based on AWS error codes)
 
 **Key Design Decisions**:
 - Enum values are **lowercase with underscores** (snake_case strings)
@@ -452,11 +261,6 @@ def get_bucket_status(...) -> BucketStatus:
 - Return enum, not boolean or string (enables >2 states)
 
 **Why use enums instead of booleans or string constants?** Enums are very flexible and obvious. Their values can be compound types, and their names can be type-checked against a known list. Unlike booleans which force binary thinking, enums naturally accommodate complex state spaces (e.g., "exists with access" vs "exists without access" vs "doesn't exist"). Unlike string constants, enums provide IDE autocomplete and catch typos at development time. The python-style guide emphasizes explicit, type-safe interfaces, and enums deliver both.
-
-**Benefits**:
-- **Type safety**: IDE autocomplete, type checking catches invalid values
-- **Self-documenting**: All possible states visible in enum definition
-- **Extensible**: Easy to add new states without breaking callers
 
 **Reference**: See `references/patterns_implementation.md` Pattern 8 for full details.
 
@@ -470,26 +274,12 @@ These 4 testing patterns enable comprehensive test coverage without making real 
 
 **What**: Create mock provider that returns mock boto3 clients.
 
-**Structure**:
-```python
-from unittest import mock
+**See**: `reference_implementation/tests/test_s3_interactions.py` - all tests demonstrate this pattern
 
-def test_something():
-    # Arrange: Create mock boto3 client
-    mock_s3_client = mock.Mock()
-    mock_s3_client.some_method.return_value = {"Key": "Value"}
-
-    # Arrange: Create mock provider that returns mock client
-    mock_provider = mock.Mock()
-    mock_provider.get_s3.return_value = mock_s3_client
-
-    # Act: Call wrapper with mock provider
-    result = wrapper_function("arg", mock_provider)
-
-    # Assert: Verify boto3 calls and result
-    mock_s3_client.some_method.assert_called_once_with(Expected="args")
-    assert result == expected_value
-```
+**Examples**:
+- Lines 20-33: Basic provider mocking (test_get_bucket_status_when_exists_have_access)
+- Lines 37-48: Provider mocking with ClientError side effect
+- Lines 91-100: Provider mocking for delete operation
 
 **Key Design Decisions**:
 - Mock the **provider**, not boto3 directly
@@ -506,35 +296,25 @@ def test_something():
 
 **What**: Control boto3 client behavior to simulate different AWS responses.
 
+**See**: `reference_implementation/tests/test_s3_interactions.py` for examples
+
 **Techniques**:
 
-**1. Simple return value**:
+**1. Simple return value** (lines 22-23, 93-94):
 ```python
-mock_client.get_parameter.return_value = {"Parameter": {"Value": "secret"}}
+mock_s3_client.head_bucket.return_value = {"ResponseMetadata": {...}}
 ```
 
-**2. Side effects for multiple calls** (pagination, state changes):
-```python
-mock_client.describe_subnets.side_effect = [
-    {"Subnets": [...], "NextToken": "token1"},  # First call
-    {"Subnets": [...]}  # Second call (no NextToken)
-]
-```
+**2. Exception side effects** (lines 39-42, 74-77): Mock ClientError with specific error codes
 
-**3. Exception side effects**:
-```python
-mock_client.head_bucket.side_effect = ClientError(
-    error_response={"Error": {"Code": "404"}},
-    operation_name="HeadBucket"
-)
-```
+**3. Paginator mocking** (lines 146-150): Mock paginator for multi-page results
 
 **Key Design Decisions**:
 - Replicate boto3 response structure (match keys, nesting)
-- Use `side_effect` list for sequential calls (pagination, polling)
+- Use `side_effect` for exceptions or sequential calls
 - Use `ClientError` with realistic error codes
 
-**What's the benefit of replicating exact boto3 response structures?** Replicating exact boto3 response structures exercises the behavior of the code under test with higher fidelity. If your wrapper code navigates nested response dictionaries (`response["Reservations"][0]["Instances"]`), the mock needs to match that structure or the test won't catch bugs. High-fidelity mocks also serve as documentation of what boto3 actually returns, making tests more valuable for understanding the integration. However, this comes with a maintenance trade-off - mocks must be updated if boto3 responses change.
+**What's the benefit of replicating exact boto3 response structures?** Replicating exact boto3 response structures exercises the behavior of the code under test with higher fidelity. If your wrapper code navigates nested response dictionaries (`response["Contents"][0]["Key"]`), the mock needs to match that structure or the test won't catch bugs. High-fidelity mocks also serve as documentation of what boto3 actually returns, making tests more valuable for understanding the integration. However, this comes with a maintenance trade-off - mocks must be updated if boto3 responses change.
 
 **Reference**: See `references/patterns_testing.md` Pattern 14 for full details.
 
@@ -544,27 +324,18 @@ mock_client.head_bucket.side_effect = ClientError(
 
 **What**: Verify service wrappers handle AWS errors correctly and raise domain exceptions.
 
-**Structure**:
-```python
-def test_wrapper_when_aws_error_then_domain_exception():
-    # Arrange: Mock ClientError from boto3
-    mock_client.some_operation.side_effect = ClientError(
-        error_response={"Error": {"Code": "ResourceNotFound"}},
-        operation_name="SomeOperation"
-    )
+**See**: `reference_implementation/tests/test_s3_interactions.py` for examples
 
-    mock_provider.get_service.return_value = mock_client
-
-    # Act & Assert: Verify domain exception raised
-    with pytest.raises(DomainResourceNotFound):
-        wrapper_function("arg", mock_provider)
-```
+**Examples**:
+- Lines 37-48: Test 403 error returns correct enum value
+- Lines 51-58: Test 404 error returns correct enum value
+- Lines 60-73: Test unexpected error re-raises ClientError
+- Lines 117-139: Test domain exception mapping (BucketDoesNotExist)
 
 **Test Coverage Requirements**:
 - Test **each error code** wrapper handles (404, 403, etc.)
 - Test **unexpected errors** are re-raised (not swallowed)
-- Test **error message** contains useful context
-- Test **idempotent errors** that should be swallowed
+- Test **idempotent errors** that should be swallowed (lines 76-87)
 
 **Why test error scenarios separately instead of only testing happy path?** Error handling is first-class behavior in production applications, not an edge case. These tests verify that custom exception mapping works correctly (boto3 `ClientError` → domain exceptions), ensuring errors surface clearly with good stack traces when problems occur. This code is used in customer-facing applications where these specific errors were encountered in production and had to be debugged. Testing error scenarios thoroughly prevents regressions and documents how the system behaves under failure conditions, which is critical for maintainability.
 
@@ -574,39 +345,21 @@ def test_wrapper_when_aws_error_then_domain_exception():
 
 ### Pattern 10: Pagination Testing
 
-**What**: Verify wrappers correctly handle AWS pagination with NextToken.
+**What**: Verify wrappers correctly handle AWS pagination (boto3 paginators or manual NextToken loops).
 
-**Structure**:
-```python
-def test_pagination_accumulates_results():
-    # Arrange: Multiple pages via side_effect
-    mock_client.describe_subnets.side_effect = [
-        {"Subnets": [{"SubnetId": "subnet-1"}], "NextToken": "token1"},
-        {"Subnets": [{"SubnetId": "subnet-2"}]}  # No NextToken = last page
-    ]
+**See**: `reference_implementation/tests/test_s3_interactions.py:143-185` (test_list_bucket_objects_with_pagination)
 
-    mock_provider.get_ec2.return_value = mock_client
-
-    # Act
-    result = get_subnets_of_vpc("vpc-123", mock_provider)
-
-    # Assert: Both pages accumulated
-    assert ["subnet-1", "subnet-2"] == result
-
-    # Assert: NextToken passed correctly
-    expected_calls = [
-        mock.call(Filters=[...]),  # First call, no NextToken
-        mock.call(Filters=[...], NextToken="token1")  # Second call with token
-    ]
-    assert expected_calls == mock_client.describe_subnets.call_args_list
-```
+**Test demonstrates**:
+- Mock paginator with multiple pages (lines 146-150)
+- Verify results from all pages accumulated (line 183)
+- Verify paginator called with correct parameters (lines 177-182)
 
 **Key Verification Points**:
-- Results from all pages are **accumulated**
-- NextToken from response N is passed to call N+1
-- Pagination **stops** when NextToken is absent
+- Results from all pages are **accumulated** (line 183: `assert len(objects) == 3`)
+- Paginator configured correctly (lines 177-182: verify `paginate()` call)
+- Each page's objects transformed to dataclasses (lines 183-185)
 
-**What are the benefits of testing with 2+ pages?** Testing with multiple pages validates that the NextToken loop logic actually works (proper accumulation of results across pages, correct stopping condition when NextToken is absent). A single-page test only verifies the first call succeeds but doesn't exercise the pagination loop at all. That said, this isn't always critical - single-page tests may be sufficient for simpler wrappers where pagination logic is straightforward or when the wrapper uses boto3's built-in paginator rather than manual NextToken loops.
+**What are the benefits of testing with 2+ pages?** Testing with multiple pages validates that the pagination logic actually works (proper accumulation of results across pages, correct stopping condition). A single-page test only verifies the first call succeeds but doesn't exercise pagination at all. That said, this isn't always critical - single-page tests may be sufficient for simpler wrappers where pagination logic is straightforward or when the wrapper uses boto3's built-in paginator rather than manual NextToken loops.
 
 **Reference**: See `references/patterns_testing.md` Pattern 18 for full details.
 

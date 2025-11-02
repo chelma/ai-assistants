@@ -1,11 +1,34 @@
 """
 Tests for S3 interactions - Demonstrates all CRITICAL testing patterns.
 
-Patterns demonstrated:
-- Pattern 7 (13): Mocking AwsClientProvider
-- Pattern 8 (14): Mocking boto3 Clients
-- Pattern 9 (17): Error Scenario Testing
-- Pattern 10 (18): Pagination Testing
+CRITICAL TESTING PATTERNS DEMONSTRATED:
+
+Pattern 7 (13): Mocking AwsClientProvider
+    - Create mock provider, wire to return mock boto3 client
+    - Pass mock provider to wrapper functions (no @mock.patch needed)
+    - See: All test functions lines 20-225
+
+Pattern 8 (14): Mocking boto3 Clients
+    - Simple return values: lines 22-23 (return success response)
+    - Exception side effects: lines 39-42 (mock ClientError with error code)
+    - Paginator mocking: lines 146-150 (mock multi-page results)
+
+Pattern 9 (17): Error Scenario Testing
+    - Test expected error codes: lines 37-48 (403), lines 51-58 (404)
+    - Test unexpected errors re-raised: lines 60-73 (InternalError)
+    - Test domain exception mapping: lines 117-139 (BucketDoesNotExist)
+    - Test idempotent errors: lines 76-87 (BucketAlreadyOwnedByYou)
+
+Pattern 10 (18): Pagination Testing
+    - Mock paginator with multiple pages: lines 146-150
+    - Verify all pages accumulated: line 183 (assert len == 3)
+    - Verify paginator called correctly: lines 177-182
+
+KEY TEST ORGANIZATION:
+    - One test file per implementation module (1:1 mapping)
+    - Test function names: test_<function>_when_<condition>_then_<expected>
+    - AAA structure: Arrange (mock setup), Act (call function), Assert (verify results)
+    - Comprehensive error coverage: happy path + expected errors + unexpected errors
 """
 from unittest import mock
 

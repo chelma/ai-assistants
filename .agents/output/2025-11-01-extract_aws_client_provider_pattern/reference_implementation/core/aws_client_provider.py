@@ -1,7 +1,38 @@
 """
 AWS Client Provider - Factory for creating boto3 clients with centralized credential management.
 
-This module demonstrates Pattern 1 (Factory Pattern) from the AWS SDK pattern guide.
+CRITICAL PATTERN DEMONSTRATED:
+
+Pattern 1: Factory Pattern
+    - Centralized factory class for creating boto3 clients on-demand
+    - Getter methods for each AWS service: get_s3(), get_ec2(), get_sts()
+    - Private _get_session() method centralizes credential logic
+    - Session created per-call (not cached) for simplicity
+    - See: AwsClientProvider class lines 9-101
+
+KEY DESIGN CHOICES:
+
+1. Getter methods vs get_client(service_name)
+    - Explicit methods (get_s3, get_ec2) are more obvious and easier to mock
+    - Allows service-specific customization without conditional logic
+    - Minimal maintenance burden (methods rarely change)
+
+2. Session-per-call vs caching
+    - Creating session each call is simpler than cache management
+    - Supports different regions/credentials within same application lifecycle
+    - Session overhead is negligible compared to cache complexity
+
+3. _get_session() credential hierarchy
+    - EC2 instance profile (aws_compute=True, no assume_role_arn)
+    - Named profile (~/.aws/credentials)
+    - Cross-account role assumption (STS AssumeRole)
+    - See: lines 46-83
+
+WHEN TO USE THIS PATTERN:
+- Applications needing credentials for multiple environments (dev/staging/prod)
+- Multi-account AWS access (role assumption)
+- Both local development (named profiles) and cloud runtime (instance profiles)
+- Projects requiring testable AWS integrations (mock the provider)
 """
 import boto3
 
