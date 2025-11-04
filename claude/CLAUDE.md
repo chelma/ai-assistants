@@ -10,6 +10,10 @@ Long-term preferences and instructions that should apply across all projects ind
 
 **IMPORTANT** Any additions to this global CLAUDE.md file should be carefully considered for token efficiency, as this content is loaded into context for every Claude Code session. Keep entries concise and remove outdated guidance regularly.
 
+### Git Repository Workspace
+
+When needing to clone or examine external Git repositories, use `/Users/chris.helma/workspace/claude` as the working directory. Never clone repositories into the current working directory unless explicitly instructed.
+
 ---
 
 ## Temporary Context
