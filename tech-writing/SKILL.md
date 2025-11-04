@@ -39,9 +39,31 @@ When creating or updating README files, consult `references/readme-guide.md` for
 
 To apply README preferences, read the guide and follow the line-item preferences defined there.
 
-### GitHub Issues (Coming Soon)
+### GitHub Issues
 
-Guidance for creating clear, actionable GitHub issues.
+When creating or updating GitHub issues, tickets, or similar tracking items, consult `references/issue-guide.md` for detailed preferences on:
+
+**Title Conventions:**
+- Title tags for categorization: `[TASK]`, `[BUG]`
+- Concise descriptions (under 80 characters total)
+- Use backticks for technical terms
+
+**Standard Issue Structure:**
+- **Situation:** Context explaining current state and why work is needed
+- **Request:** Clear statement of what should be accomplished
+- **Acceptance Criteria:** Specific, testable conditions for completion
+
+
+**Writing Standards:**
+- Third-person objective tone, imperative for requests
+- Substantial context enabling action without synchronous communication
+- Specific, independently verifiable acceptance criteria
+- Include code references, error logs, and technical details
+
+**Working with Templates:**
+- Apply these preferences within any repository-specific template constraints
+
+To apply issue writing preferences, read the guide and follow the patterns defined there. The guide documents evolution from 2023-2025, with recent patterns weighted more heavily.
 
 ### Pull Requests (Coming Soon)
 
@@ -68,8 +90,9 @@ This skill uses the `references/` directory to store detailed writing guides for
 
 Current references:
 - `readme-guide.md` - Line-item preferences for README file creation
+- `issue-guide.md` - Line-item preferences for GitHub issue/ticket creation
 
-Future references will include guides for GitHub issues, pull requests, and technical proposals.
+Future references will include guides for pull requests and technical proposals.
 
 ### assets/
 
