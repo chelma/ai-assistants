@@ -94,6 +94,18 @@ Current references:
 
 Future references will include guides for pull requests and technical proposals.
 
+#### examples/ subdirectory
+
+The `references/examples/` directory contains archival copies of original artifacts that informed the creation of this skill's guides. These serve two purposes: (1) long-term ownership of exemplar work, and (2) enabling re-analysis when explicitly requested.
+
+**Important:** These examples should **not** be automatically loaded or referenced during normal writing tasks. They exist purely for archival and explicit re-analysis requests.
+
+**Naming convention:** Examples use module-scoped naming to clearly tie them to their corresponding guide:
+- `readme-aws-aio/` - AWS-AIO project README with architecture diagrams
+- `readme-ocsf-playground/` - OCSF Playground README with workflow screenshots
+
+When new modules are added, follow this pattern (e.g., `issue-time-cop-task-summarization/` for a specific exemplar issue, `pr-aws-aio-capture-config/` for pull request examples).
+
 ### assets/
 
 The `assets/` directory can be used to store document templates, example files, or other resources that should be used in the output Claude produces. This directory is currently empty but available for future use.
