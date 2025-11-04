@@ -1,6 +1,6 @@
 ---
 name: tech-writing
-description: Use this skill when writing README files, GitHub issues, pull requests, or technical proposals/RFCs. Apply when creating documentation, drafting PR descriptions, cutting issues, or documenting software projects. Ensures consistent style (third-person objective, no marketing language), structure (context before instructions), code formatting (complete examples, language tags, no shell prompts), and visual strategy (draft Mermaid/PlantUML diagrams, labeled screenshots). Covers: README creation software libraries, GitHub issue writing with acceptance criteria, PR descriptions with testing evidence. Emphasizes pragmatic completeness.
+description: "Use this skill when writing README files, GitHub issues, pull requests, or technical proposals/RFCs. Apply when creating documentation, drafting PR descriptions, cutting issues, or documenting software projects. Ensures consistent style (third-person objective, no marketing language), structure (context before instructions), code formatting (complete examples, language tags, no shell prompts), and visual strategy (draft Mermaid/PlantUML diagrams, labeled screenshots). Covers: README creation software libraries, GitHub issue writing with acceptance criteria, PR descriptions with testing evidence. Emphasizes pragmatic completeness."
 ---
 
 # Technical Writing
