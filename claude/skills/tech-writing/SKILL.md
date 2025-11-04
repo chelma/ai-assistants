@@ -1,6 +1,6 @@
 ---
 name: tech-writing
-description: This skill should be used when writing technical documentation including README files, GitHub issues, pull requests, and technical proposals/RFCs. Apply this skill to ensure consistent writing style (third-person objective, no marketing language), structure (context before instructions), code formatting (complete examples, no shell prompts), and visual creation strategy (generate draft Mermaid/PlantUML diagrams for review). Emphasizes pragmatic completeness - include what's needed to understand and use effectively, no more and no less.
+description: Use this skill when writing README files, GitHub issues, pull requests, or technical proposals/RFCs. Apply when creating documentation, drafting PR descriptions, cutting issues, or documenting software projects. Ensures consistent style (third-person objective, no marketing language), structure (context before instructions), code formatting (complete examples, language tags, no shell prompts), and visual strategy (draft Mermaid/PlantUML diagrams, labeled screenshots). Covers: README creation software libraries, GitHub issue writing with acceptance criteria, PR descriptions with testing evidence. Emphasizes pragmatic completeness.
 ---
 
 # Technical Writing
@@ -65,9 +65,34 @@ When creating or updating GitHub issues, tickets, or similar tracking items, con
 
 To apply issue writing preferences, read the guide and follow the patterns defined there. The guide documents evolution from 2023-2025, with recent patterns weighted more heavily.
 
-### Pull Requests (Coming Soon)
+### Pull Requests
 
-Guidance for writing comprehensive PR descriptions that facilitate effective code review.
+When creating or updating pull request descriptions, consult `references/pr-guide.md` for detailed preferences on:
+
+**Standard PR Structure:**
+- **Description:** Context explaining why changes were needed and what was accomplished
+- **Changes:** Bullet list of notable modifications
+- **Relevant Issues:** Links to related GitHub issues or PRs
+- **Commit Checklist:** Required verification steps before merging
+- **Testing:** Detailed verification approach with evidence
+
+**Writing Standards:**
+- Third-person objective in Description/Changes, first-person in Testing
+- Comprehensive technical detail for reviewers
+- Concrete testing evidence (command output, screenshots)
+- Inline code for commands, paths, functions, service names
+
+**Visual Evidence:**
+- Screenshots in Testing section showing verification
+- Labeled screenshots using backticks (`` `Python Worker` ``, `` `Dashboard` ``)
+- Alt text with descriptive timestamps
+- Show dashboards, UI states, test results, workflow execution
+
+**Working with Templates:**
+- Follow repository PR template structure when present
+- Apply these style and completeness preferences within template constraints
+
+To apply PR preferences, read the guide and follow the patterns defined there.
 
 ### Technical Proposals/RFCs (Coming Soon)
 
@@ -91,8 +116,9 @@ This skill uses the `references/` directory to store detailed writing guides for
 Current references:
 - `readme-guide.md` - Line-item preferences for README file creation
 - `issue-guide.md` - Line-item preferences for GitHub issue/ticket creation
+- `pr-guide.md` - Line-item preferences for pull request descriptions
 
-Future references will include guides for pull requests and technical proposals.
+Future references will include guides for technical proposals and RFCs.
 
 #### examples/ subdirectory
 
