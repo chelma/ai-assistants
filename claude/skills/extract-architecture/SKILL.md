@@ -138,10 +138,35 @@ For each iteration, document:
 **Rationale**: Understand foundation before studying specific use cases
 ```
 
-**2.6 Present Plan for Approval**
+**2.6 Assess Investigation Scale & Choose Approach**
+
+Calculate total lines from file inventory. Choose analysis approach:
+
+**Direct Analysis (Default for ≤3,000 lines)**
+- Main session reads files directly (~1500 lines per iteration)
+- Typical extractions: 1-2 iterations, 20-30 files
+- Proceed to Step 3: Iterative Analysis
+
+**Delegated Investigation (Recommended for >3,000 lines)**
+- Use codebase-researcher sub-agent for iteration-level investigations
+- Main session synthesizes from findings across iterations
+- See Step 3.0.1 for delegation workflow
+
+**When uncertain**: Start with direct analysis for first 2 iterations (~3k lines). If context becomes strained or patterns remain unclear, switch to delegation for remaining iterations.
+
+**Why 3k line threshold?**
+- Roughly 2 analysis iterations at ~1500 lines each
+- Early enough to pivot before context pollution
+- Late enough to validate patterns are emerging
+- Based on production experience from multiple architecture extractions
+
+**Key insight**: Gestalt understanding comes from pattern synthesis, not code memorization. For large extractions (>3k lines), delegating investigation to codebase-researcher and synthesizing from curated findings may actually improve architectural insight by forcing progressive abstraction.
+
+**2.7 Present Plan for Approval**
 
 Explain iteration strategy to user:
 - Total iterations planned
+- Analysis approach (direct vs delegated)
 - Files per iteration and grouping rationale
 - Estimated timeline
 - Expected deliverables
@@ -152,9 +177,68 @@ Wait for user approval before proceeding to analysis phase.
 
 Extract patterns incrementally by analyzing files in planned batches.
 
+**3.0.1 Iteration Approach: Direct vs. Delegated**
+
+Choose iteration execution strategy based on Step 2.6 assessment:
+
+**Direct Reading (Default for ≤3,000 lines total)**
+
+Main session reads files directly and documents patterns. Use Steps 3.1-3.6 as written below.
+
+**Delegated Investigation (For >3,000 lines total)**
+
+For large-scale extractions, delegate iteration-level investigation to codebase-researcher sub-agent:
+
+**Workflow for each iteration:**
+
+1. **Invoke codebase-researcher** with iteration-specific objective:
+   ```
+   Use codebase-researcher to analyze Iteration [N]: [iteration focus/title]
+
+   Files to analyze: [list from iteration plan with line counts]
+
+   Pattern categories to extract: [from iteration plan]
+
+   Current patterns documented: [reference to existing patterns.md if not first iteration]
+
+   Deliverables:
+   - Findings document with patterns identified in these files
+   - File references for all observations (path:line-range format)
+   - Priority classification for each pattern (CRITICAL/PREFERRED/OBSERVED)
+
+   Context: This is iteration [N] of [M] for [extraction goal].
+   ```
+
+2. **Review findings returned** by codebase-researcher:
+   - Read findings file from `.agents/research/<timestamp>-iteration-N/`
+   - Main session never loads source code - only curated findings
+
+3. **Synthesize into patterns.md** (main session):
+   - Integrate new patterns from findings into growing pattern catalog
+   - Cross-reference patterns across iterations
+   - Note pattern evolution or refinement
+   - Main session focuses on synthesis, not drowning in code
+
+4. **Update progress file**: Mark iteration complete, files analyzed
+
+5. **Continue to next iteration**: Repeat for remaining iterations
+
+**Benefits of delegation:**
+- ✅ Main session context stays clean (only sees findings, not raw code)
+- ✅ Each iteration's investigation preserved separately for resumability
+- ✅ Forces progressive abstraction (code → patterns → architecture)
+- ✅ Better for context health on large extractions (>3k lines)
+
+**Trade-offs:**
+- ❌ Additional orchestration complexity
+- ❌ Slight overhead from sub-agent invocation
+- ❌ Pattern synthesis must bridge across separate investigation contexts
+
+**When to switch mid-extraction**: If you started with direct reading but context is becoming strained after 2 iterations, switch to delegated approach for remaining iterations. Document the switch in progress file.
+
 **For each iteration:**
 
-**3.1 Read Files Sequentially**
+**3.1 Read Files Sequentially** (Direct reading approach)
 
 Use Read tool to analyze files in the batch:
 - Read complete files (don't use offset/limit unless files are very large >2000 lines)
