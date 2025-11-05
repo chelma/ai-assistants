@@ -21,6 +21,9 @@ Third-person, engineering-focused communication. Avoid personal pronouns, market
 ### Actionable Outcomes
 Every issue concludes with clear, testable acceptance criteria that define "done."
 
+### Problem Definition, Not Solution Prescription
+Issues describe WHAT is broken and WHY it matters, not HOW to fix it. This preserves implementer agency and prevents premature optimization. Technical context provides facts about the system; acceptance criteria define outcomes, not implementation steps.
+
 ## Title Conventions
 
 Use **title tags** to categorize issues:
@@ -68,6 +71,8 @@ Use this structure for all issues (tasks, bugs, enhancements):
 **Request section:**
 - Single paragraph clearly stating the desired outcome
 - Focuses on *what* should change, not *how* to do it
+- CRITICAL: Do not prescribe implementation steps, specific code changes, or technical approaches
+- If extensive investigation informed this issue, distill findings into problem context rather than solution steps
 - May reference related issues or documentation
 
 **Acceptance Criteria section:**
@@ -156,6 +161,155 @@ rake aborted!
 - Related existing functionality
 - Technical constraints
 - Scaling considerations
+
+## Distilling Investigation Findings
+
+When creating an issue after extensive investigation, provide technical context that helps understand the problem while avoiding solution prescription.
+
+### Technical Context to Include (Breadcrumbs)
+
+**Concrete examples with locations:**
+- Code snippets showing the problem with file paths and line numbers
+- Error messages or logs with stack traces
+- Specific instances demonstrating the pattern
+- Example: `summary_generator_tool_def.py:204-208` shows the sorting implementation
+
+**Project context:**
+- PR comments or review feedback that motivated this investigation
+- Links to related issues, previous discussions, or design documents
+- Team philosophy or principles relevant to understanding why this matters
+- Example: "Following PR #52 review comment by @username: [quote]"
+
+**Impact metrics:**
+- Token usage, error rates, performance degradation
+- Cost implications, reliability concerns
+- Maintenance burden or technical debt
+
+**System architecture facts:**
+- How components interact relevant to this issue
+- Technology stack or patterns in use (LangChain, Expert-Task-Tool, etc.)
+- Constraints or design decisions that affect the problem
+
+**Key principle:** Provide breadcrumbs to investigate further. File references, line numbers, and PR links help the implementer understand WHERE and WHY, without prescribing HOW to fix.
+
+### What NOT to Include
+
+**Investigation process artifacts:**
+- References to local research directories (`.agents/research/`)
+- Tool names used during investigation (grep, codebase-researcher, etc.)
+- "I found..." or "Investigation revealed..." language
+- Your personal investigation methodology
+
+**Prescriptive solutions:**
+- "Recommendation:" subsections telling how to fix each problem
+- Priority rankings for suggested solutions (HIGH/MEDIUM/LOW)
+- Implementation checklists or "Files to Modify" sections
+- Acceptance criteria tied to specific implementation approaches
+- "Option 1 / Option 2" code examples showing how to solve it
+
+### Example - Too prescriptive (implementation TODO list):
+
+```markdown
+## Opportunities Identified
+
+### Priority 1: Remove Redundant Sorting Instruction (HIGH)
+**File**: `prompting/summarizer_templates.py:60`
+
+**Recommendation**: Remove "sorted by date" from line 60 of the prompt template.
+
+**Impact**: Reduces LLM cognitive load, saves ~10 tokens per invocation.
+
+### Priority 2: Fix Docstring/Code Mismatch (HIGH)
+**File**: `summary_generator_tool_def.py:110`
+
+**Recommendation**: Update docstring to match code implementation.
+
+## Files to Modify
+
+1. `prompting/summarizer_templates.py`
+   - Line 60: Remove "sorted by date" instruction
+   - Lines 62-65: Remove event_type warnings
+
+2. `summary_generator_tool_def.py`
+   - Line 110: Fix docstring
+
+## Acceptance Criteria
+- [ ] Line 60 of prompt template updated (Priority 1)
+- [ ] Docstring matches implementation (Priority 2)
+```
+
+**Problems with this approach:**
+- Priority rankings prescribe which solutions to implement
+- "Recommendation:" sections tell the implementer how to solve each issue
+- "Files to Modify" creates an implementation checklist
+- Acceptance criteria tied to specific line changes, not outcomes
+- Reads like a TODO list, not a problem definition
+
+### Example - Good balance (problem with breadcrumbs):
+
+```markdown
+## Situation
+
+The Summary Generator expert currently asks the LLM to perform operations that could be handled deterministically by Python code. This reduces reliability and increases token costs.
+
+Following PR #52 review comment by @chelma:
+> "Anything we *can* solve with traditional code, we should solve with traditional code. Reducing the ask of the LLM to the bare minimum increases the odds of success."
+
+While PR #52 implemented sorting in Python code, investigation reveals the prompt template still instructs the LLM to perform sorting, plus additional opportunities exist.
+
+**Problem 1: Redundant Sorting Instruction**
+
+The prompt at `prompting/summarizer_templates.py:60` instructs the LLM to sort pharmacy actions by date:
+
+```python
+- **pharmacy_action_summary_items**: Pharmacy actions from filtered events
+  (cite supporting event_ids, sorted by date)
+```
+
+However, Python already re-sorts the output at `summary_generator_tool_def.py:204-208`:
+
+```python
+# Sort by timestamp in ascending order
+items_with_timestamps.sort(key=lambda x: x[0])
+```
+
+The LLM instruction is redundant and may cause confusion since Python will re-sort regardless.
+
+**Problem 2: Error-Prone Field Navigation**
+
+The prompt at `prompting/summarizer_templates.py:62-65` includes extensive warnings:
+
+```python
+**CRITICAL**: For source_events, use EXACT event_type from each event
+- NEVER use resource_type values ("Prescription") as event_type
+```
+
+These warnings indicate the LLM frequently confuses fields when navigating event JSON - a pure data extraction task Python could handle reliably.
+
+**Problem 3: Documentation Mismatch**
+
+The docstring at `summary_generator_tool_def.py:110` states pharmacy actions are "sorted by the action's date in descending order", but the implementation at line 204 sorts ascending. This creates confusion about expected behavior.
+
+## Request
+
+Reduce the LLM's workload by moving deterministic operations to Python code, allowing the LLM to focus on semantic understanding and content generation.
+
+## Acceptance Criteria
+
+* Prompt no longer instructs LLM to perform operations that Python handles deterministically
+* Function docstrings accurately describe implemented behavior
+* Token usage for summary generation reduced by at least 5%
+* Existing integration tests pass without modification
+* Unit tests verify deterministic operations handled by Python code
+```
+
+**Why this works:**
+- Provides PR context explaining team philosophy and why this matters
+- File paths and line numbers help implementer locate the problems
+- Code snippets show WHAT is wrong with specific examples
+- Describes the problem without prescribing HOW to fix it
+- Acceptance criteria define outcomes, not implementation steps
+- No "Recommendation:" sections or priority rankings
 
 ## Writing Style
 
@@ -453,6 +607,13 @@ We should refactor the authentication code to use the OAuth2 library instead of 
 - No explanation of why change is needed
 - No user-facing or technical justification
 - Doesn't describe actual requirements
+
+**Why this is problematic:**
+- Implementation may change by the time issue is worked
+- Better solutions may exist that weren't considered during initial analysis
+- Issue becomes a TODO list instead of a problem definition
+- Reduces implementer's creative problem-solving and agency
+- Creates false sense that solution is validated when only problem has been identified
 
 **Better version:**
 ```markdown
