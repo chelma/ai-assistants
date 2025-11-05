@@ -14,6 +14,10 @@ Long-term preferences and instructions that should apply across all projects ind
 
 When needing to clone or examine external Git repositories, use `/Users/chris.helma/workspace/claude` as the working directory. Never clone repositories into the current working directory unless explicitly instructed.
 
+### GitHub Access
+
+When needing to interact with GitHub, use the locally installed GitHub CLI (`gh`) to ensure you have acess to the human's credentials GitHub credentials.
+
 ---
 
 ## Temporary Context
