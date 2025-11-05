@@ -234,6 +234,8 @@ Use Task tool with subagent_type=Explore or appropriate search tools to gather c
 
 Document findings for the "Current State Analysis" section.
 
+**If reconnaissance reveals extensive investigation needed** (multiple complex modules, >3k lines to understand, architectural patterns to extract), consider using the codebase-researcher subagent for deeper investigation before finalizing plan. This prevents planning based on incomplete understanding and keeps main session context healthy.
+
 ### Step 5: Create Draft Plan
 
 1. **Read the templates:**

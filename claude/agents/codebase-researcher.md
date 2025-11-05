@@ -32,6 +32,23 @@ Load relevant skills based on task context:
 - **Architecture extraction** → extract-architecture skill
 - **Other domains** → Ask user which skills to load
 
+## Skill Integration
+
+This sub-agent is designed to compose with other skills in your ecosystem:
+
+**Planning workflows**:
+- Invoked by `extract-architecture` for iteration-level pattern investigations
+- Can be invoked during `task-planning` for extensive reconnaissance
+
+**Domain knowledge**:
+- Loads `python-style` for Python code analysis
+- Loads `langchain-expert-builder` for LangChain patterns
+- Loads `aws-interface-builder` for AWS SDK patterns
+
+**Documentation standards**:
+- Loads `tech-writing` for GitHub issue/PR creation
+- Loads `extract-architecture` for pattern documentation format
+
 ## Investigation Workflow
 
 ### Phase 1: Setup & Planning
@@ -42,11 +59,37 @@ Load relevant skills based on task context:
 - Determine what deliverables are expected (GitHub issue, findings document, architecture summary, etc.)
 
 **1.2 Load Relevant Skills**
+
 Based on task keywords, load appropriate skills:
-- Python code investigation → `python-style`
-- LangChain patterns → `langchain-expert-builder`
-- Issue/PR creation → `tech-writing`
-- Architecture analysis → `extract-architecture`
+
+**Python code investigation**: Load `python-style` skill for:
+- Code organization patterns
+- Type system usage
+- Documentation expectations
+- Error handling patterns
+- Testing patterns
+
+**LangChain patterns**: Load `langchain-expert-builder` skill for:
+- Expert-Task-Tool patterns
+- Multi-expert architectures
+- Structured output patterns
+- Validation pipelines
+
+**GitHub issue/PR creation**: Load `tech-writing` skill for:
+- Issue structure and style
+- Problem statement formatting
+- Acceptance criteria patterns
+- Code formatting in markdown
+
+**Architecture extraction**: Load `extract-architecture` skill for:
+- Pattern documentation format (Step 3.2)
+- Priority classification guidance (CRITICAL/PREFERRED/OBSERVED)
+- Pattern categories and trade-off structure
+
+**AWS SDK patterns**: Load `aws-interface-builder` skill for:
+- Client provider patterns
+- Factory + dependency injection
+- Testing patterns for AWS services
 
 If unclear which skills to load, ask the user.
 
@@ -318,8 +361,26 @@ Based on the original request, create the appropriate deliverable:
 - Add executive summary section at top
 - Include recommendations if applicable
 
-**5.1 Update Progress**
-Mark Phase 5 complete, note deliverables created.
+**5.1 Validate Deliverable Against Loaded Skills**
+
+If you loaded a skill for deliverable creation, validate output against skill guidelines:
+
+**For tech-writing skill**:
+- Issue/PR structure matches guidelines
+- Problem statement is clear and context-first
+- Acceptance criteria are specific and testable
+- Code examples use proper markdown formatting
+
+**For extract-architecture skill**:
+- Pattern documentation follows format (Purpose, Implementation, When to use, Trade-offs)
+- File references use `path/to/file.py:line-range` format
+- Priority classifications are present (CRITICAL/PREFERRED/OBSERVED)
+- Trade-offs section includes benefits and limitations
+
+**Quality gate**: If validation reveals issues, fix them before proceeding. This ensures deliverables meet standards before returning to main session.
+
+**5.2 Update Progress**
+Mark Phase 5 complete, note deliverables created and validation performed.
 
 ### Phase 6: Summary & Handoff
 

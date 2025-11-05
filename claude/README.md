@@ -28,12 +28,16 @@ claude/
 ├── CLAUDE.md                    # User-level instructions loaded at session start
 ├── .mcp.json                    # MCP server configuration
 ├── skills/                      # Custom Claude Code skills
+│   ├── aws-interface-builder/   # AWS SDK interface patterns with Factory + DI
+│   ├── extract-architecture/    # Extract patterns from codebases for AI consumption
 │   ├── langchain-expert-builder/  # LangChain multi-expert system builder
 │   ├── python-style/            # Python coding style guidelines
-│   └── task-planning/           # Task planning workflow skill
+│   ├── task-planning/           # Task planning workflow skill
+│   └── tech-writing/            # Technical documentation guidelines
 ├── commands/                    # Custom slash commands (empty)
 ├── memories/                    # Custom memories (empty)
-└── agents/                      # Custom subagent definitions (empty)
+└── agents/                      # Custom subagent definitions
+    └── codebase-researcher.md   # Deep codebase investigation with context health management
 ```
 
 ## How It Works
@@ -70,6 +74,48 @@ This means:
 5. **Push**: `git push`
 
 ## Skills
+
+### aws-interface-builder
+
+Build production-ready Python interfaces for AWS SDK (boto3) using the Factory + Dependency Injection pattern.
+
+**Usage**: Use when implementing AWS SDK interactions:
+- Creating testable AWS service wrappers
+- Multi-account AWS access with centralized credential management
+- Structured interfaces to S3, EC2, Lambda, or other AWS services
+- Migrating from scattered boto3 calls to structured patterns
+
+**What it provides**:
+- Complete AwsClientProvider factory class (handles credentials, sessions, regions, role assumption)
+- S3 service wrapper reference implementation
+- Testing patterns (mock the provider, not boto3)
+- Domain exception mapping (ClientError → custom exceptions)
+- 10 CRITICAL patterns for implementation and testing
+
+**Key philosophy**: Single point of credential configuration, testable without real AWS calls, business logic separated from SDK details.
+
+See `skills/aws-interface-builder/SKILL.md` for full documentation.
+
+### extract-architecture
+
+Extract architectural patterns and design decisions from existing codebases to create AI-consumable reference guides.
+
+**Usage**: Use when tasked with documenting architecture:
+- Creating pattern catalogs for specific architectural approaches
+- Building reference implementations from proven production code
+- Producing prescriptive "how to build" guides for AI assistants
+- Extracting reusable abstractions for frameworks/libraries
+
+**What it provides**:
+- Structured workflow (reconnaissance → iterative analysis → refinement)
+- Context health management (direct reading or delegated investigation via codebase-researcher)
+- Flexible deliverables (pattern catalog, prescriptive guide, reference implementation)
+- Builds on task-planning for progress tracking
+- Optional skill conversion for distribution
+
+**Key characteristics**: Supports both small extractions (<3k lines, direct reading) and large extractions (>3k lines, delegated to codebase-researcher). Optimizes for AI consumption with file references and progressive disclosure.
+
+See `skills/extract-architecture/SKILL.md` for full documentation.
 
 ### langchain-expert-builder
 
@@ -134,6 +180,59 @@ Structured workflow for planning and implementing features across multiple Claud
 - Separates planning from implementation sessions
 
 See `skills/task-planning/SKILL.md` for full documentation.
+
+### tech-writing
+
+Technical documentation guidelines for README files, GitHub issues, pull requests, and proposals.
+
+**Usage**: Automatically invoked when creating technical documentation:
+- Writing or updating README files
+- Creating GitHub issues with acceptance criteria
+- Drafting pull request descriptions
+- Technical proposals or RFCs
+
+**What it provides**:
+- README preferences (context before instructions, third-person objective tone, pragmatic completeness)
+- GitHub issue structure (title conventions, situation/request format, acceptance criteria)
+- PR description guidelines (testing evidence, change summary)
+- Code formatting standards (no shell prompts, complete examples, language tags)
+- Visual element strategy (Mermaid diagrams, labeled screenshots)
+
+**Structure**:
+- `references/readme-guide.md` - Comprehensive README preferences
+- `references/issue-guide.md` - GitHub issue and PR guidelines
+- `references/exemplars/` - Reference examples of excellent documentation
+
+**Key philosophy**: Third-person objective tone, context before instructions, pragmatic completeness.
+
+See `skills/tech-writing/SKILL.md` for full documentation.
+
+## Sub-agents
+
+### codebase-researcher
+
+Specialized research sub-agent that performs extensive codebase investigations while maintaining context health. Runs in separate context window from main session.
+
+**Usage**: Invoked automatically or explicitly for:
+- GitHub issue creation requiring code trawl
+- Architecture exploration across many files
+- Understanding unfamiliar code patterns
+- Investigating bugs/quirks with structured findings
+- Any research task requiring deep codebase understanding
+
+**What it does**:
+- Loads relevant skills based on task (python-style, langchain-expert-builder, tech-writing, extract-architecture)
+- Uses Explore agent for reconnaissance
+- Chunks file reading (~1500 lines max per batch)
+- Monitors context health with resumability checkpoints
+- Saves structured findings to disk
+- Returns concise summary + file paths to main session
+
+**Key characteristics**: Separate context window prevents pollution of main session. Designed to compose with skills ecosystem (invoked by extract-architecture for iteration-level investigations, can be invoked during task-planning for extensive reconnaissance).
+
+**File structure**: Creates `.agents/research/<timestamp>-<task-name>/` with plan.md, progress.md, findings.md, and deliverables.
+
+See `agents/codebase-researcher.md` for full documentation.
 
 ## Configuration Files
 

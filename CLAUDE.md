@@ -31,27 +31,22 @@ This creates bidirectional symlinks between `~/.claude/` and the repository's `c
 - **.agents/** - Task planning artifacts (when using task-planning skill)
   - **tasks/** - Planning and progress documents for multi-session work
 
-## Claude Skills
+## Claude Skills and Sub-agents
 
-This repository contains six custom Claude Code skills:
+This repository contains 6 custom Claude Code skills and 1 custom sub-agent. For detailed documentation including usage patterns, key philosophies, and what each provides, see `claude/README.md`.
 
-### python-style
-Comprehensive Python coding guidelines extracted from production codebases. Automatically applies when working with Python code. Uses priority-based patterns (CRITICAL, PREFERRED, OBSERVED) with conditional loading for testing and async patterns.
+**Skills**:
+- **aws-interface-builder** - AWS SDK interface patterns with Factory + Dependency Injection
+- **extract-architecture** - Extract architectural patterns from codebases for AI consumption
+- **langchain-expert-builder** - LangChain multi-expert system builder using Expert-Task-Tool pattern
+- **python-style** - Comprehensive Python coding guidelines with priority-based patterns
+- **task-planning** - Structured planning workflow for multi-session feature work
+- **tech-writing** - Technical documentation guidelines (READMEs, issues, PRs)
 
-### langchain-expert-builder
-Reference implementation and abstractions for building LangChain-based multi-expert systems using the Expert-Task-Tool pattern. Provides copy-paste ready core abstractions and complete reference implementation demonstrating structured output, validation pipelines, and progressive detail loading.
+**Sub-agents**:
+- **codebase-researcher** - Deep codebase investigation with context health management, composes with skills ecosystem
 
-### aws-interface-builder
-Production-ready patterns for building testable AWS SDK (boto3) interfaces using Factory + Dependency Injection. Includes reference implementation demonstrating 10 critical patterns for implementation and testing with complete S3 wrapper examples.
-
-### tech-writing
-Style guidelines for README files, GitHub issues, and pull requests. Emphasizes third-person objective tone, context-before-instructions structure, complete code examples, and pragmatic completeness. Includes exemplar READMEs and evolution of patterns from 2023-2025.
-
-### task-planning
-Structured workflow for planning and implementing features across multiple sessions. Establishes `.agents/` directory workflow. Only invoke when user explicitly mentions "task planning" - do NOT use for general planning requests.
-
-### extract-architecture
-Extract architectural patterns from existing codebases to create AI-consumable reference guides. Use when tasked with documenting architecture, creating pattern catalogs, or producing prescriptive guides for AI assistants.
+Read `claude/README.md` for comprehensive documentation on each skill and sub-agent, including when to use them, what they provide, and how they integrate with each other.
 
 ## Working with This Repository
 

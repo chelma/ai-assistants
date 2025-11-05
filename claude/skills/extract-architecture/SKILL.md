@@ -19,6 +19,7 @@ Extract architectural patterns, design decisions, and reusable abstractions from
 **Key characteristics:**
 - Builds on task-planning skill for comprehensive progress tracking
 - Produces flexible deliverables based on extraction goals (patterns catalog, guide, reference implementation)
+- Context health management: Supports both direct reading and delegated investigation via codebase-researcher for large-scale extractions
 - Optimizes for AI consumption (file references, imperative form, progressive disclosure)
 - Supports resumability via detailed progress documentation
 - Optional skill conversion for distribution
@@ -194,6 +195,8 @@ For large-scale extractions, delegate iteration-level investigation to codebase-
 1. **Invoke codebase-researcher** with iteration-specific objective:
    ```
    Use codebase-researcher to analyze Iteration [N]: [iteration focus/title]
+
+   Skills to load: extract-architecture (for pattern documentation format guidance)
 
    Files to analyze: [list from iteration plan with line counts]
 
