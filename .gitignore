@@ -13,5 +13,5 @@ Thumbs.db
 # Backup files created by install.sh
 *.backup.2*
 
-# Claude working files
-.agents/research/
+# Claude working files (engineer-specific)
+.claude/

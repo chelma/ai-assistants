@@ -1,153 +1,19 @@
 ---
 name: task-planning
-description: This skill should ONLY be invoked when the user explicitly mentions "task planning" or "task-planning" in their request (e.g., "use task planning", "help me with task-planning", "set up task planning workflow"). Do NOT use this skill for general planning requests like "help me plan this feature" or "create a plan for X" - those should use Claude's built-in planning mode. This skill establishes the .agents/ directory workflow for structured planning across sessions.
+description: This skill should ONLY be invoked when the user explicitly mentions "task planning" or "task-planning" in their request (e.g., "use task planning", "help me with task-planning", "set up task planning workflow"). Do NOT use this skill for general planning requests like "help me plan this feature" or "create a plan for X" - those should use Claude's built-in planning mode. This skill establishes the .claude/agents/ directory workflow for structured planning across sessions.
 ---
 
 # Task Planning
 
 ## Overview
 
-This skill helps establish and maintain a structured planning workflow in git repositories. It creates a `.agents/` directory structure that separates planning from implementation, enabling efficient context management across multiple Claude Code sessions.
+This skill helps establish and maintain a structured planning workflow in git repositories. It creates a `.claude/agents/` directory structure that separates planning from implementation, enabling efficient context management across multiple Claude Code sessions.
 
 **When to use this skill:** Only when the user explicitly mentions "task planning" or "task-planning" in their request. Do NOT use for general planning requests - those should use Claude's built-in planning mode.
 
-**Current Version:** 3
+## Workflow
 
-**Version History:**
-- **v0**: Legacy (pre-versioning) - no task prefixes, `*_implement.md` files
-- **v1**: Partial updates (some prefixes or progress naming adopted)
-- **v2**: Task prefixes, `*_progress.md` files, output directory, `progress_template.md`
-- **v3**: Added resumability guidance, skill improvement tracking, phase outcome patterns (README sections + template comments)
-
-## Workflow Decision Tree
-
-When this skill is invoked, follow this decision tree:
-
-1. **Check if `.agents/` directory exists**
-   - If NO → Go to "First-Time Setup"
-   - If YES → Go to "Check Version"
-
-2. **Check Version**
-   - Read `.agents/.version` file (if missing, treat as v0 - legacy)
-   - Compare local version with skill version (currently v3)
-   - If `local_version < skill_version` → Go to "Offer Migration"
-   - If `local_version == skill_version` → Go to "Validate Structure"
-   - If `local_version > skill_version` → Warn user (they're ahead, unexpected)
-
-3. **Validate Structure**
-   - Check for: `.agents/README.md`, `.agents/templates/`, `.agents/tasks/`
-   - If structure matches expected pattern → Go to "Reconcile Templates"
-   - If structure is wildly different → Go to "Handle Unexpected Structure"
-
-4. **Reconcile Templates**
-   - Compare local files with canonical versions
-   - If differences exist → Go to "Template Reconciliation"
-   - If no differences → Go to "Create New Plan"
-
-5. **Create New Plan**
-   - Interactive plan creation workflow
-
-## First-Time Setup
-
-When no `.agents/` directory exists, create the complete structure:
-
-1. **Create directory structure:**
-   ```
-   .agents/
-   ├── .version
-   ├── README.md
-   ├── tasks/
-   ├── templates/
-   │   ├── plan_template.md
-   │   └── progress_template.md
-   └── output/
-   ```
-
-2. **Copy canonical files from skill assets:**
-   - Copy `assets/.version` to `.agents/.version` (contains: 2)
-   - Copy `assets/README.md` to `.agents/README.md`
-   - Copy `assets/templates/plan_template.md` to `.agents/templates/plan_template.md`
-   - Copy `assets/templates/progress_template.md` to `.agents/templates/progress_template.md`
-
-3. **Inform the user:**
-   ```
-   Created .agents/ directory structure for task planning (v2):
-   - .version: Tracks structure version
-   - README.md: Explains the planning workflow
-   - templates/: Contains plan and progress templates
-   - tasks/: Will contain your plan and progress tracking files
-   - output/: Will contain task deliverables and artifacts
-
-   Ready to create your first plan!
-   ```
-
-4. **Proceed to "Create New Plan"**
-
-## Offer Migration
-
-When local version is older than skill version:
-
-1. **Determine version gap:**
-   - Read local version from `.agents/.version` (or 0 if missing)
-   - Current skill version: 2
-   - Calculate migration path needed (e.g., v0→v2, v1→v2)
-
-2. **Load migration guidance:**
-   - Load detailed guidance: `references/migration.md`
-   - Follow version-specific migration workflow
-   - Migration guide contains paths for each version jump
-
-3. **Key principles** (details in migration.md):
-   - Always create backup before changes
-   - Never modify file contents (only rename/restructure)
-   - Offer migration but allow user to decline
-   - Update `.version` file after successful migration
-   - Report all changes made
-
-## Handle Unexpected Structure
-
-If `.agents/` exists but doesn't match the expected pattern:
-
-1. **Stop and explain the situation:**
-   ```
-   I found a .agents/ directory, but it doesn't match the expected structure for this task planning workflow.
-
-   Expected structure:
-   - .agents/.version
-   - .agents/README.md
-   - .agents/templates/plan_template.md
-   - .agents/templates/progress_template.md
-   - .agents/tasks/
-   - .agents/output/
-
-   Current structure:
-   [List what actually exists]
-
-   How would you like to proceed?
-   1. Rename existing .agents/ to .agents.backup/ and create new structure
-   2. Merge the structures (I'll help adapt the canonical templates)
-   3. Skip setup and just create a plan file in the existing structure
-   4. Cancel and investigate manually
-   ```
-
-2. **Wait for user decision** and follow their guidance.
-
-## Template Reconciliation
-
-When local templates differ from canonical versions:
-
-1. **Identify files to reconcile:**
-   - `.agents/README.md`
-   - `.agents/templates/plan_template.md`
-   - `.agents/templates/implementation_template.md`
-
-2. **Compare with canonical versions** from skill assets
-
-3. **If differences exist:**
-   - Load detailed guidance: `references/reconciliation.md`
-   - Follow the workflow documented there for summarizing differences, offering options, and performing merges
-
-4. **After reconciliation is complete,** proceed to "Create New Plan"
+When this skill is invoked, proceed directly to plan creation. The skill will create necessary directories as needed.
 
 ## Create New Plan
 
@@ -202,9 +68,9 @@ For example:
   - 2025-10-31-optimize_queries (if no tracking ID)
 
 This will create:
-  - tasks/GH-123-add_authentication_plan.md
-  - tasks/GH-123-add_authentication_progress.md (during implementation)
-  - output/GH-123-add_authentication/ (for deliverables)
+  - .claude/agents/tasks/GH-123-add_authentication_plan.md
+  - .claude/agents/tasks/GH-123-add_authentication_progress.md (during implementation)
+  - .claude/agents/output/GH-123-add_authentication/ (for deliverables)
 
 Does this naming work for you, or would you prefer a different name?
 ```
@@ -238,11 +104,14 @@ Document findings for the "Current State Analysis" section.
 
 ### Step 5: Create Draft Plan
 
-1. **Read the templates:**
-   - Read `.agents/templates/plan_template.md`
-   - Read `.agents/templates/progress_template.md` (for reference)
+1. **Ensure directory structure exists:**
+   - Create `.claude/agents/tasks/` if it doesn't exist
+   - Create `.claude/agents/output/` if it doesn't exist
 
-2. **Fill in the template** with:
+2. **Read the plan template from skill assets:**
+   - Read `claude/skills/task-planning/assets/templates/plan_template.md` from the repository
+
+3. **Fill in the template** with:
    - Task name (from user)
    - Status: "draft"
    - GitHub Issue (from user, or "N/A")
@@ -255,12 +124,12 @@ Document findings for the "Current State Analysis" section.
    - Risks and Considerations (potential issues)
    - Testing Strategy (how to verify it works)
 
-3. **Write the plan file:**
-   - Write to `.agents/tasks/<task_name>_plan.md`
+4. **Write the plan file:**
+   - Write to `.claude/agents/tasks/<task_name>_plan.md`
 
-4. **Inform the user:**
+5. **Inform the user:**
    ```
-   Created draft plan at: .agents/tasks/<task_name>_plan.md
+   Created draft plan at: .claude/agents/tasks/<task_name>_plan.md
 
    The plan includes:
    ✓ Problem statement and acceptance criteria
@@ -299,7 +168,7 @@ Your plan is ready! When you're ready to mark it as "approved", edit the Status 
 
 To implement this plan:
 1. Start a fresh Claude Code session (optimizes context)
-2. Reference the plan file: .agents/tasks/<task_name>_plan.md
+2. Reference the plan file: .claude/agents/tasks/<task_name>_plan.md
 3. Ask Claude to begin implementation following the plan
 
 Claude will create a <task_name>_progress.md file to track progress and will pause after each implementation step for your review.
@@ -308,18 +177,6 @@ Claude will create a <task_name>_progress.md file to track progress and will pau
 ## Key Principles
 
 When using this skill, follow these principles:
-
-### For File Reconciliation and Migration:
-- **Never modify files under `.agents/tasks/`** - these contain user's work-in-progress
-- **Only reconcile** README.md and template files
-- **Always get user input** before replacing local files with canonical versions
-- **Preserve user customizations** when merging
-- **Detect and offer migration** when encountering previous versions of `.agents/` structure
-- **Future-proof migrations**: When the user requests changes to artifact structure:
-  - Update this skill's guidance with new migration path
-  - Add detection logic for the old convention
-  - Document what NOT to modify (typically file contents, only structure/naming)
-  - Always create backups before performing migrations
 
 ### For Plan Creation:
 - **Always prompt for GitHub/JIRA issue** if not provided initially
@@ -331,38 +188,16 @@ When using this skill, follow these principles:
 ### For Implementation (Not handled by this skill):
 This skill only handles planning. Implementation follows in a separate session where:
 - User references the approved plan
-- Claude creates `tasks/<task_name>_progress.md` to track progress
+- Claude creates `.claude/agents/tasks/<task_name>_progress.md` to track progress
 - Claude follows the plan steps, stopping after each for human review
 - Implementation details are documented in the progress file
-- Task deliverables and artifacts are written to `output/<task_name>/` directory
+- Task deliverables and artifacts are written to `.claude/agents/output/<task_name>/` directory
 
 ## Assets
 
-This skill includes canonical versions of the planning workflow files:
+This skill includes template files used for creating plans and tracking progress:
 
-- `assets/README.md` - Explains the .agents/ workflow to users and future Claude sessions
 - `assets/templates/plan_template.md` - Template structure for planning documents
 - `assets/templates/progress_template.md` - Template structure for tracking implementation progress
 
-These files are copied to new `.agents/` directories and used for reconciliation when local versions differ.
-
-## References
-
-Detailed guidance loaded on-demand for specific scenarios:
-
-- `references/migration.md` - **Load when:** Detecting old `.agents/` structure that needs migration. Provides step-by-step migration workflows for each version upgrade path.
-- `references/reconciliation.md` - **Load when:** Local template files differ from canonical versions. Provides interactive reconciliation workflow with multiple merge strategies.
-
-**Progressive loading pattern:** The main SKILL.md contains workflow logic and decision points. References contain detailed "how-to" guidance loaded only when needed, keeping context efficient.
-
-## Versioning Philosophy
-
-Version increments signal substantive changes to skill capability, guidance, or structure. Changes warranting version bumps include:
-- New sections in README or templates
-- Structural changes to `.agents/` layout
-- Workflow or philosophical shifts
-- Coordinated improvements that evolve skill capability
-
-Typo fixes, minor clarifications, and single-example additions typically don't warrant version bumps.
-
-**When in doubt:** If users should review the changes, bump the version.
+These templates are read directly from the skill assets directory when creating new plans. Working files (plans, progress, outputs) are stored in `.claude/agents/` which is git-ignored and engineer-specific.

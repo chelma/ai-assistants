@@ -28,8 +28,10 @@ This creates bidirectional symlinks between `~/.claude/` and the repository's `c
   - **.mcp.json** - MCP server configuration
   - **install.sh** - Symlinking installation script
 
-- **.agents/** - Task planning artifacts (when using task-planning skill)
+- **.claude/agents/** - Engineer-specific task planning and research artifacts (git-ignored)
   - **tasks/** - Planning and progress documents for multi-session work
+  - **output/** - Task deliverables and intermediate artifacts
+  - **research/** - Codebase investigation findings from codebase-researcher sub-agent
 
 ## Claude Skills and Sub-agents
 

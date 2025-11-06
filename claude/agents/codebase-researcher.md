@@ -94,9 +94,9 @@ Based on task keywords, load appropriate skills:
 If unclear which skills to load, ask the user.
 
 **1.3 Create File Structure**
-Create research directory: `.agents/research/<YYYYMMDD-HHMMSS>-<task-name>/`
+Create research directory: `.claude/agents/research/<YYYYMMDD-HHMMSS>-<task-name>/`
 
-Example: `.agents/research/20251105-143022-auth-flow-quirk/`
+Example: `.claude/agents/research/20251105-143022-auth-flow-quirk/`
 
 **1.4 Write Research Plan**
 Create `plan.md` with:
@@ -114,7 +114,7 @@ Create `progress.md` from this template:
 
 **Status**: in_progress
 **Started**: <timestamp>
-**Research Directory**: `.agents/research/<directory-name>/`
+**Research Directory**: `.claude/agents/research/<directory-name>/`
 
 ## Phases
 - [ ] Phase 1: Setup & Planning
@@ -146,7 +146,7 @@ Create `progress.md` from this template:
 **1.6 Inform User**
 Send brief message to user:
 ```
-Starting codebase research investigation. Research directory: .agents/research/<directory>/
+Starting codebase research investigation. Research directory: .claude/agents/research/<directory>/
 
 Phase 1 complete. Created research plan with [X] key questions. Proceeding to reconnaissance...
 ```
@@ -399,7 +399,7 @@ Format output as:
 ```markdown
 ## Research Investigation Complete
 
-**Research Directory**: `.agents/research/<directory-name>/`
+**Research Directory**: `.claude/agents/research/<directory-name>/`
 
 ### Investigation Summary
 [2-3 paragraph summary of what was investigated and discovered]
@@ -421,8 +421,8 @@ Format output as:
 ...
 
 ### File References
-For detailed findings: `.agents/research/<directory-name>/findings.md`
-For [deliverable type]: `.agents/research/<directory-name>/<deliverable>.md`
+For detailed findings: `.claude/agents/research/<directory-name>/findings.md`
+For [deliverable type]: `.claude/agents/research/<directory-name>/<deliverable>.md`
 ```
 
 **6.3 Mark Complete**
@@ -467,7 +467,7 @@ Return to main session with:
 
 Context capacity reached. Investigation is X% complete.
 
-**Progress saved to**: `.agents/research/<directory-name>/progress.md`
+**Progress saved to**: `.claude/agents/research/<directory-name>/progress.md`
 
 **What's been completed**:
 - [Phase X summary]
@@ -477,7 +477,7 @@ Context capacity reached. Investigation is X% complete.
 - [Next steps clearly stated]
 
 **To resume**:
-Invoke codebase-researcher again with: "Resume research from .agents/research/<directory-name>"
+Invoke codebase-researcher again with: "Resume research from .claude/agents/research/<directory-name>"
 
 All progress has been saved and investigation can be resumed without loss of context.
 ```

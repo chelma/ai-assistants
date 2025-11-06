@@ -213,7 +213,7 @@ For large-scale extractions, delegate iteration-level investigation to codebase-
    ```
 
 2. **Review findings returned** by codebase-researcher:
-   - Read findings file from `.agents/research/<timestamp>-iteration-N/`
+   - Read findings file from `.claude/agents/research/<timestamp>-iteration-N/`
    - Main session never loads source code - only curated findings
 
 3. **Synthesize into patterns.md** (main session):
@@ -250,7 +250,7 @@ Use Read tool to analyze files in the batch:
 
 **3.2 Document Patterns**
 
-Create or update patterns document in `.agents/output/<task_name>/`:
+Create or update patterns document in `.claude/agents/output/<task_name>/`:
 
 **Initial iterations**: Create `patterns.md` or `architecture_patterns.md`
 **Subsequent iterations**: Append findings to existing document
@@ -646,7 +646,7 @@ List all deliverables created:
 Show output directory structure:
 
 ```
-.agents/
+.claude/agents/
 ├── tasks/
 │   ├── <task_name>_plan.md
 │   └── <task_name>_progress.md

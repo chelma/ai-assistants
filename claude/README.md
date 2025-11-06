@@ -174,10 +174,11 @@ Structured workflow for planning and implementing features across multiple Claud
 **Note**: Do NOT use for general planning requests like "help me plan this feature" - use Claude's built-in planning mode for those.
 
 **What it does**:
-- Sets up `.agents/` directory structure in git repositories
-- Reconciles local templates with canonical versions
+- Sets up `.claude/agents/` directory structure for engineer-specific working files
+- Reads templates directly from skill assets (no copying/versioning complexity)
 - Guides interactive plan creation
 - Separates planning from implementation sessions
+- All working files are git-ignored (plans, progress, outputs)
 
 See `skills/task-planning/SKILL.md` for full documentation.
 
@@ -230,7 +231,7 @@ Specialized research sub-agent that performs extensive codebase investigations w
 
 **Key characteristics**: Separate context window prevents pollution of main session. Designed to compose with skills ecosystem (invoked by extract-architecture for iteration-level investigations, can be invoked during task-planning for extensive reconnaissance).
 
-**File structure**: Creates `.agents/research/<timestamp>-<task-name>/` with plan.md, progress.md, findings.md, and deliverables.
+**File structure**: Creates `.claude/agents/research/<timestamp>-<task-name>/` with plan.md, progress.md, findings.md, and deliverables (git-ignored).
 
 See `agents/codebase-researcher.md` for full documentation.
 
