@@ -109,7 +109,7 @@ Document findings for the "Current State Analysis" section.
    - Create `.claude/agents/output/` if it doesn't exist
 
 2. **Read the plan template from skill assets:**
-   - Read `claude/skills/task-planning/assets/templates/plan_template.md` from the repository
+   - Read `~/.claude/skills/task-planning/assets/templates/plan_template.md`
 
 3. **Fill in the template** with:
    - Task name (from user)
