@@ -48,6 +48,8 @@ your_project/
     ├── experts.py           # Expert dataclass + invoke_expert() orchestration
     ├── tasks.py             # Task ABC for work items + conversation context
     ├── tools.py             # ToolBundle for structured output
+    ├── messages.py          # Framework-agnostic message types
+    ├── base_validator.py    # Dependency-injected validation
     ├── inference.py         # Async batch inference
     └── validation_report.py # Validation accumulation for observability
 ```

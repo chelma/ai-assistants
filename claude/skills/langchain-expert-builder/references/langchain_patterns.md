@@ -1708,4 +1708,196 @@ class CreateEntitiesReport(BaseModel):
 
 ---
 
-**Status**: Analysis complete. All 33 LangChain-relevant files analyzed across 2 iterations (1,749 lines of code).
+## 8. Production Patterns
+
+**Source**: Production implementation in time-cop repository (Python/Ruby polyglot Temporal workflow system)
+
+These patterns represent production-tested improvements to the core Expert-Task-Tool architecture for enhanced framework independence, testability, and operational robustness.
+
+### 8.1 [PREFERRED] Message Abstraction Layer
+
+**Pattern**: Framework-agnostic message types with boundary conversion to/from LangChain.
+
+**Implementation**: See `assets/reference_implementation/core/messages.py`
+
+**Purpose**:
+- Decouple domain code from LangChain framework
+- Enable framework portability (swap LangChain for LiteLLM, direct API calls, etc.)
+- Clean serialization without framework dependencies
+- Type safety via custom message types and enums
+
+**Architecture**:
+```python
+# Domain code uses framework-agnostic types
+from core.messages import SystemMessage, HumanMessage, AIMessage, ToolMessage
+
+# Conversion only at LLM invocation boundaries
+lc_context = to_langchain_messages(task.context)
+lc_response = llm.invoke(lc_context)
+response = from_langchain(lc_response)
+```
+
+**Key Components**:
+- `MessageRole` enum for type safety
+- `BaseMessage` abstract class with `to_langchain()` method
+- Concrete message types: `SystemMessage`, `HumanMessage`, `AIMessage`, `ToolMessage`
+- Conversion utilities: `to_langchain_messages()`, `from_langchain()`, `from_langchain_messages()`
+
+**When to use**:
+- Building expert systems that may need to switch LLM providers
+- Creating reusable components across projects with different LLM frameworks
+- Want clean domain types without framework leakage
+- Need to serialize conversation history independent of LLM provider
+
+**When NOT to use**:
+- Simple scripts with single LLM provider that won't change
+- Prototyping where framework independence isn't a concern
+- Projects deeply integrated with LangChain-specific features
+
+**Trade-offs**:
+- ✅ Zero framework coupling in domain code
+- ✅ Clean serialization via `to_dict()` methods
+- ✅ Type safety with `MessageRole` enum
+- ✅ Framework portability
+- ❌ Requires conversion at boundaries (minimal overhead)
+- ❌ Slight duplication of LangChain message API
+
+**Production observations**:
+- Enabled switching between LangChain and direct OpenAI SDK without domain code changes
+- Simplified testing (no LangChain mocks needed in domain tests)
+- Clean serialization for Temporal workflow state persistence
+- No measurable performance impact from boundary conversion
+
+---
+
+### 8.2 [PREFERRED] Dependency-Injected Validator Pattern
+
+**Pattern**: Optional, pure-function validators injected into expert classes via abstract property.
+
+**Implementation**: See `assets/reference_implementation/core/base_validator.py`
+
+**Purpose**:
+- Make validation optional (experts without complex validation needs can skip it)
+- Enable independent testing of validation logic without LLM invocation
+- Support validation retry loops for LLM self-correction
+- Clear separation between validation logic and orchestration
+
+**Architecture**:
+```python
+# 1. Define abstract validator interface
+class BaseValidator:
+    def validate(self, result: ResultType, task: TaskType) -> ValidationReport:
+        # Pure function: no side effects
+        raise NotImplementedError()
+
+# 2. Experts declare validator via property
+class MyExpert(BaseExpert):
+    @property
+    def validator(self) -> Optional[BaseValidator]:
+        return MyValidator()  # or None for no validation
+
+# 3. Base expert invokes validator automatically
+def invoke(self, task, ...):
+    result = self.tool.func(**tool_call["args"])
+    if self.validator:
+        validation_report = self.validator.validate(result, task)
+        if not validation_report.passed:
+            raise ValidationFailedError(...)  # Triggers retry
+```
+
+**Key Characteristics**:
+- **Pure functions**: Validators don't modify tasks, just return reports
+- **Optional**: Expert property returns `None` if no validation needed
+- **Testable in isolation**: Test validator without invoking LLM
+- **Composable**: Could chain validators or create conditional validators
+
+**When to use**:
+- Expert outputs need domain-specific validation beyond Pydantic schema validation
+- Validation logic is complex enough to warrant separate testing
+- Want to enable validation retry loops (LLM self-correction)
+- Different experts need different validation rules
+
+**When NOT to use**:
+- Simple experts where Pydantic schema validation is sufficient
+- Validation logic is trivial (2-3 line checks)
+- Prototyping where separation of concerns adds unnecessary complexity
+
+**Trade-offs**:
+- ✅ Testable in isolation (no mocks needed)
+- ✅ Optional validation (experts declare via property)
+- ✅ Clear interface contract via `BaseValidator`
+- ✅ Supports retry loops for self-correction
+- ❌ Slightly more setup (create validator class vs inline checks)
+- ❌ Indirection (validation logic in separate file)
+
+**Production observations**:
+- Conversation analyzer expert has no validator (simple analysis task)
+- Summary generator expert has complex validator checking event ID references
+- Validators enabled 70%+ success rate with 2 retry attempts
+- Isolated testing caught validation bugs before LLM integration
+
+---
+
+### 8.3 [PREFERRED] Task-Based User Prompt Factory
+
+**Pattern**: User prompt factories accept Task objects rather than individual parameters.
+
+**Implementation**:
+```python
+# OLD approach: Multiple parameters
+def user_prompt_factory(patient_id: int, events: List[Event], analysis: Analysis):
+    ...
+
+# NEW approach: Single task parameter
+def user_prompt_factory(task: MyTask) -> HumanMessage:
+    # Access all task fields
+    serialized_events = [to_dict(e) for e in task.events]
+    content = PROMPT_TEMPLATE.format(
+        patient_id=task.patient_id,
+        events_json=json.dumps(serialized_events),
+        ...
+    )
+    return HumanMessage(content=content)
+```
+
+**Purpose**:
+- Single responsibility: Task encapsulates all input data
+- Extensible: Adding task fields doesn't change factory signature
+- Type-safe: Factory receives typed Task, not loose parameters
+- Consistent: All user prompt factories follow same pattern
+
+**When to use**:
+- Expert has multiple input parameters
+- Task structure is likely to evolve (add fields)
+- Want type safety for prompt factory inputs
+
+**When NOT to use**:
+- Expert has single input parameter (factory(name: str) is fine)
+- Task is just a wrapper with no additional fields
+
+**Trade-offs**:
+- ✅ Single parameter (cleaner signature)
+- ✅ Type-safe access to all task fields
+- ✅ Adding task fields doesn't break factory signature
+- ❌ Requires Task definition upfront
+- ❌ Can't use factory independently of Task type
+
+**Production observations**:
+- Eliminated signature drift when adding conversation analysis to summary task
+- Type checking caught missing field references at compile time
+- Simplified factory testing (single task mock vs multiple parameter mocks)
+
+---
+
+**Production Pattern Summary**:
+
+These three patterns emerged from scaling the Expert-Task-Tool architecture to production:
+1. **Message Abstraction** - Framework independence for portability
+2. **Dependency-Injected Validators** - Optional, testable validation
+3. **Task-Based Prompts** - Type-safe, extensible prompt factories
+
+All three are **PREFERRED** patterns, not CRITICAL. The core pattern works fine without them; these are refinements for specific production contexts (framework independence, complex validation, evolving task structures).
+
+---
+
+**Status**: Analysis complete. All 33 LangChain-relevant files analyzed across 2 iterations (1,749 lines of code). Production patterns added from time-cop implementation.
