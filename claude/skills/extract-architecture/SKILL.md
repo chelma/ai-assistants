@@ -675,6 +675,94 @@ Based on deliverables:
 - Skill conversion (if appropriate)
 - Distribution to team
 
+### Step 10: Choose Output Format & Finalize
+
+After deliverables are complete, present format choice to user.
+
+**10.1 Present Options**
+
+```
+Extraction complete! Deliverables are in .claude/agents/output/<task_name>/
+
+Choose output format:
+
+[1] Shared Reference (AI-agnostic format in .agents/)
+    - Works with any AI coding assistant
+    - Can be converted to Claude Skill later
+    - Checked into git for team sharing
+
+[2] Claude Skill (Claude Code-specific format)
+    - Immediately usable in Claude Code
+    - Lives in ~/.claude/skills/ or .claude/skills/
+
+Which would you prefer? [1/2]
+```
+
+**10.2 If User Chooses Shared Reference**
+
+1. **Check for FORMAT.md**:
+   ```
+   Looking for .agents/FORMAT.md...
+   ```
+
+   - If found: Read `.agents/FORMAT.md` completely
+   - If not found:
+     ```
+     No .agents/FORMAT.md found in this repository.
+
+     Options:
+     [a] Generate FORMAT.md based on Claude Skills specification
+         (I'll create one for this repo)
+     [b] Create Claude Skill format instead
+
+     What would you like? [a/b]
+     ```
+
+2. **If user chooses to generate FORMAT.md**:
+   - Load skill-creator skill to understand Claude Skills specification
+   - Generate FORMAT.md adapted for AI-agnostic references
+   - Write to .agents/FORMAT.md
+   - Then proceed with transformation
+
+3. **Follow FORMAT.md instructions**:
+   - Read FORMAT.md to understand requirements
+   - Transform extraction output to match specification
+   - Organize into .agents/<reference-name>/
+
+4. **Inform user**:
+   ```
+   Reference created at .agents/<reference-name>/
+
+   Next steps:
+   - Review the reference
+   - Commit to git for team sharing
+   - Convert to Claude Skill with reference-skill-converter (if desired)
+   ```
+
+**10.3 If User Chooses Claude Skill**
+
+1. **Invoke skill-creator skill**:
+   ```
+   Loading skill-creator skill...
+   ```
+
+2. **Let skill-creator handle workflow**:
+   - skill-creator reads extraction output
+   - skill-creator follows its own workflow (metadata gathering, SKILL.md generation)
+   - skill-creator asks any questions it needs
+   - skill-creator organizes final output
+
+3. **Completion**:
+   ```
+   [skill-creator completes its workflow]
+
+   Skill created. Ready to use!
+   ```
+
+**10.4 Update Progress File**
+
+Mark Step 10 complete with chosen format and output location.
+
 ## Key Principles
 
 **1. Progressive Disclosure**
@@ -863,6 +951,21 @@ Claude: Extraction complete! I've created:
 
         Progress file documents the complete 8-phase process for resumability.
 
-        This guide is ready for AI assistant consumption. If you'd like to convert it
-        to a Claude Skill for broader distribution, we can use the skill-creator skill.
+[Follows Step 10: Choose Output Format]
+
+Claude: Choose output format:
+        [1] Shared Reference (AI-agnostic format in .agents/)
+        [2] Claude Skill (Claude Code-specific format)
+
+User: 1
+
+Claude: Looking for .agents/FORMAT.md... Found!
+        Reading format specification...
+
+        I'll transform the extraction output to match the shared reference format.
+
+        [Transforms deliverables, creates .agents/langchain-expert-builder/]
+
+        Reference created at .agents/langchain-expert-builder/
+        Ready to commit or convert to Claude Skill.
 ```

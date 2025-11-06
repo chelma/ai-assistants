@@ -18,15 +18,27 @@ When needing to clone or examine external Git repositories, use `/Users/chris.he
 
 When needing to interact with GitHub, use the locally installed GitHub CLI (`gh`) to ensure you have acess to the human's credentials GitHub credentials.
 
+### Claude Skills Documentation
+
+The documentation for Claude and Claude Code Skills can be fetched from here:
+- https://claude.com/blog/skills
+- https://anthropic.mintlify.app/en/docs/claude-code/skills
+
+### Claude Slash Command Documentation
+
+The documentation for Claude and Claude Code Slash Commands can be fetched from here:
+- https://anthropic.mintlify.app/en/docs/claude-code/slash-commands
+
+### Claude Subagents Documentation
+
+The documentation for Claude and Claude Code Subagents can be fetched from here:
+- https://anthropic.mintlify.app/en/docs/claude-code/sub-agents
+
 ---
 
 ## Temporary Context
 
 Short-term guidance relevant for current work (weeks/months). Review and prune regularly.
 
-### Claude Skills Documentation
 
-When discussing Claude Skills or Claude Code Skills, fetch these reference docs if not already loaded:
-- https://www.anthropic.com/news/skills
-- https://anthropic.mintlify.app/en/docs/claude-code/skills
 

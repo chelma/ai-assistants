@@ -28,6 +28,14 @@ This creates bidirectional symlinks between `~/.claude/` and the repository's `c
   - **.mcp.json** - MCP server configuration
   - **install.sh** - Symlinking installation script
 
+- **.agents/** - Shared architecture references (version-controlled)
+  - **FORMAT.md** - Canonical format specification for architecture references
+  - **README.md** - Overview and usage guide
+  - **references/** - Architecture references extracted from codebases
+    - Each reference documents patterns, design decisions, and reusable abstractions
+    - AI-agnostic format works across coding assistants (Claude, Copilot, Cursor, etc.)
+    - Can be converted to assistant-specific formats (e.g., Claude Skills)
+
 - **.claude/agents/** - Engineer-specific task planning and research artifacts (git-ignored)
   - **tasks/** - Planning and progress documents for multi-session work
   - **output/** - Task deliverables and intermediate artifacts
@@ -39,7 +47,7 @@ This repository contains 6 custom Claude Code skills and 1 custom sub-agent. For
 
 **Skills**:
 - **aws-interface-builder** - AWS SDK interface patterns with Factory + Dependency Injection
-- **extract-architecture** - Extract architectural patterns from codebases for AI consumption
+- **extract-architecture** - Extract architectural patterns from codebases; outputs to shared references (`.agents/references/`) or Claude Skills format
 - **langchain-expert-builder** - LangChain multi-expert system builder using Expert-Task-Tool pattern
 - **python-style** - Comprehensive Python coding guidelines with priority-based patterns
 - **task-planning** - Structured planning workflow for multi-session feature work
@@ -72,6 +80,25 @@ When creating or modifying skills, follow the structure observed in existing ski
 - Loading strategy (if applicable)
 - Detailed implementation guidance
 - Reference materials in `references/` subdirectory
+
+### Architecture References
+Architecture references in `.agents/references/` document reusable patterns extracted from codebases:
+
+**Creating references:**
+- Use `extract-architecture` skill to extract patterns from codebases
+- Skill offers choice: shared reference (`.agents/references/`) or Claude Skill format
+- Shared references are AI-agnostic and version-controlled for team use
+- Can be converted to assistant-specific formats later
+
+**Working with references:**
+- Read `.agents/FORMAT.md` for detailed format specification
+- Read `.agents/README.md` for overview and usage guidance
+- References use progressive disclosure (README.md → references/ → assets/)
+- Optimized for token efficiency (2-10k tokens loaded vs 50k+ available)
+
+**Key distinction:**
+- `.agents/references/` - Shared, version-controlled architecture references (team resource)
+- `.claude/agents/` - Engineer-specific working files, git-ignored (personal workspace)
 
 ## Key Patterns
 
