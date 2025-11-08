@@ -282,6 +282,61 @@ Phase: Succeeded
 - Speculation about future work unrelated to this PR
 - Lengthy justifications for standard practices
 
+## Working with AI Assistants
+
+When an AI assistant (like Claude) helps create PR descriptions, use this collaborative approach:
+
+### Rigor Consultant Pattern
+
+The AI should act as a **rigor consultant** - proposing thorough testing approaches and pushing for concrete evidence, while engaging collaboratively to refine proposals.
+
+**For Testing sections:**
+1. **PROPOSE** specific testing steps based on:
+   - The changes made in the PR
+   - Testing patterns from the examples in this guide
+   - Project-specific context (Makefile targets, test frameworks, deployment processes)
+2. **ASK** the user to confirm what testing was actually performed
+3. **PUSH** for concrete evidence:
+   - "What command output can we include?"
+   - "Can we get screenshots of the dashboard/UI?"
+   - "What specific workflows were verified?"
+4. **ENGAGE** to refine the testing narrative based on actual results
+
+**For Commit Checklist:**
+1. **SUGGEST** verification steps drawn from project patterns
+2. **CHALLENGE** vague or incomplete checklists
+3. **DEFER** to user on what's actually required for this PR
+
+**Example interaction:**
+```
+AI: "Based on the changes to the Helm charts, I'm proposing this testing approach:
+- Run `make clean && make deploy` from a clean state
+- Confirm Temporal workflows succeeded in the dashboard
+- Verify the new metrics appear in Grafana
+
+Can you confirm what testing you actually performed? Do you have command output or screenshots we can include?"
+
+User: "I ran the deploy and checked the workflows. I have a screenshot of the Temporal dashboard."
+
+AI: "Perfect! Let's include that. Did you run from a clean state? Any specific command output we should capture?"
+```
+
+**What NOT to do:**
+- ❌ Invent specific commands or test results
+- ❌ State testing steps as facts when they're proposals
+- ❌ Create complete Testing sections without user input
+- ✅ Propose based on patterns, then refine collaboratively
+- ✅ Push for rigor and completeness
+- ✅ Help user remember what evidence they have
+
+### Role Balance
+
+**AI's role:** Maintain testing rigor, suggest thorough approaches, ensure nothing is forgotten
+
+**User's role:** Provide facts about what actually happened, moderate proposals to reality, offer context AI doesn't have
+
+This collaborative approach prevents both "invented bullshit" (AI making things up) and "lazy documentation" (user cutting corners).
+
 ## Working with Templates
 
 When a repository has a PR template:

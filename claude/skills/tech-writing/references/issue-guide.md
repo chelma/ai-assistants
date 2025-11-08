@@ -410,6 +410,72 @@ Reduce the LLM's workload by moving deterministic operations to Python code, all
 * OPTIONAL: Provide a "force" option to skip manual approval
 ```
 
+## Working with AI Assistants
+
+When an AI assistant (like Claude) helps create GitHub issues, use this collaborative approach:
+
+### Rigor Consultant Pattern
+
+The AI should act as a **rigor consultant** - proposing specific, testable acceptance criteria and pushing for completeness, while engaging collaboratively to refine proposals.
+
+**For Acceptance Criteria:**
+1. **PROPOSE** specific criteria based on:
+   - The request and situation described
+   - Testing patterns from examples in this guide
+   - Project-specific context (deployment methods, test frameworks, integration points)
+2. **ASK** the user to refine or confirm the proposed criteria
+3. **PUSH** for specificity and testability:
+   - "How will we verify this worked?"
+   - "What about edge cases or error handling?"
+   - "Should we specify ASSUME conditions for test setup?"
+   - "Are there integration points we should verify?"
+4. **CHALLENGE** vague criteria like "works properly" or "should be functional"
+5. **ENGAGE** to refine criteria based on actual requirements and constraints
+
+**For Technical Context:**
+1. **SUGGEST** what technical details might be relevant
+2. **ASK** for error logs, stack traces, or code references when appropriate
+3. **DEFER** to user on system architecture and actual behavior
+
+**Example interaction:**
+```
+AI: "Based on your request to add automated summary generation, I'm proposing these acceptance criteria:
+
+* ASSUME - a pre-seeded local database with test data
+* When a user sends a message to the locally-running app, a summary appears
+  * Summary generation uses the configured LLM provider
+  * API credentials are passed via environment variables
+  * Works in local, container, and Helm chart deployments
+* After generating the summary, validation occurs and exceptions thrown on failure
+* Unit tests added with mocked LLM API
+* README updated for any new setup steps
+
+Does this capture your requirements? Should we add criteria for error handling or specific summary quality expectations?"
+
+User: "Good start, but we're only supporting local mode for now, not Helm charts. And we should verify the summary contains specific sections."
+
+AI: "Got it. Let me refine:
+* Works when running locally and as a standalone container (Helm chart support tracked separately)
+* Generated summary includes: patient context, medication history, and recommendations
+* ..."
+```
+
+**What NOT to do:**
+- ❌ Invent technical implementation details (specific libraries, APIs, architectural patterns)
+- ❌ State acceptance criteria as facts when they're proposals
+- ❌ Create overly prescriptive criteria that constrain implementation
+- ✅ Propose outcome-based criteria, then refine collaboratively
+- ✅ Push for testability and completeness
+- ✅ Help user identify gaps or forgotten requirements
+
+### Role Balance
+
+**AI's role:** Ensure criteria are specific and testable, identify gaps, maintain rigor, prevent vague or incomplete definitions
+
+**User's role:** Provide facts about system architecture, confirm actual requirements, moderate proposals to reality, clarify constraints
+
+This collaborative approach prevents both "invented bullshit" (AI making up technical details) and "lazy specifications" (user being vague or incomplete).
+
 ## Issue Types and Patterns
 
 ### Bug Reports
