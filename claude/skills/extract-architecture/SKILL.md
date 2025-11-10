@@ -42,6 +42,11 @@ Begin by invoking the task-planning skill to establish the extraction as a forma
   - Progress file documents process for resumability
 - **Implementation approach**: Will follow 3-8 phase workflow (reconnaissance → analysis → refinement → optional phases)
 
+**Note**: task-planning skill automatically handles:
+- Workspace detection (from git repo name or asks user)
+- Project root detection (for portable file references)
+- Creates plan in `~/.claude/workspace/<workspace>/tasks/<task_name>_plan.md`
+
 After task-planning creates the plan file, proceed to Step 2.
 
 ### Step 2: Reconnaissance Phase
@@ -213,7 +218,7 @@ For large-scale extractions, delegate iteration-level investigation to codebase-
    ```
 
 2. **Review findings returned** by codebase-researcher:
-   - Read findings file from `.claude/agents/research/<timestamp>-iteration-N/`
+   - Read findings file from `~/.claude/workspace/<workspace>/research/<timestamp>-iteration-N/`
    - Main session never loads source code - only curated findings
 
 3. **Synthesize into patterns.md** (main session):
@@ -250,10 +255,19 @@ Use Read tool to analyze files in the batch:
 
 **3.2 Document Patterns**
 
-Create or update patterns document in `.claude/agents/output/<task_name>/`:
+Create or update patterns document in `~/.claude/workspace/<workspace>/output/<task_name>/`:
 
 **Initial iterations**: Create `patterns.md` or `architecture_patterns.md`
+- Include project root in header: `**Project Root**: /absolute/path/to/project`
+- Create output directory with lazy creation: `mkdir -p ~/.claude/workspace/<workspace>/output/<task_name>/`
+
 **Subsequent iterations**: Append findings to existing document
+
+**File Reference Requirements**:
+- Use paths **relative to project root** for all code references
+- Example: `ruby_worker/app/workflows/workflow_demo_mixed.rb:15-30`
+- NOT: `/Users/chris.helma/workspace/personal/time-cop/ruby_worker/...`
+- Enables portability across machines and Claude sessions
 
 **Pattern documentation format:**
 
@@ -262,7 +276,7 @@ Create or update patterns document in `.claude/agents/output/<task_name>/`:
 
 **Purpose**: [What problem does this pattern solve]
 
-**Implementation**: See `path/to/file.py:line-range` for example
+**Implementation**: See `path/to/file.py:line-range` for example (relative to project root)
 
 **When to use**:
 - [Scenario 1]
@@ -646,13 +660,13 @@ List all deliverables created:
 Show output directory structure:
 
 ```
-.claude/agents/
+~/.claude/workspace/<workspace>/
 ├── tasks/
 │   ├── <task_name>_plan.md
 │   └── <task_name>_progress.md
 └── output/
     └── <task_name>/
-        ├── patterns.md or guide.md
+        ├── patterns.md or guide_draft.md
         ├── reference_implementation/ (if applicable)
         │   ├── core/
         │   └── example_domain/
@@ -682,7 +696,7 @@ After deliverables are complete, present format choice to user.
 **10.1 Present Options**
 
 ```
-Extraction complete! Deliverables are in .claude/agents/output/<task_name>/
+Extraction complete! Deliverables are in ~/.claude/workspace/<workspace>/output/<task_name>/
 
 Choose output format:
 

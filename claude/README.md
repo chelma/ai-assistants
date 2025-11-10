@@ -36,8 +36,17 @@ claude/
 │   └── tech-writing/            # Technical documentation guidelines
 ├── commands/                    # Custom slash commands (empty)
 ├── memories/                    # Custom memories (empty)
-└── agents/                      # Custom subagent definitions
-    └── codebase-researcher.md   # Deep codebase investigation with context health management
+├── agents/                      # Custom subagent definitions
+│   └── codebase-researcher.md   # Deep codebase investigation with context health management
+└── workspace/                   # Working files (plans, progress, research outputs)
+    ├── time-cop/                # Per-project working files
+    │   ├── tasks/               # Plans and progress files
+    │   ├── output/              # Task deliverables
+    │   └── research/            # codebase-researcher findings
+    └── other-project/
+        ├── tasks/
+        ├── output/
+        └── research/
 ```
 
 ## How It Works
@@ -50,6 +59,7 @@ After running `install.sh`, configuration in `~/.claude/` becomes symlinks:
 ~/.claude/commands -> /path/to/ai-assistants/claude/commands
 ~/.claude/memories -> /path/to/ai-assistants/claude/memories
 ~/.claude/agents -> /path/to/ai-assistants/claude/agents
+~/.claude/workspace -> /path/to/ai-assistants/claude/workspace
 ```
 
 **Files:**
@@ -174,11 +184,17 @@ Structured workflow for planning and implementing features across multiple Claud
 **Note**: Do NOT use for general planning requests like "help me plan this feature" - use Claude's built-in planning mode for those.
 
 **What it does**:
-- Sets up `.claude/agents/` directory structure for engineer-specific working files
-- Reads templates directly from skill assets (no copying/versioning complexity)
+- Creates working files in `~/.claude/workspace/<workspace>/` (symlinked to ai-assistants repo for version control)
+- Automatically detects workspace from git repo name (or asks if not in git repo)
+- Tracks project root for portable file references (relative paths)
 - Guides interactive plan creation
 - Separates planning from implementation sessions
-- All working files are git-ignored (plans, progress, outputs)
+- All working files are version-controlled and sync across machines
+
+**Key benefits**:
+- Git checkpointing: Commit plans/progress anytime
+- Cross-machine sync: Same workspace on all machines
+- Portable file references: Use relative paths from project root
 
 See `skills/task-planning/SKILL.md` for full documentation.
 
@@ -222,16 +238,18 @@ Specialized research sub-agent that performs extensive codebase investigations w
 - Any research task requiring deep codebase understanding
 
 **What it does**:
+- Automatically detects workspace from git repo name (or asks if not in git repo)
+- Tracks project root for portable file references
 - Loads relevant skills based on task (python-style, langchain-expert-builder, tech-writing, extract-architecture)
 - Uses Explore agent for reconnaissance
 - Chunks file reading (~1500 lines max per batch)
 - Monitors context health with resumability checkpoints
-- Saves structured findings to disk
+- Saves structured findings to disk with version control
 - Returns concise summary + file paths to main session
 
 **Key characteristics**: Separate context window prevents pollution of main session. Designed to compose with skills ecosystem (invoked by extract-architecture for iteration-level investigations, can be invoked during task-planning for extensive reconnaissance).
 
-**File structure**: Creates `.claude/agents/research/<timestamp>-<task-name>/` with plan.md, progress.md, findings.md, and deliverables (git-ignored).
+**File structure**: Creates `~/.claude/workspace/<workspace>/research/<timestamp>-<task-name>/` with plan.md, progress.md, findings.md, and deliverables. All file references are relative to project root for portability.
 
 See `agents/codebase-researcher.md` for full documentation.
 

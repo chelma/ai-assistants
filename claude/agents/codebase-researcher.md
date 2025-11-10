@@ -58,7 +58,25 @@ This sub-agent is designed to compose with other skills in your ecosystem:
 - Identify what questions need to be answered
 - Determine what deliverables are expected (GitHub issue, findings document, architecture summary, etc.)
 
-**1.2 Load Relevant Skills**
+**1.2 Detect Workspace and Project Root**
+
+**Workspace Detection** (determines where research files are stored):
+```bash
+WORKSPACE=$(basename $(git rev-parse --show-toplevel 2>/dev/null) 2>/dev/null)
+```
+
+- **If in git repo**: Use repo name as workspace (e.g., "time-cop")
+- **If not in git repo**: Ask user: "What workspace name should I use for this research?"
+
+**Project Root Detection** (for portable file references):
+```bash
+PROJECT_ROOT=$(git rev-parse --show-toplevel 2>/dev/null)
+# If empty, use current working directory
+```
+
+Store both values - they will be included in research file headers and used for all file operations.
+
+**1.3 Load Relevant Skills**
 
 Based on task keywords, load appropriate skills:
 
@@ -93,28 +111,35 @@ Based on task keywords, load appropriate skills:
 
 If unclear which skills to load, ask the user.
 
-**1.3 Create File Structure**
-Create research directory: `.claude/agents/research/<YYYYMMDD-HHMMSS>-<task-name>/`
+**1.4 Create File Structure with Lazy Directory Creation**
+Research directory will be created when first file is written:
+`~/.claude/workspace/<workspace>/research/<YYYYMMDD-HHMMSS>-<task-name>/`
 
-Example: `.claude/agents/research/20251105-143022-auth-flow-quirk/`
+Example: `~/.claude/workspace/time-cop/research/20251105-143022-auth-flow-quirk/`
 
-**1.4 Write Research Plan**
+**1.5 Write Research Plan**
+Before writing, create directory: `mkdir -p ~/.claude/workspace/<workspace>/research/<directory-name>/`
+
 Create `plan.md` with:
+- **Workspace**: <workspace-name>
+- **Project Root**: /absolute/path/to/project
 - **Research Objective**: What needs to be understood
 - **Key Questions**: Specific questions to answer
 - **Investigation Scope**: Files/modules to examine
 - **Expected Deliverables**: What will be produced (issue, findings doc, etc.)
 - **Skills Loaded**: Which skills are active
 
-**1.5 Create Progress File**
+**1.6 Create Progress File**
 Create `progress.md` from this template:
 
 ```markdown
 # Research Progress: <task-name>
 
+**Workspace**: <workspace-name>
+**Project Root**: /absolute/path/to/project
 **Status**: in_progress
 **Started**: <timestamp>
-**Research Directory**: `.claude/agents/research/<directory-name>/`
+**Research Directory**: `~/.claude/workspace/<workspace>/research/<directory-name>/`
 
 ## Phases
 - [ ] Phase 1: Setup & Planning
@@ -143,10 +168,12 @@ Create `progress.md` from this template:
 - Files to review: [List of key files created so far]
 ```
 
-**1.6 Inform User**
+**1.7 Inform User**
 Send brief message to user:
 ```
-Starting codebase research investigation. Research directory: .claude/agents/research/<directory>/
+Starting codebase research investigation. Research directory: ~/.claude/workspace/<workspace>/research/<directory>/
+
+**File Reference Convention**: All file paths in research outputs will be relative to project root for portability.
 
 Phase 1 complete. Created research plan with [X] key questions. Proceeding to reconnaissance...
 ```
@@ -399,7 +426,7 @@ Format output as:
 ```markdown
 ## Research Investigation Complete
 
-**Research Directory**: `.claude/agents/research/<directory-name>/`
+**Research Directory**: `~/.claude/workspace/<workspace>/research/<directory-name>/`
 
 ### Investigation Summary
 [2-3 paragraph summary of what was investigated and discovered]
@@ -411,8 +438,8 @@ Format output as:
 - ...
 
 ### Deliverables Created
-- `plan.md` - Research plan and objectives
-- `findings.md` - Detailed investigation findings with file references
+- `plan.md` - Research plan and objectives (includes workspace and project root)
+- `findings.md` - Detailed investigation findings with file references (relative to project root)
 - `<deliverable>.md` - [Description of primary deliverable]
 
 ### Recommended Next Steps
@@ -421,8 +448,10 @@ Format output as:
 ...
 
 ### File References
-For detailed findings: `.claude/agents/research/<directory-name>/findings.md`
-For [deliverable type]: `.claude/agents/research/<directory-name>/<deliverable>.md`
+For detailed findings: `~/.claude/workspace/<workspace>/research/<directory-name>/findings.md`
+For [deliverable type]: `~/.claude/workspace/<workspace>/research/<directory-name>/<deliverable>.md`
+
+**Note**: All code file references in findings are relative to project root for portability.
 ```
 
 **6.3 Mark Complete**
@@ -467,7 +496,7 @@ Return to main session with:
 
 Context capacity reached. Investigation is X% complete.
 
-**Progress saved to**: `.claude/agents/research/<directory-name>/progress.md`
+**Progress saved to**: `~/.claude/workspace/<workspace>/research/<directory-name>/progress.md`
 
 **What's been completed**:
 - [Phase X summary]
@@ -477,7 +506,7 @@ Context capacity reached. Investigation is X% complete.
 - [Next steps clearly stated]
 
 **To resume**:
-Invoke codebase-researcher again with: "Resume research from .claude/agents/research/<directory-name>"
+Invoke codebase-researcher again with: "Resume research from ~/.claude/workspace/<workspace>/research/<directory-name>"
 
 All progress has been saved and investigation can be resumed without loss of context.
 ```

@@ -6,6 +6,13 @@ These sections should be added to the standard task-planning progress template w
 
 **Usage**: When task-planning creates `<task_name>_progress.md`, add these sections after the standard template sections (Deviations, Blockers, Gotchas, Additional Research).
 
+**File Reference Requirements**:
+- The standard progress template (from task-planning) includes Workspace and Project Root fields
+- All file paths in these architecture extraction sections should be **relative to project root**
+- Example: `ruby_worker/app/workflows/workflow_demo_mixed.rb:15-30`
+- NOT: `/Users/chris.helma/workspace/personal/time-cop/ruby_worker/...`
+- This ensures portability across machines and Claude sessions
+
 ---
 
 ## Reconnaissance Summary

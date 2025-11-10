@@ -1,5 +1,7 @@
 # Plan: [Task Name]
 
+**Workspace**: [workspace-name]
+**Project Root**: [/absolute/path/to/project/root]
 **Status**: draft
 **GitHub Issue**: [Link to issue or "N/A"]
 **Created**: [Date]

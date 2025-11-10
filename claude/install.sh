@@ -32,7 +32,7 @@ fi
 
 # Create directories in ai-assistants repo if they don't exist
 echo -e "${BLUE}Ensuring directory structure exists...${NC}"
-for dir in skills commands memories agents; do
+for dir in skills commands memories agents workspace; do
     if [ ! -d "${SCRIPT_DIR}/${dir}" ]; then
         echo -e "${YELLOW}Creating ${SCRIPT_DIR}/${dir}${NC}"
         mkdir -p "${SCRIPT_DIR}/${dir}"
@@ -207,6 +207,7 @@ create_dir_symlink "${SCRIPT_DIR}/skills" "${CLAUDE_HOME}/skills" "Skills"
 create_dir_symlink "${SCRIPT_DIR}/commands" "${CLAUDE_HOME}/commands" "Commands"
 create_dir_symlink "${SCRIPT_DIR}/memories" "${CLAUDE_HOME}/memories" "Memories"
 create_dir_symlink "${SCRIPT_DIR}/agents" "${CLAUDE_HOME}/agents" "Custom Agents"
+create_dir_symlink "${SCRIPT_DIR}/workspace" "${CLAUDE_HOME}/workspace" "Workspace"
 
 # Create symlinks for files
 create_file_symlink "${SCRIPT_DIR}/settings.json" "${CLAUDE_HOME}/settings.json" "settings.json"
@@ -221,7 +222,7 @@ echo "Your Claude Code configuration is now symlinked to:"
 echo "  ${SCRIPT_DIR}"
 echo ""
 echo "Symlinked items:"
-echo "  📁 Directories: skills, commands, memories, agents"
+echo "  📁 Directories: skills, commands, memories, agents, workspace"
 echo "  📄 Files: settings.json, CLAUDE.md, .mcp.json"
 echo ""
 echo "Any changes in ~/.claude/ will automatically reflect in your"

@@ -13,9 +13,11 @@ outcomes: what was accomplished, key decisions, metrics, what's next.
 See .agents/README.md sections "Resumability" and "Documenting Phase Outcomes" for details.
 -->
 
+**Workspace**: [workspace-name]
+**Project Root**: [/absolute/path/to/project/root]
 **Status**: in_progress
 **Plan**: [Link to corresponding _plan.md file]
-**Output Directory**: `../output/[task_name]/`
+**Output Directory**: `~/.claude/workspace/[workspace-name]/output/[task_name]/`
 **Started**: [Date]
 
 ## Progress
