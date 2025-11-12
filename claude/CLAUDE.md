@@ -21,8 +21,9 @@ When needing to interact with GitHub, use the locally installed GitHub CLI (`gh`
 ### Claude Skills Documentation
 
 The documentation for Claude and Claude Code Skills can be fetched from here:
-- https://claude.com/blog/skills
-- https://anthropic.mintlify.app/en/docs/claude-code/skills
+- https://anthropic.mintlify.app/en/docs/agents-and-tools/agent-skills/overview
+- https://anthropic.mintlify.app/en/docs/agents-and-tools/agent-skills/quickstart
+- https://anthropic.mintlify.app/en/docs/agents-and-tools/agent-skills/best-practices
 
 ### Claude Slash Command Documentation
 
