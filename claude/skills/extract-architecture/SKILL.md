@@ -218,7 +218,9 @@ For large-scale extractions, delegate iteration-level investigation to codebase-
    ```
 
 2. **Review findings returned** by codebase-researcher:
-   - Read findings file from `~/.claude/workspace/<workspace>/research/<timestamp>-iteration-N/`
+   - Read findings files from `~/.claude/workspace/<workspace>/research/<timestamp>-iteration-N/`
+   - Codebase-researcher creates `findings_part1.md`, `findings_part2.md`, etc. (split to stay under 25K token read limit) plus `summary.md`
+   - Read summary.md first for overview, then findings_part*.md as needed for details
    - Main session never loads source code - only curated findings
 
 3. **Synthesize into patterns.md** (main session):
@@ -236,6 +238,7 @@ For large-scale extractions, delegate iteration-level investigation to codebase-
 - ✅ Each iteration's investigation preserved separately for resumability
 - ✅ Forces progressive abstraction (code → patterns → architecture)
 - ✅ Better for context health on large extractions (>3k lines)
+- ✅ Codebase-researcher manages file size automatically (splits findings to stay under 25K token Claude Code read limit)
 
 **Trade-offs:**
 - ❌ Additional orchestration complexity
@@ -348,7 +351,6 @@ Document iteration completion in "Phase Progress Tracking" section
 **3.5 Continue Until All Iterations Complete**
 
 Repeat Steps 3.1-3.4 for each planned iteration.
-Actual iterations may differ from plan (document deviations).
 
 **3.6 Human Priority Review**
 
@@ -788,6 +790,7 @@ Mark Step 10 complete with chosen format and output location.
 - Update progress file after each phase
 - Write patterns incrementally (not at end)
 - Document decisions and rationale as you go
+- For high-iteration extractions (5+ iterations), apply tag-team's living document pattern: write patterns immediately to deliverables (patterns.md), keep Progress file lean with just tracking/outcomes
 
 **3. Flexible Deliverables**
 - Adapt output to extraction goals
@@ -854,6 +857,9 @@ This skill builds directly on tag-team:
 
 **Step 1**: Invoke tag-team to create plan and progress files
 **Throughout**: Update progress file using architecture-specific sections (see `assets/progress_template_additions.md`)
+
+**Task-type pattern**: Extract-architecture follows the Extraction/Research task pattern - phase-based structure, reconnaissance → analysis → refinement → delivery, with outcome summaries per phase. See tag-team SKILL.md "Task-Type Patterns" section for detailed guidance on this workflow style.
+
 **Progress file sections**:
 - Reconnaissance Summary (repository stats, architecture overview, file inventory)
 - Iteration Plan (batching strategy, file groupings, pattern targets)
