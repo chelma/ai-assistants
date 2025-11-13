@@ -2,12 +2,12 @@
 
 ## Overview
 
-These sections should be added to the standard task-planning progress template when performing architecture extraction tasks. They provide structure for documenting reconnaissance findings, iteration plans, and phase-by-phase progress.
+These sections should be added to the standard tag-team progress template when performing architecture extraction tasks. They provide structure for documenting reconnaissance findings, iteration plans, and phase-by-phase progress.
 
-**Usage**: When task-planning creates `<task_name>_progress.md`, add these sections after the standard template sections (Deviations, Blockers, Gotchas, Additional Research).
+**Usage**: When tag-team creates `<task_name>_progress.md`, add these sections after the standard template sections (Deviations, Blockers, Gotchas, Additional Research).
 
 **File Reference Requirements**:
-- The standard progress template (from task-planning) includes Workspace and Project Root fields
+- The standard progress template (from tag-team) includes Workspace and Project Root fields
 - All file paths in these architecture extraction sections should be **relative to project root**
 - Example: `ruby_worker/app/workflows/workflow_demo_mixed.rb:15-30`
 - NOT: `/Users/chris.helma/workspace/personal/time-cop/ruby_worker/...`
@@ -271,9 +271,9 @@ Common additional phases:
 
 ### Integration with Standard Template
 
-These sections integrate with task-planning's progress template as follows:
+These sections integrate with tag-team's progress template as follows:
 
-**Standard template sections** (from task-planning):
+**Standard template sections** (from tag-team):
 - Status
 - Plan reference
 - Started date
@@ -284,7 +284,7 @@ These sections integrate with task-planning's progress template as follows:
 - Iteration Plan
 - Phase Progress Tracking
 
-**Standard template sections** (from task-planning):
+**Standard template sections** (from tag-team):
 - Deviations from Plan
 - Blockers
 - Gotchas and Friction Points
@@ -293,7 +293,7 @@ These sections integrate with task-planning's progress template as follows:
 **Add these phase completion sections as needed**:
 - Phase [N] Completion Summary (repeat for each phase)
 
-**Standard template section** (from task-planning):
+**Standard template section** (from tag-team):
 - Notes
 
 ### Example Integration
@@ -307,7 +307,7 @@ These sections integrate with task-planning's progress template as follows:
 
 ## Progress
 
-[High-level progress summary from task-planning template]
+[High-level progress summary from tag-team template]
 
 ---
 
@@ -331,25 +331,25 @@ These sections integrate with task-planning's progress template as follows:
 
 ## Deviations from Plan
 
-[Standard task-planning section]
+[Standard tag-team section]
 
 ---
 
 ## Blockers
 
-[Standard task-planning section]
+[Standard tag-team section]
 
 ---
 
 ## Gotchas and Friction Points
 
-[Standard task-planning section]
+[Standard tag-team section]
 
 ---
 
 ## Additional Research
 
-[Standard task-planning section]
+[Standard tag-team section]
 
 ---
 
@@ -367,7 +367,7 @@ These sections integrate with task-planning's progress template as follows:
 
 ## Notes
 
-[Standard task-planning section]
+[Standard tag-team section]
 ```
 
-This structure enables comprehensive progress tracking while maintaining compatibility with task-planning's established workflow.
+This structure enables comprehensive progress tracking while maintaining compatibility with tag-team's established workflow.

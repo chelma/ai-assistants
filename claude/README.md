@@ -32,7 +32,7 @@ claude/
 │   ├── extract-architecture/    # Extract patterns from codebases for AI consumption
 │   ├── langchain-expert-builder/  # LangChain multi-expert system builder
 │   ├── python-style/            # Python coding style guidelines
-│   ├── task-planning/           # Task planning workflow skill
+│   ├── tag-team/                # Collaborative pair programming workflow
 │   └── tech-writing/            # Technical documentation guidelines
 ├── commands/                    # Custom slash commands (empty)
 ├── memories/                    # Custom memories (empty)
@@ -172,31 +172,31 @@ Comprehensive Python coding style guidelines extracted from Chris's production c
 
 See `skills/python-style/SKILL.md` for full documentation.
 
-### task-planning
+### tag-team
 
-Structured workflow for planning and implementing features across multiple Claude Code sessions.
+Collaborative pair programming workflow for substantive engineering tasks through planning and implementation phases.
 
-**Usage**: Explicitly invoke when the user mentions "task planning":
-- "Use task planning skill"
-- "Help me with task-planning"
-- "Set up task planning workflow"
+**Usage**: Explicitly invoke with "tag-team":
+- "Let's tag-team this feature"
+- "Use tag-team for this task"
 
-**Note**: Do NOT use for general planning requests like "help me plan this feature" - use Claude's built-in planning mode for those.
+**Note**: This is a user-initiated workflow for extended collaborative work, not for quick tasks or general planning requests.
 
 **What it does**:
 - Creates working files in `~/.claude/workspace/<workspace>/` (symlinked to ai-assistants repo for version control)
 - Automatically detects workspace from git repo name (or asks if not in git repo)
 - Tracks project root for portable file references (relative paths)
-- Guides interactive plan creation
-- Separates planning from implementation sessions
+- Guides through planning and implementation phases
+- Enables review/intervention points throughout the workflow
 - All working files are version-controlled and sync across machines
 
 **Key benefits**:
 - Git checkpointing: Commit plans/progress anytime
 - Cross-machine sync: Same workspace on all machines
 - Portable file references: Use relative paths from project root
+- Extended collaboration model with clear handoff points
 
-See `skills/task-planning/SKILL.md` for full documentation.
+See `skills/tag-team/SKILL.md` for full documentation.
 
 ### tech-writing
 

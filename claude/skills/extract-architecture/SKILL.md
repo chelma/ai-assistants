@@ -1,6 +1,6 @@
 ---
 name: extract-architecture
-description: Extract architectural patterns and design decisions from existing codebases to create AI-consumable reference guides. Use this skill when tasked with documenting architecture, creating pattern catalogs, building reference implementations, or producing prescriptive guides for AI coding assistants. Outputs are designed for Claude and other AI assistants to reference when implementing similar patterns. This skill builds on task-planning for comprehensive progress tracking and supports optional conversion to Claude Skills.
+description: Extract architectural patterns and design decisions from existing codebases to create AI-consumable reference guides. Use this skill when tasked with documenting architecture, creating pattern catalogs, building reference implementations, or producing prescriptive guides for AI coding assistants. Outputs are designed for Claude and other AI assistants to reference when implementing similar patterns. This skill builds on tag-team for comprehensive progress tracking and supports optional conversion to Claude Skills.
 ---
 
 # Extract Architecture
@@ -17,7 +17,7 @@ Extract architectural patterns, design decisions, and reusable abstractions from
 - Extracting reusable abstractions for framework/library development
 
 **Key characteristics:**
-- Builds on task-planning skill for comprehensive progress tracking
+- Builds on tag-team skill for comprehensive progress tracking
 - Produces flexible deliverables based on extraction goals (patterns catalog, guide, reference implementation)
 - Context health management: Supports both direct reading and delegated investigation via codebase-researcher for large-scale extractions
 - Optimizes for AI consumption (file references, imperative form, progressive disclosure)
@@ -26,9 +26,9 @@ Extract architectural patterns, design decisions, and reusable abstractions from
 
 ## Workflow
 
-### Step 1: Invoke task-planning Skill
+### Step 1: Invoke tag-team Skill
 
-Begin by invoking the task-planning skill to establish the extraction as a formal task with plan and progress tracking.
+Begin by invoking the tag-team skill to establish the extraction as a formal task with plan and progress tracking.
 
 **Task name format**: `<issue-id>-<description>` or `<YYYY-MM-DD>-<description>`
 - Example: `GH-456-extract_langchain_patterns` or `2025-11-01-document_microservices_architecture`
@@ -42,12 +42,12 @@ Begin by invoking the task-planning skill to establish the extraction as a forma
   - Progress file documents process for resumability
 - **Implementation approach**: Will follow 3-8 phase workflow (reconnaissance → analysis → refinement → optional phases)
 
-**Note**: task-planning skill automatically handles:
+**Note**: tag-team skill automatically handles:
 - Workspace detection (from git repo name or asks user)
 - Project root detection (for portable file references)
 - Creates plan in `~/.claude/workspace/<workspace>/tasks/<task_name>_plan.md`
 
-After task-planning creates the plan file, proceed to Step 2.
+After tag-team creates the plan file, proceed to Step 2.
 
 ### Step 2: Reconnaissance Phase
 
@@ -848,11 +848,11 @@ When scanning large amounts of code or documentation:
 
 **Note**: Sub-agents (like Explore agent) manage their own context and are not bound by this guidance.
 
-## Integration with task-planning
+## Integration with tag-team
 
-This skill builds directly on task-planning:
+This skill builds directly on tag-team:
 
-**Step 1**: Invoke task-planning to create plan and progress files
+**Step 1**: Invoke tag-team to create plan and progress files
 **Throughout**: Update progress file using architecture-specific sections (see `assets/progress_template_additions.md`)
 **Progress file sections**:
 - Reconnaissance Summary (repository stats, architecture overview, file inventory)
@@ -898,16 +898,16 @@ Guide for structuring output deliverables based on extraction goals.
 
 ### assets/progress_template_additions.md
 
-Architecture extraction-specific sections to add to task-planning's progress template.
+Architecture extraction-specific sections to add to tag-team's progress template.
 
 **Contents**:
 - Reconnaissance Summary structure
 - Iteration Plan format
 - Phase Progress Tracking sections
 - Phase Completion Summary templates
-- Integration guidance with standard task-planning template
+- Integration guidance with standard tag-team template
 
-**When to load**: Reference when setting up progress file or documenting phase completions. Copy relevant sections into `<task_name>_progress.md` created by task-planning.
+**When to load**: Reference when setting up progress file or documenting phase completions. Copy relevant sections into `<task_name>_progress.md` created by tag-team.
 
 ## Common Pitfalls
 
@@ -939,10 +939,10 @@ User: I want to extract the multi-expert LLM architecture from ocsf-playground
       and create a reference guide that other AI assistants can use.
 
 Claude: I'll help extract the LangChain multi-expert architecture from ocsf-playground.
-        Let me start by invoking the task-planning skill to set up this extraction
+        Let me start by invoking the tag-team skill to set up this extraction
         as a formal task.
 
-[Invokes task-planning skill, creates plan and progress files]
+[Invokes tag-team skill, creates plan and progress files]
 
 Claude: I've created the extraction plan. Now let me begin reconnaissance by launching
         an Explore agent to survey the ocsf-playground repository...

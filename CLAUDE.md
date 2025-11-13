@@ -50,7 +50,7 @@ This repository contains 6 custom Claude Code skills and 1 custom sub-agent. For
 - **extract-architecture** - Extract architectural patterns from codebases; outputs to shared references (`.agents/references/`) or Claude Skills format
 - **langchain-expert-builder** - LangChain multi-expert system builder using Expert-Task-Tool pattern
 - **python-style** - Comprehensive Python coding guidelines with priority-based patterns
-- **task-planning** - Structured planning workflow for multi-session feature work
+- **tag-team** - Collaborative pair programming workflow for substantive engineering tasks
 - **tech-writing** - Technical documentation guidelines (READMEs, issues, PRs)
 
 **Sub-agents**:

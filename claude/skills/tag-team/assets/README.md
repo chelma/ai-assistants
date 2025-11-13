@@ -168,7 +168,7 @@ ALL test code (1,687 lines). This validates the incremental artifact building wo
 
 ## Documenting Skill Improvements
 
-As you work on tasks, you may discover improvements to the skills you're using (task-planning, extract-architecture, or custom skills). Documenting these insights ensures they feed back into skill evolution.
+As you work on tasks, you may discover improvements to the skills you're using (tag-team, extract-architecture, or custom skills). Documenting these insights ensures they feed back into skill evolution.
 
 **When to document skill improvements:**
 

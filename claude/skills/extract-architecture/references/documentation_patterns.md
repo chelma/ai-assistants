@@ -287,7 +287,7 @@ WHEN TO USE THIS PATTERN:
 ```
 .agents/
 ├── tasks/
-│   ├── <task_name>_plan.md           # Created by task-planning skill
+│   ├── <task_name>_plan.md           # Created by tag-team skill
 │   └── <task_name>_progress.md       # Created during extraction
 └── output/
     └── <task_name>/                   # Extraction deliverables

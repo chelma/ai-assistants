@@ -28,12 +28,12 @@ The documentation for Claude and Claude Code Skills can be fetched from here:
 ### Claude Slash Command Documentation
 
 The documentation for Claude and Claude Code Slash Commands can be fetched from here:
-- https://anthropic.mintlify.app/en/docs/claude-code/slash-commands
+- https://code.claude.com/docs/en/slash-commands
 
 ### Claude Subagents Documentation
 
 The documentation for Claude and Claude Code Subagents can be fetched from here:
-- https://anthropic.mintlify.app/en/docs/claude-code/sub-agents
+- https://code.claude.com/docs/en/sub-agents
 
 ---
 
