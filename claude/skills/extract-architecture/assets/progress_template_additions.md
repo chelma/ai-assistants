@@ -4,7 +4,13 @@
 
 These sections should be added to the standard tag-team progress template when performing architecture extraction tasks. They provide structure for documenting reconnaissance findings, iteration plans, and phase-by-phase progress.
 
-**Usage**: When tag-team creates `<task_name>_progress.md`, add these sections after the standard template sections (Deviations, Blockers, Gotchas, Additional Research).
+**Usage**: When tag-team creates `<task_name>_progress.md`, add these sections after the standard template sections (Evolution and Adaptations, Blockers, Gotchas, Additional Research).
+
+**CRITICAL - Incremental Updates**:
+- **UPDATE THIS FILE IMMEDIATELY AFTER EACH PHASE/ITERATION COMPLETION** (not in batches)
+- Batched updates cause context strain and reduce resumability
+- Update progress file BEFORE moving to next phase/iteration
+- This ensures state is preserved if context needs to be compacted
 
 **File Reference Requirements**:
 - The standard progress template (from tag-team) includes Workspace and Project Root fields
@@ -100,58 +106,70 @@ Organize files by architectural layer, concern, or domain. For each layer:
 
 ## Phase Progress Tracking
 
-### Phase 1: Reconnaissance ✅/⏳/[ ]
-- ✅/[ ] Launch Explore agent for [repository] repository
-- ✅/[ ] Review reconnaissance report
-- ✅/[ ] Create complete file inventory organized by [layer/concern/domain]
-- ✅/[ ] File prioritization ([strategy])
-- ✅/[ ] Create iteration plan grouping files into batches
-- ✅/[ ] Present iteration plan for approval
+**REMEMBER**: Update this file immediately after EACH phase completion (not in batches).
 
-**Outcome**: [Summary of what was learned and delivered in this phase]
+### Phase 1: Plan with Tag-Team ✅/⏳/[ ]
+- ✅/[ ] Invoke tag-team skill
+- ✅/[ ] Create plan file with extraction goals and acceptance criteria
+
+**Outcome**: [Summary of plan created]
 
 ---
 
-### Phase 2: Iterative Analysis ✅/⏳/[ ]
+### Phase 2: Reconnaissance & Iteration Planning ✅/⏳/[ ]
+- ✅/[ ] Launch Explore agent for [repository] repository
+- ✅/[ ] Review reconnaissance report
+- ✅/[ ] Create complete file inventory organized by [layer/concern/domain]
+- ✅/[ ] Plan iterations (~1500 lines each)
+- ✅/[ ] Choose investigation approach (direct / delegated)
+- ✅/[ ] Present iteration plan for approval (CHECKPOINT)
+
+**Outcome**: [Summary of what was learned and strategy approved]
+
+---
+
+### Phase 3: Iterative Analysis ✅/⏳/[ ]
 - ✅/[ ] Iteration 1: [Title] ([X] files, [Y] lines)
 - ✅/[ ] Iteration 2: [Title] ([X] files, [Y] lines)
 - ✅/[ ] Iteration 3: [Title] ([X] files, [Y] lines)
 - ✅/[ ] [Additional iterations as needed]
+- ✅/[ ] Human priority review (CHECKPOINT)
 
-**Outcome**: [Summary of patterns extracted, total files/lines analyzed]
-
----
-
-### Phase 3: Human-Led Refinement ✅/⏳/[ ]
-- ✅/[ ] Critical review of findings
-- ✅/[ ] Identify output type needed (pattern catalog / prescriptive guide / reference impl)
-- ✅/[ ] Create [deliverable 1]
-- ✅/[ ] Create [deliverable 2]
-- ✅/[ ] [Additional refinement tasks]
-
-**Outcome**: [Summary of deliverables created]
+**Outcome**: [Summary of patterns extracted with priority breakdown - X CRITICAL, Y PREFERRED, Z OBSERVED]
 
 ---
 
-### Phase 4: Token Optimization ✅/⏳/[ ]
-- ✅/[ ] Eliminate code duplication between [doc1] and [doc2]
-- ✅/[ ] Replace inline code examples with file references
-- ✅/[ ] Enhance [component] docstrings with pattern explanations
-- ✅/[ ] [Additional optimization tasks]
+### Phase 4: Critical Review & Deliverable Scoping ✅/⏳/[ ]
+- ✅/[ ] Review pattern documentation (descriptive vs prescriptive)
+- ✅/[ ] Determine deliverables needed (catalog / guide / reference impl)
+- ✅/[ ] Choose output format: Shared Reference OR Claude Skill (CHECKPOINT)
 
-**Outcome**: [Token reduction achieved, clarity improvements]
+**Outcome**: [Deliverables scoped, format chosen]
 
 ---
 
-### Phase 5: [Custom Phase Title] ✅/⏳/[ ]
+### Phase 5: Refinement ✅/⏳/[ ]
+- ✅/[ ] Create prescriptive guide (if applicable) with TODO markers
+- ✅/[ ] Create reference implementation (if applicable) with TODO markers
+- ✅/[ ] Human collaboration - design rationale (CHECKPOINT)
+- ✅/[ ] Token optimization (file references, enhanced docstrings)
 
-[Add additional phases as needed for the specific extraction]
+**Outcome**: [Deliverables created with human rationale incorporated]
 
-Common additional phases:
-- **Code Organization Refinement**: Ensure domain-agnostic abstractions
-- **Workflow Documentation**: Document complete usage patterns with examples
-- **Design Philosophy Documentation**: Capture rationale behind key decisions
-- **Skill Conversion**: Package architecture guide as Claude Skill (if applicable)
+---
+
+### Phase 6: Finalize & Deliver ✅/⏳/[ ]
+- ✅/[ ] Process documentation (phase summaries, lessons learned)
+- ✅/[ ] Format deliverables per Phase 4 choice
+- ✅/[ ] Final review and presentation to user
+
+**Outcome**: [Complete deliverable set delivered]
+
+---
+
+### [Optional Additional Phases]
+
+**Note**: Additional phases may emerge from human reviews. Document them here using positive framing in "Evolution and Adaptations" section (not as deviations/failures).
 
 ---
 
