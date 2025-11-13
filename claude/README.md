@@ -29,6 +29,7 @@ claude/
 ├── .mcp.json                    # MCP server configuration
 ├── skills/                      # Custom Claude Code skills
 │   ├── aws-interface-builder/   # AWS SDK interface patterns with Factory + DI
+│   ├── code-reviewer/           # Code review assistance with context-efficient workflow
 │   ├── extract-architecture/    # Extract patterns from codebases for AI consumption
 │   ├── langchain-expert-builder/  # LangChain multi-expert system builder
 │   ├── python-style/            # Python coding style guidelines
@@ -106,6 +107,28 @@ Build production-ready Python interfaces for AWS SDK (boto3) using the Factory +
 
 See `skills/aws-interface-builder/SKILL.md` for full documentation.
 
+### code-reviewer
+
+Guidance for assisting with code reviews in a collaborative, context-efficient manner.
+
+**Usage**: Use only when explicitly requested:
+- "Help me review PR #123"
+- "Can you assist with this code review?"
+- "Help me understand what changed in this branch"
+
+**Note**: Do NOT trigger automatically. Wait for explicit request from the user.
+
+**What it provides**:
+- Collaborative review principles (assist user, don't perform independent formal review)
+- Context-efficient workflow (brief responses unless detail requested)
+- Local code checkout workflow (uses GitHub CLI for authentication)
+- Token-heavy investigation delegation (uses codebase-researcher for cross-file analysis)
+- Review focus areas (correctness, edge cases, testing, maintainability, performance, security)
+
+**Key philosophy**: Claude's role is to assist the user in reaching their own conclusions about the code, not to perform a formal review independently. Preserve context window through brevity and strategic use of sub-agents.
+
+See `skills/code-reviewer/SKILL.md` for full documentation.
+
 ### extract-architecture
 
 Extract architectural patterns and design decisions from existing codebases to create AI-consumable reference guides.
@@ -117,13 +140,13 @@ Extract architectural patterns and design decisions from existing codebases to c
 - Extracting reusable abstractions for frameworks/libraries
 
 **What it provides**:
-- Structured workflow (reconnaissance → iterative analysis → refinement)
-- Context health management (direct reading or delegated investigation via codebase-researcher)
+- 6-phase checkpoint-driven workflow (plan → reconnaissance → analysis → scoping → refinement → delivery)
+- 4 strategic human collaboration gates (iteration approval, priority review, format choice, design rationale)
+- Priority classification framework (CRITICAL/PREFERRED/OBSERVED patterns)
+- Context health management (direct reading ≤3k lines, delegated to codebase-researcher >3k lines)
 - Flexible deliverables (pattern catalog, prescriptive guide, reference implementation)
-- Builds on task-planning for progress tracking
-- Optional skill conversion for distribution
 
-**Key characteristics**: Supports both small extractions (<3k lines, direct reading) and large extractions (>3k lines, delegated to codebase-researcher). Optimizes for AI consumption with file references and progressive disclosure.
+**Key characteristics**: Composition model - builds on tag-team for checkpoint rhythm and progress tracking, composes with codebase-researcher for large-scale investigations. Optimizes for AI consumption with file references, imperative form, and progressive disclosure.
 
 See `skills/extract-architecture/SKILL.md` for full documentation.
 
@@ -174,7 +197,7 @@ See `skills/python-style/SKILL.md` for full documentation.
 
 ### tag-team
 
-Collaborative pair programming workflow for substantive engineering tasks through planning and implementation phases.
+Collaborative pair programming workflow for substantive engineering tasks using checkpoint pattern (DO WORK → DOCUMENT → PAUSE → CONTINUE).
 
 **Usage**: Explicitly invoke with "tag-team":
 - "Let's tag-team this feature"
@@ -182,19 +205,20 @@ Collaborative pair programming workflow for substantive engineering tasks throug
 
 **Note**: This is a user-initiated workflow for extended collaborative work, not for quick tasks or general planning requests.
 
-**What it does**:
-- Creates working files in `~/.claude/workspace/<workspace>/` (symlinked to ai-assistants repo for version control)
-- Automatically detects workspace from git repo name (or asks if not in git repo)
-- Tracks project root for portable file references (relative paths)
-- Guides through planning and implementation phases
-- Enables review/intervention points throughout the workflow
-- All working files are version-controlled and sync across machines
+**What it provides**:
+- **Checkpoint rhythm**: DO WORK → DOCUMENT → PAUSE FOR REVIEW → CONTINUE at natural boundaries
+- **Flexible structure**: Linear step-by-step OR phase-based OR emergent task organization
+- **Workspace management**: Creates working files in `~/.claude/workspace/<workspace>/` (symlinked for version control)
+- **Portable file references**: Tracks project root for relative paths across machines
+- **Plan/progress separation**: Plan is snapshot, progress is living document with evolution tracking
+- **Composition base**: Other skills (extract-architecture) build on tag-team's checkpoint pattern
 
 **Key benefits**:
+- Resumable across sessions (progress file as state document)
+- Flexible evolution (additional phases can emerge from discoveries)
 - Git checkpointing: Commit plans/progress anytime
 - Cross-machine sync: Same workspace on all machines
-- Portable file references: Use relative paths from project root
-- Extended collaboration model with clear handoff points
+- Systematic learning capture (gotchas, lessons learned, process improvements)
 
 See `skills/tag-team/SKILL.md` for full documentation.
 
@@ -238,18 +262,18 @@ Specialized research sub-agent that performs extensive codebase investigations w
 - Any research task requiring deep codebase understanding
 
 **What it does**:
-- Automatically detects workspace from git repo name (or asks if not in git repo)
-- Tracks project root for portable file references
-- Loads relevant skills based on task (python-style, langchain-expert-builder, tech-writing, extract-architecture)
-- Uses Explore agent for reconnaissance
-- Chunks file reading (~1500 lines max per batch)
-- Monitors context health with resumability checkpoints
-- Saves structured findings to disk with version control
-- Returns concise summary + file paths to main session
+- **Workspace management**: Automatically detects workspace from git repo name (or asks if not in git repo)
+- **Portable references**: Tracks project root for relative file paths
+- **Skills integration**: Loads relevant skills based on task (python-style, langchain-expert-builder, tech-writing, extract-architecture)
+- **Reconnaissance**: Uses Explore agent for high-level codebase survey
+- **Chunked reading**: ~1500 lines max per read for context health
+- **Incremental writing**: Separate numbered files (findings_part1.md, findings_part2.md) with 20-22K token limits
+- **Resumability**: Progress saved after each phase, designed for continuation by another instance
+- **Concise return**: Provides main session with brief summary + file paths
 
-**Key characteristics**: Separate context window prevents pollution of main session. Designed to compose with skills ecosystem (invoked by extract-architecture for iteration-level investigations, can be invoked during task-planning for extensive reconnaissance).
+**Key characteristics**: Separate context window prevents pollution of main session. Designed to compose with skills ecosystem (invoked by extract-architecture for iteration-level investigations, can be invoked during tag-team for extensive reconnaissance). Uses Write tool for autonomous file creation (never bash commands requiring approval).
 
-**File structure**: Creates `~/.claude/workspace/<workspace>/research/<timestamp>-<task-name>/` with plan.md, progress.md, findings.md, and deliverables. All file references are relative to project root for portability.
+**File structure**: Creates `~/.claude/workspace/<workspace>/research/<timestamp>-<task-name>/` with plan.md, progress.md, findings_partN.md, summary.md. All file references are relative to project root for portability.
 
 See `agents/codebase-researcher.md` for full documentation.
 

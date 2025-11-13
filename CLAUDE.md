@@ -43,14 +43,15 @@ This creates bidirectional symlinks between `~/.claude/` and the repository's `c
 
 ## Claude Skills and Sub-agents
 
-This repository contains 6 custom Claude Code skills and 1 custom sub-agent. For detailed documentation including usage patterns, key philosophies, and what each provides, see `claude/README.md`.
+This repository contains 7 custom Claude Code skills and 1 custom sub-agent. For detailed documentation including usage patterns, key philosophies, and what each provides, see `claude/README.md`.
 
 **Skills**:
 - **aws-interface-builder** - AWS SDK interface patterns with Factory + Dependency Injection
-- **extract-architecture** - Extract architectural patterns from codebases; outputs to shared references (`.agents/references/`) or Claude Skills format
+- **code-reviewer** - Code review assistance with context-efficient workflow
+- **extract-architecture** - Extract architectural patterns from codebases using checkpoint-driven workflow; composes with tag-team and codebase-researcher
 - **langchain-expert-builder** - LangChain multi-expert system builder using Expert-Task-Tool pattern
 - **python-style** - Comprehensive Python coding guidelines with priority-based patterns
-- **tag-team** - Collaborative pair programming workflow for substantive engineering tasks
+- **tag-team** - Collaborative pair programming workflow using checkpoint pattern (DO WORK → DOCUMENT → PAUSE → CONTINUE)
 - **tech-writing** - Technical documentation guidelines (READMEs, issues, PRs)
 
 **Sub-agents**:
