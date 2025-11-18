@@ -41,6 +41,15 @@ This creates bidirectional symlinks between `~/.claude/` and the repository's `c
   - **output/** - Task deliverables and intermediate artifacts
   - **research/** - Codebase investigation findings from codebase-researcher sub-agent
 
+- **public-plugin/** - Shareable plugin for collaborative workflow tools
+  - **.claude-plugin/plugin.json** - Plugin manifest
+  - **skills/** - Symlinks to shareable skills in `claude/skills/`
+  - **agents/** - Symlinks to shareable agents in `claude/agents/`
+  - **README.md** - Plugin documentation for users
+
+- **.claude-plugin/** - Marketplace configuration (repo root)
+  - **marketplace.json** - Marketplace definition pointing to `public-plugin/`
+
 ## Claude Skills and Sub-agents
 
 This repository contains 7 custom Claude Code skills and 1 custom sub-agent. For detailed documentation including usage patterns, key philosophies, and what each provides, see `claude/README.md`.
@@ -100,6 +109,22 @@ Architecture references in `.agents/references/` document reusable patterns extr
 **Key distinction:**
 - `.agents/references/` - Shared, version-controlled architecture references (team resource)
 - `.claude/agents/` - Engineer-specific working files, git-ignored (personal workspace)
+
+### Installing as a Plugin
+This repository also functions as a Claude Code plugin marketplace, allowing others to install collaborative workflow tools without cloning the full repository:
+
+```bash
+# Add the marketplace
+/plugin marketplace add chelma/ai-assistants
+
+# Install the collaborative workflows plugin
+/plugin install collaborative-workflows@ai-assistants
+```
+
+**What gets shared:**
+- `tag-team` skill - Collaborative pair programming workflow
+- `extract-architecture` skill - Architecture pattern extraction
+- `codebase-researcher` agent - Deep codebase investigation
 
 ## Key Patterns
 

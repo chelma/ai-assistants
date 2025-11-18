@@ -1,0 +1,14 @@
+{
+  "marketplace": {
+    "name": "Honest chelma@'s Used Cars and AI Tooling",
+    "owner": "Chris Helma",
+    "description": "Your one stop for the finest discount vehicles and extremely trustworthy AI configuration"
+  },
+  "plugins": [
+    {
+      "name": "collaborative-workflows",
+      "source": "./public-plugin",
+      "description": "Claude Code configuration to support AI-assisted development"
+    }
+  ]
+}
