@@ -1,7 +1,9 @@
 {
-  "marketplace": {
-    "name": "Honest chelma@'s Used Cars and AI Tooling",
-    "owner": "Chris Helma",
+  "name": "chelma-ai-tools",
+  "owner": {
+    "name": "Chris Helma"
+  },
+  "metadata": {
     "description": "Your one stop for the finest discount vehicles and extremely trustworthy AI configuration"
   },
   "plugins": [
