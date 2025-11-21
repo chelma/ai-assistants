@@ -1,0 +1,49 @@
+// PATTERN DEMONSTRATED: Scriptdash Proto (Type Reuse from Engine)
+//
+// KEY CONCEPT: Scriptdash imports Engine types instead of defining its own.
+// This ensures type consistency between services - Scriptdash returns exactly
+// what Engine returns (no transformation needed).
+//
+// CRITICAL DIFFERENCE from Engine proto:
+// - Different package: alto.actions.wunderbar.v1 (not actions_api.v2)
+// - Imports Engine type: actions_api/types/v2/action_partnership.proto
+// - Same message structure (enables seamless delegation)
+//
+// File location: protos/src/alto/{domain}/{application}/v{version}/{resource}_endpoint.proto
+
+syntax = "proto3";
+
+package alto.actions.wunderbar.v1;  // CRITICAL: Scriptdash package (alto.* not actions_api.*)
+
+// PATTERN: Import Engine type (type reuse!)
+import "actions_api/types/v2/action_partnership.proto";  // ← From Engine
+import "core/types/v1/error_object.proto";
+import "opts/opts.proto";
+
+// PATTERN: Same request structure as Engine (enables delegation)
+message ActionPartnershipsEndpointFetchAllRequest {
+  // Empty - matches Engine request exactly
+}
+
+// PATTERN: Same response structure as Engine, using Engine types
+message ActionPartnershipsEndpointFetchAllResponse {
+  repeated core.types.v1.ErrorObject errors = 1;
+  repeated actions_api.types.v2.ActionPartnership data = 2;  // ← Engine type!
+
+  // KEY CONCEPT: Response uses Engine type (ActionsAPI::Types::V2::ActionPartnership)
+  // This means Scriptdash can return Engine response directly without transformation
+}
+
+// CRITICAL: Service V2.0 annotation (same as Engine)
+service ActionPartnershipsEndpoint {
+  option (opts.service_value) = {version: "v2.0"};
+
+  rpc FetchAll(ActionPartnershipsEndpointFetchAllRequest)
+      returns (ActionPartnershipsEndpointFetchAllResponse);
+}
+
+// WHY TYPE REUSE?
+// - Single source of truth (Engine defines type)
+// - No transformation needed (Scriptdash passes through Engine response)
+// - Type safety (Scriptdash and Engine guaranteed compatible)
+// - Fewer files to maintain

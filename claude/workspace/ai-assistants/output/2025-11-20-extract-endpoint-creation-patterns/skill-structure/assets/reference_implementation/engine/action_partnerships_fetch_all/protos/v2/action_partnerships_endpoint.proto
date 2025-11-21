@@ -1,0 +1,44 @@
+// PATTERN DEMONSTRATED: Service V2.0 FetchAll Endpoint (Empty Request)
+//
+// This defines the API contract for fetching all action partnerships.
+// Service V2.0 generates: interface.rb, client.rb, controller.rb, routes.rb, rpc_client.rb
+//
+// KEY CONCEPT: Empty request message = fetch all records (no filtering)
+// Use this pattern for small datasets, dropdowns, reference data.
+//
+// File location: protos/src/{domain}_api/v{version}/{resource}_endpoint.proto
+
+syntax = "proto3";
+
+package actions_api.v2;  // CRITICAL: Different package from types (ActionsAPI::V2 vs ActionsAPI::Types::V2)
+
+import "actions_api/types/v2/action_partnership.proto";  // ← Import the type we defined
+import "core/types/v1/error_object.proto";
+import "opts/opts.proto";
+
+// PATTERN: Empty request for "fetch all records"
+message ActionPartnershipsEndpointFetchAllRequest {
+  // Empty = no parameters
+  // Alternative: Add `repeated int64 ids = 1;` for filtered FetchAll
+}
+
+// PATTERN: Standard response structure (always same format)
+message ActionPartnershipsEndpointFetchAllResponse {
+  repeated core.types.v1.ErrorObject errors = 1;  // CRITICAL: Field 1 is always errors
+  repeated actions_api.types.v2.ActionPartnership data = 2;  // CRITICAL: Field 2 is always data (repeated for FetchAll)
+
+  // Optional field 3 for metadata (pagination, etc.):
+  // ActionPartnershipsEndpointFetchAllResponseMetadata metadata = 3;
+}
+
+// CRITICAL: Service definition with V2.0 annotation
+service ActionPartnershipsEndpoint {
+  option (opts.service_value) = {version: "v2.0"};  // ← Enables advanced code generation
+
+  rpc FetchAll(ActionPartnershipsEndpointFetchAllRequest)
+      returns (ActionPartnershipsEndpointFetchAllResponse);
+
+  // TODO: Add other methods (FetchOne, Create, Update, etc.)
+  // rpc FetchOne(ActionPartnershipsEndpointFetchOneRequest)
+  //     returns (ActionPartnershipsEndpointFetchOneResponse);
+}

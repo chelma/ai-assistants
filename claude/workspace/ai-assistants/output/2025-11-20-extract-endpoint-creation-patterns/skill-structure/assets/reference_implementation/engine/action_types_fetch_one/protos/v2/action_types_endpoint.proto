@@ -1,0 +1,42 @@
+// PATTERN DEMONSTRATED: FetchOne Endpoint (Required ID Parameter)
+//
+// KEY DIFFERENCE from FetchAll:
+// - Request has singular `int64 id` field (required)
+// - Response data is singular (not repeated)
+//
+// See action_partnerships_fetch_all example for detailed proto annotations
+
+syntax = "proto3";
+
+package actions_api.v2;
+
+import "actions_api/types/v2/action_type.proto";
+import "core/types/v1/error_object.proto";
+import "opts/opts.proto";
+
+// PATTERN: FetchOne request - singular ID, required
+message ActionTypesEndpointFetchOneRequest {
+  int64 id = 1 [(opts.field) = {required: true}];  // ← Singular, required
+}
+
+// PATTERN: FetchOne response - singular data field
+message ActionTypesEndpointFetchOneResponse {
+  repeated core.types.v1.ErrorObject errors = 1;
+  actions_api.types.v2.ActionType data = 2;  // ← NOT repeated (single record)
+}
+
+service ActionTypesEndpoint {
+  option (opts.service_value) = {version: "v2.0"};
+
+  rpc FetchOne(ActionTypesEndpointFetchOneRequest)
+      returns (ActionTypesEndpointFetchOneResponse);
+
+  // TODO: Note that FetchAll would look different:
+  // message ActionTypesEndpointFetchAllRequest {
+  //   repeated int64 ids = 1;  // ← Plural, optional
+  // }
+  // message ActionTypesEndpointFetchAllResponse {
+  //   repeated core.types.v1.ErrorObject errors = 1;
+  //   repeated actions_api.types.v2.ActionType data = 2;  // ← Repeated
+  // }
+}
