@@ -1,0 +1,27 @@
+// PATTERN DEMONSTRATED: Type Definition in Engine
+// KEY CONCEPT: Type lives in engine even though implementation is in Scriptdash
+// LOCATION: engine-operations/protos/src/operations_api/types/v1/wunderbar_user.proto
+
+syntax = "proto3";
+
+package operations_api.types.v1;
+
+import "opts/opts.proto";
+
+// Simplified WunderbarUser type (real version has ~30 fields)
+message WunderbarUser {
+  int64 id = 1 [(opts.field) = {required: true}];
+  string email = 2 [(opts.field) = {required: true}];
+  string first_name = 3 [(opts.field) = {required: true}];
+  string last_name = 4 [(opts.field) = {required: true}];
+  string full_name = 5 [(opts.field) = {required: true}];
+
+  // Team/role information
+  string team = 6;
+  string pod = 7;
+  repeated string wunderbar_roles = 8;
+
+  // Timestamps
+  int64 created_at = 9 [(opts.field) = {required: true}];
+  int64 updated_at = 10 [(opts.field) = {required: true}];
+}

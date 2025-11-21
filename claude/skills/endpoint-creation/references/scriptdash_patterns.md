@@ -509,9 +509,122 @@ end
 
 ---
 
+### Pattern 6.6: Engine Interface, Scriptdash Implementation [OBSERVED]
+
+**Priority**: OBSERVED
+
+**Purpose**: Establish proto contract in engine while keeping implementation and models in Scriptdash. Common intermediate pattern during migration.
+
+**When to use**: When you want proto benefits but aren't ready to move models to engine, or when Scriptdash is the natural home for the logic (operations, internal tools).
+
+**Implementation**:
+
+**Proto in Engine** (`engine-operations/protos/src/operations_api/v1/wunderbar_users_endpoint.proto`):
+```protobuf
+// NOTE: Currently implemented in scriptdash
+service WunderbarUsersEndpoint {
+  option (opts.service_value) = {version: "v2.0"};
+  rpc FetchOne(...) returns (...);
+  rpc FetchAll(...) returns (...);
+}
+```
+
+**Implementation in Scriptdash** (`app/services/operations/v1/wunderbar_users_endpoint.rb`):
+```ruby
+module Operations::V1
+  # Extends engine's generated abstract class
+  class WunderbarUsersEndpoint < OperationsAPI::V1::WunderbarUsersEndpoint::Interface::AbstractWunderbarUsersEndpoint
+    include OperationsAPI::V1::WunderbarUsersEndpoint::Interface
+
+    sig { override.params(id: Integer).returns(OperationsAPI::Types::V1::WunderbarUser) }
+    def fetch_one(id:)
+      wb_user = ::WunderbarUser.find(id)  # ← Scriptdash model
+      to_struct(wb_user)
+    end
+
+    sig do
+      override
+        .params(ids: T.nilable(T::Array[Integer]))
+        .returns(T::Array[OperationsAPI::Types::V1::WunderbarUser])
+    end
+    def fetch_all(ids: nil)
+      rel = ::WunderbarUser.all
+      rel = rel.where(id: ids) unless ids.nil?
+      rel.map { |wb_user| to_struct(wb_user) }
+    end
+
+    private
+
+    def to_struct(wb_user)
+      OperationsAPI::Types::V1::WunderbarUser.new(
+        id: wb_user.id,
+        email: wb_user.email,
+        # ... map fields
+      )
+    end
+  end
+end
+```
+
+**Hookup via Initializer** (`config/initializers/operations_engine.rb`):
+```ruby
+Rails.application.reloader.to_prepare do
+  OperationsEngine::Engine.base_controller = APIController
+  # CRITICAL: Tell engine to use Scriptdash implementation
+  OperationsEngine::Engine.wunderbar_users_endpoint = Operations::V1::WunderbarUsersEndpoint
+end
+```
+
+**What this enables**:
+- Engine provides: Routes (`GET /v1/wunderbar_users/:id`), interface, generated controller
+- Scriptdash provides: Implementation, model access, business logic
+- Generated controller calls Scriptdash endpoint via initializer hookup
+
+**Testing**:
+```ruby
+# Test via engine routes, implementation runs in Scriptdash
+RSpec.describe 'Operations::V1::WunderbarUsersEndpoint', type: :request do
+  it 'fetches wunderbar user' do
+    user = WunderbarUser.create!(email: 'test@example.com', ...)
+    get "/v1/wunderbar_users/#{user.id}"
+
+    expect(response).to have_http_status(200)
+    expect(JSON.parse(response.body)['data']['email']).to eq('test@example.com')
+  end
+end
+```
+
+**Trade-offs**:
+- ✅ Proto contract benefits (types, clients, documentation)
+- ✅ Models stay in Scriptdash (no migration needed)
+- ✅ Generated routes/controllers (less boilerplate)
+- ✅ Can migrate to engine implementation later without breaking consumers
+- ❌ Scriptdash must mount engine
+- ❌ Implementation split across repos (proto in engine, code in Scriptdash)
+- ❌ Requires initializer hookup (one more configuration step)
+
+**Common Error**: Forgetting initializer hookup
+
+```ruby
+# ❌ Wrong: No initializer, endpoint not hooked up
+# Result: Engine controller tries to instantiate AbstractEndpoint (fails)
+
+# ✅ Correct: Initializer tells engine where to find implementation
+Rails.application.reloader.to_prepare do
+  OperationsEngine::Engine.wunderbar_users_endpoint = Operations::V1::WunderbarUsersEndpoint
+end
+```
+
+**When NOT to use**:
+- Building new service from scratch (use Engine-only instead)
+- Need separate deployment (use full engine with models)
+- Already have models in engine (no benefit to Scriptdash implementation)
+
+---
+
 ## Pattern Summary
 
-**Layers 6-7 extracted**: 7 patterns (5 CRITICAL, 2 PREFERRED)
+**Layers 6-7 extracted**: 8 patterns (5 CRITICAL, 2 PREFERRED, 1 OBSERVED)
 
 **Key takeaways**:
 1. Core API modules wire up Engine clients with local/RPC switching

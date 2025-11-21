@@ -1,0 +1,45 @@
+// PATTERN DEMONSTRATED: Service Definition with Implementation Note
+// KEY CONCEPT: Proto in engine, comment indicates implementation location
+// LOCATION: engine-operations/protos/src/operations_api/v1/wunderbar_users_endpoint.proto
+
+syntax = "proto3";
+
+package operations_api.v1;
+
+import "core/types/v1/error_object.proto";
+import "operations_api/types/v1/wunderbar_user.proto";
+import "opts/opts.proto";
+
+// Request/Response for FetchOne
+message WunderbarUsersEndpointFetchOneRequest {
+  int64 id = 1 [(opts.field) = {required: true}];
+}
+
+message WunderbarUsersEndpointFetchOneResponse {
+  repeated core.types.v1.ErrorObject errors = 1;
+  operations_api.types.v1.WunderbarUser data = 2;
+}
+
+// Request/Response for FetchAll
+message WunderbarUsersEndpointFetchAllRequest {
+  // Optional: omit to fetch all Wunderbar Users
+  repeated int64 ids = 1;
+}
+
+message WunderbarUsersEndpointFetchAllResponse {
+  repeated core.types.v1.ErrorObject errors = 1;
+  repeated operations_api.types.v1.WunderbarUser data = 2;
+}
+
+// CRITICAL: Note indicating where implementation lives
+// NOTE: Currently implemented in scriptdash
+service WunderbarUsersEndpoint {
+  option (opts.service_value) = {version: "v2.0"};  // ← Generates controllers/routes/clients
+
+  rpc FetchOne(WunderbarUsersEndpointFetchOneRequest)
+    returns (WunderbarUsersEndpointFetchOneResponse);
+
+  // Fetch multiple Wunderbar Users by ID. Omit IDs to fetch all.
+  rpc FetchAll(WunderbarUsersEndpointFetchAllRequest)
+    returns (WunderbarUsersEndpointFetchAllResponse);
+}

@@ -46,52 +46,36 @@ The endpoint creation workflow follows **Better Boundaries** architectural princ
 
 **Trade-off**: Requires learning proto syntax, changes require regeneration. The upfront investment pays dividends in reliability, maintainability, and multi-language support.
 
-## Quick Start Workflow
-
-### Step 1: Choose Your Pattern
-
-**Engine-only** (business logic layer):
-- Use when: Building backend API, no permissions needed
-- Example: `assets/reference_implementation/engine/action_partnerships_fetch_all/`
-
-**Scriptdash + Engine** (two-layer with permissions):
-- Use when: Frontend needs authorization, gateway pattern
-- Example: `assets/reference_implementation/scriptdash/action_partnerships_fetch_all/`
-
-### Step 2: Copy Reference Implementation
-
-Copy the appropriate reference implementation and adapt for your resource:
-
-```bash
-# For Engine FetchAll:
-cp -r assets/reference_implementation/engine/action_partnerships_fetch_all my_resource_fetch_all
-
-# For Scriptdash wrapper:
-cp -r assets/reference_implementation/scriptdash/action_partnerships_fetch_all my_resource_fetch_all
-```
-
-### Step 3: Follow the Pattern Annotations
-
-Each file includes:
-- `# PATTERN DEMONSTRATED:` - What architectural pattern this shows
-- `# KEY CONCEPT:` - Important concepts to understand
-- `# CRITICAL:` - Required for functionality
-- `# TODO:` - Customization points for your domain
-- `# ← inline annotations` - Line-specific explanations
-
-### Step 4: Generate, Implement, Test
-
-1. Customize proto files for your resource
-2. Run `bin/protos` to generate code
-3. Implement endpoint business logic
-4. Create controller
-5. Mount routes
-6. Write tests
-7. Commit with `feat:` prefix for semantic release
-
-## Building Your First Endpoint
+## Endpoint Creation Workflow
 
 Follow this workflow for autonomous endpoint creation. Reference implementations demonstrate each step.
+
+**Choose your deployment pattern**:
+
+If not clear from context, ask the user which pattern to use:
+
+1. **Engine-only** - Proto and implementation both in engine
+   - Use when: Independent backend API, no Scriptdash integration needed
+   - Example: `assets/reference_implementation/engine/action_partnerships_fetch_all/`
+   - Models: In engine
+   - Routes: Engine routes (`/v2/resource`)
+
+2. **Proto in Engine, Implementation in Scriptdash** - Contract in engine, logic in Scriptdash
+   - Use when: Want proto contract but models/logic stay in Scriptdash (common for gradual migration)
+   - Example: `assets/reference_implementation/intermediate/wunderbar_users_fetch_all/`
+   - Models: In Scriptdash
+   - Routes: Engine routes (`/v1/resource`), implementation via initializer hookup
+
+3. **Two-Layer (Scriptdash + Engine)** - Scriptdash wraps Engine API with permissions
+   - Use when: Frontend needs authorization, Engine provides business logic
+   - Example: `assets/reference_implementation/scriptdash/action_partnerships_fetch_all/`
+   - Models: In engine
+   - Routes: Both Scriptdash (`/actions/v1/resource`) and Engine (`/v2/resource`)
+
+**When to use each**:
+- **Engine-only**: Building new backend-only service
+- **Intermediate**: Migrating existing Scriptdash code to proto contracts
+- **Two-layer**: Frontend-facing API with separate business logic layer
 
 ### Step 1: Define Proto Type
 
@@ -218,19 +202,9 @@ For Scriptdash wrapper with permissions:
 6. **Create controller** (same pattern as Engine)
 7. **Write tests** (mock Engine API, test permissions)
 
-### Step 9: Commit and Deploy
+### Step 9: Verify and Complete
 
-**Commit message**: Use `feat:` prefix for semantic release:
-```bash
-git commit -m "feat: add {resource} endpoint"
-git push
-```
-
-This triggers automated version bump and gem publication.
-
-### Step 10: Celebrate
-
-You've created a production-ready endpoint following Better Boundaries architecture!
+You've created a production-ready endpoint following Better Boundaries architecture! Run tests to verify everything works as expected.
 
 ## Common Patterns Quick Reference
 
