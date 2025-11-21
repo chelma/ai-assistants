@@ -9,8 +9,13 @@
   "plugins": [
     {
       "name": "collaborative-workflows",
-      "source": "./public-plugin",
-      "description": "Claude Code configuration to support AI-assisted development"
+      "source": "./workflows-plugin",
+      "description": "Collaborative workflow tools for AI-assisted development (tag-team, extract-architecture, codebase-researcher)"
+    },
+    {
+      "name": "reference-guides",
+      "source": "./reference-plugin",
+      "description": "Knowledge-based reference skills for specific domains (currently: endpoint-creation for proto-first API development)"
     }
   ]
 }
