@@ -1,0 +1,28 @@
+// PATTERN DEMONSTRATED: Proto Type Definition
+//
+// This defines the resource structure (ActionPartnership). This type will be:
+// - Generated as Ruby T::Struct (ActionsAPI::Types::V2::ActionPartnership)
+// - Generated as TypeScript interface
+// - Reusable across multiple endpoints
+// - Importable by Scriptdash (enables type sharing between services)
+//
+// KEY CONCEPT: Types live separately from endpoints to enable reuse.
+// File location: protos/src/{domain}_api/types/v{version}/{resource}.proto
+
+syntax = "proto3";
+
+package actions_api.types.v2;  // CRITICAL: Package determines Ruby module (ActionsAPI::Types::V2)
+
+import "opts/opts.proto";
+
+message ActionPartnership {
+  // CRITICAL: Field numbers (1, 2, 3) must never change - used for serialization
+  int64 id = 1 [(opts.field) = {required: true}];
+  string name = 2 [(opts.field) = {required: true}];
+  string value = 3 [(opts.field) = {required: true}];
+
+  // TODO: Add your resource fields here
+  // - Use [(opts.field) = {required: true}] for required fields
+  // - Field numbers are permanent - never reuse or reorder
+  // - Use descriptive field names (snake_case)
+}

@@ -404,12 +404,14 @@ skill-structure/
 - Progressive disclosure strategy
 - Extension roadmap to v3.0
 
-### Phase 5: Package Skill ✅
+### Phase 5: Package and Install Skill ✅
 
 - [✅] Validated skill structure with package_skill.py
 - [✅] Created distributable skill-structure.zip (73KB, 29 files)
+- [✅] Installed as global skill in ~/.claude/skills/endpoint-creation/
 
 **Package Location**: `~/.claude/workspace/ai-assistants/output/2025-11-20-extract-endpoint-creation-patterns/skill-structure.zip`
+**Install Location**: `~/.claude/skills/endpoint-creation/`
 
 **Package Contents**:
 - SKILL.md (13.9KB)
