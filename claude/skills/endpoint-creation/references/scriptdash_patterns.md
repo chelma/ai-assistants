@@ -513,9 +513,16 @@ end
 
 **Priority**: OBSERVED
 
-**Purpose**: Establish proto contract in engine while keeping implementation and models in Scriptdash. Common intermediate pattern during migration.
+**Purpose**: Establish proto contract in engine while keeping implementation and models in Scriptdash. Common when models are deeply coupled to Scriptdash infrastructure.
 
-**When to use**: When you want proto benefits but aren't ready to move models to engine, or when Scriptdash is the natural home for the logic (operations, internal tools).
+**When to use**:
+- Models have many associations to other Scriptdash models (`belongs_to :patient`, `has_many :attachments`, etc.)
+- Models depend on Scriptdash authentication (Devise, custom auth)
+- Moving model to engine would create cascade refactoring across hundreds of files
+- Want proto benefits (types, clients, contracts) without massive model migration
+- Common for: Operations endpoints, internal tools, auth-dependent resources
+
+**Why this pattern exists**: WunderbarUser example has ~30 associations to Scriptdash models plus Devise authentication. Moving it to engine would require moving Patient, Attachment, and dozens of other models - a massive refactoring. This pattern gets proto benefits while keeping model in Scriptdash.
 
 **Implementation**:
 
@@ -616,9 +623,12 @@ end
 ```
 
 **When NOT to use**:
-- Building new service from scratch (use Engine-only instead)
-- Need separate deployment (use full engine with models)
+- Building new service from scratch (use Engine-only - no legacy coupling)
+- Models have few/no associations and can be easily moved to engine
 - Already have models in engine (no benefit to Scriptdash implementation)
+- Need separate deployment with independent scaling (move models to engine first)
+
+**This is often permanent**: Don't treat this as temporary "tech debt" to fix. If models are deeply coupled to Scriptdash, this pattern may be the pragmatic long-term solution.
 
 ---
 

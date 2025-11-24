@@ -3,12 +3,34 @@
 ## When to Use This Pattern
 
 Use this pattern when:
-- You want proto contract benefits (type safety, generated clients) but models/logic stay in Scriptdash
-- Migrating existing Scriptdash code to Better Boundaries incrementally
-- Not ready to move models to engine but want to establish API contract
-- Common for internal operations endpoints where Scriptdash is the authority
+- **Models are deeply coupled to Scriptdash** - The underlying model has many associations to other Scriptdash models that would be difficult to move
+- **Authentication dependencies** - Model uses Devise or other Scriptdash-specific auth systems
+- **You want proto benefits without refactoring** - Get type safety, generated clients, and API contracts without massive model migration
+- **Internal operations endpoints** - Where Scriptdash is the natural authority for the data
 
-**This is NOT a migration guide** - this is a valid standalone pattern. Many engines remain mounted in Scriptdash indefinitely.
+**This is NOT a migration guide** - this is a valid long-term pattern. Many engines remain mounted in Scriptdash indefinitely.
+
+## Why Models Stay in Scriptdash
+
+**Real-world example**: WunderbarUser model has:
+- `belongs_to :patient` (Scriptdash model)
+- `has_many :attachments` (Scriptdash model)
+- Dozens of other associations to Scriptdash models
+- Uses Devise for authentication (Scriptdash gem)
+
+**Moving to engine would require**:
+- Moving Patient model (and all ITS associations)
+- Moving Attachment model (and all ITS associations)
+- Reimplementing authentication system
+- Cascade effect touching hundreds of files
+
+**This pattern solves it**:
+- ✅ Model stays in Scriptdash (no cascade refactoring)
+- ✅ Proto establishes API contract (better than direct model access)
+- ✅ Generated clients/routes (infrastructure benefits)
+- ✅ Can remain this way indefinitely (not temporary!)
+
+**TLDR**: Implementation lives in Scriptdash when the underlying model can't or hasn't yet been moved due to coupling.
 
 ## Pattern Overview
 

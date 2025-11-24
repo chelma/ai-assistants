@@ -61,10 +61,11 @@ If not clear from context, ask the user which pattern to use:
    - Routes: Engine routes (`/v2/resource`)
 
 2. **Proto in Engine, Implementation in Scriptdash** - Contract in engine, logic in Scriptdash
-   - Use when: Want proto contract but models/logic stay in Scriptdash (common for gradual migration)
+   - Use when: Models deeply coupled to Scriptdash (associations, Devise auth) and can't be easily moved
    - Example: `assets/reference_implementation/intermediate/wunderbar_users_fetch_all/`
-   - Models: In Scriptdash
+   - Models: In Scriptdash (stays due to coupling)
    - Routes: Engine routes (`/v1/resource`), implementation via initializer hookup
+   - Common for: Operations endpoints, internal tools, auth-dependent models
 
 3. **Two-Layer (Scriptdash + Engine)** - Scriptdash wraps Engine API with permissions
    - Use when: Frontend needs authorization, Engine provides business logic
@@ -73,9 +74,9 @@ If not clear from context, ask the user which pattern to use:
    - Routes: Both Scriptdash (`/actions/v1/resource`) and Engine (`/v2/resource`)
 
 **When to use each**:
-- **Engine-only**: Building new backend-only service
-- **Intermediate**: Migrating existing Scriptdash code to proto contracts
-- **Two-layer**: Frontend-facing API with separate business logic layer
+- **Engine-only**: Building new backend-only service from scratch
+- **Intermediate**: Models coupled to Scriptdash (associations, Devise) - can't easily move to engine
+- **Two-layer**: Frontend-facing API needing permissions, Engine has independent business logic
 
 ### Step 1: Define Proto Type
 
