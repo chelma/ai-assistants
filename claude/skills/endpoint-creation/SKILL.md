@@ -30,6 +30,8 @@ The endpoint creation workflow follows **Better Boundaries** architectural princ
 2. **Engine**: Extract to Rails Engine with proto-defined APIs
 3. **Boxcar**: Deploy separately with independent scaling
 
+**Foundation**: alto-workspace manages the entire infrastructure (repositories, dependencies, proto generation, deployment configs). See `references/alto-workspace-infrastructure.md` for complete context.
+
 **Proto as source of truth**: Every endpoint starts with `.proto` files that generate:
 - Ruby types (T::Struct with Sorbet)
 - Interface modules (abstract endpoints to implement)
@@ -49,6 +51,11 @@ The endpoint creation workflow follows **Better Boundaries** architectural princ
 ## Endpoint Creation Workflow
 
 Follow this workflow for autonomous endpoint creation. Reference implementations demonstrate each step.
+
+**Prerequisites**:
+- Rails Engine exists (or use `alto generate engine <name>` - see `references/alto-workspace-infrastructure.md`)
+- Database tables and models created
+- alto-workspace configured for your engine (see `references/alto-workspace-quick-reference.md` for config examples)
 
 **Choose your deployment pattern**:
 
@@ -115,12 +122,16 @@ Define the service with Request/Response messages:
 
 **See**: `assets/reference_implementation/engine/action_partnerships_fetch_all/generated/`
 
+**For alto-workspace integration**: `references/alto-workspace-infrastructure.md` (Proto Generation Pipeline section)
+
 **Command**:
 ```bash
 cd engine-{domain}
 bin/protos
 git checkout {domain}_api/lib/{domain}_api.rb  # CRITICAL: Restore after generation
 ```
+
+**Note**: Proto generation uses configurations from alto-workspace (see `references/alto-workspace-quick-reference.md` for proto config syntax).
 
 **What gets generated**:
 - `interface.rb` - Request/Response types + AbstractEndpoint
@@ -186,22 +197,32 @@ Test full stack using RPC client:
 
 **For patterns**: `references/scriptdash_patterns.md` (All patterns)
 
+**For dependency management**: `references/alto-workspace-quick-reference.md` (Dependency Management section)
+
 For Scriptdash wrapper with permissions:
 
-1. **Define Scriptdash proto** (imports Engine type)
-2. **Core API wiring** (`app/services/{domain}/action_partnerships.rb`)
+1. **Update dependencies** (if new engine version)
+   ```bash
+   cd alto-workspace
+   alto bump scriptdash {domain}  # Updates to latest engine version
+   cd ../scriptdash
+   bundle install
+   bin/tapioca gem {domain}_api {domain}_engine
+   ```
+2. **Define Scriptdash proto** (imports Engine type)
+3. **Core API wiring** (`app/services/{domain}/action_partnerships.rb`)
    - Include `Core::API`
    - Add Engine client
    - Configure local endpoint
-3. **Dotted accessor** (`app/services/{domain}.rb`)
+4. **Dotted accessor** (`app/services/{domain}.rb`)
    - Expose module via class method
-4. **Implement endpoint with permissions** (`app/services/{domain}/wunderbar/{resource}_endpoint.rb`)
+5. **Implement endpoint with permissions** (`app/services/{domain}/wunderbar/{resource}_endpoint.rb`)
    - Check `current_ability.authorize!`
    - Delegate to Engine via `Actions.resource.fetch_all`
-5. **Add permissions** (`app/models/abilities/ability.rb`)
+6. **Add permissions** (`app/models/abilities/ability.rb`)
    - Define who can `:read` the Engine type
-6. **Create controller** (same pattern as Engine)
-7. **Write tests** (mock Engine API, test permissions)
+7. **Create controller** (same pattern as Engine)
+8. **Write tests** (mock Engine API, test permissions)
 
 ### Step 9: Verify and Complete
 
@@ -237,6 +258,12 @@ For quick fixes, see `references/troubleshooting.md`. Common issues:
 **Proto generation errors**:
 - Run `git checkout {domain}_api/lib/{domain}_api.rb` after `bin/protos`
 - Check proto syntax (required fields, imports, field numbers)
+- Verify alto-workspace proto config (see `references/alto-workspace-quick-reference.md`)
+
+**Dependency errors**:
+- Run `alto bump scriptdash {domain}` to update dependencies
+- Check `alto-workspace/config/repositories/` for version constraints
+- See `references/alto-workspace-infrastructure.md` for dependency resolution
 
 **Sorbet type errors**:
 - Run `bin/tapioca gem` and `bin/tapioca dsl` after generating code
@@ -303,6 +330,18 @@ Each example includes:
 - `testing_patterns.md` - 7 patterns for request specs
 - `scriptdash_patterns.md` - 7 patterns for permissions and Core API
 - `troubleshooting.md` - Common errors and fixes by layer
+
+### Alto Workspace Reference
+
+**references/** - Infrastructure and tooling documentation:
+
+- `alto-workspace-quick-reference.md` (~1k tokens) - Quick lookups for CLI commands, config syntax, and common patterns
+  - **When to use**: Fast answers during implementation (command syntax, YAML fields, type mappings)
+  - **Contains**: CLI command reference, configuration schemas, SQL→Proto mappings, standard RPC methods
+
+- `alto-workspace-infrastructure.md` (~5-6k tokens) - Complete architectural reference for alto-workspace
+  - **When to use**: Understanding the workspace system, creating engines, configuring dependencies, proto generation pipeline
+  - **Contains**: Repository structure, CLI implementation details, configuration system, proto generation, dependency management, integration patterns
 
 ### Deep-Dive Reference
 
