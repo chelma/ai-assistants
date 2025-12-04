@@ -103,7 +103,7 @@ Does this naming work for you, or would you prefer a different name?
 
 Wait for confirmation or alternative name before proceeding.
 
-### Step 4: Explore Codebase (if applicable)
+### Step 5: Explore Codebase (if applicable)
 
 If the task involves code changes:
 
