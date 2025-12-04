@@ -5,8 +5,6 @@ description: Understand and apply Better Boundaries architecture through hands-o
 
 # Better Boundaries
 
-> **Note**: This skill was previously named `endpoint-creation`. The rename reflects its broader scope as an architectural reference while maintaining focus on hands-on implementation.
-
 ## Overview
 
 **Better Boundaries** is an architectural philosophy for building scalable Rails applications through progressive service extraction. This skill teaches Better Boundaries principles through the practical lens of **building production-ready API endpoints** using proto-first architecture.
