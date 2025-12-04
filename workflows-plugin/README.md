@@ -30,7 +30,7 @@ Performs extensive codebase investigations with structured findings while mainta
 /plugin marketplace add chelma/ai-assistants
 
 # Install the plugin
-/plugin install collaborative-workflows@ai-assistants
+/plugin install collaborative-workflows@chelma-ai-tools
 ```
 
 ## Usage

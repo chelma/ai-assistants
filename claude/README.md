@@ -29,6 +29,7 @@ claude/
 ├── .mcp.json                    # MCP server configuration
 ├── skills/                      # Custom Claude Code skills
 │   ├── aws-interface-builder/   # AWS SDK interface patterns with Factory + DI
+│   ├── better-boundaries/       # Better Boundaries architecture via proto-first endpoints
 │   ├── code-reviewer/           # Code review assistance with context-efficient workflow
 │   ├── extract-architecture/    # Extract patterns from codebases for AI consumption
 │   ├── langchain-expert-builder/  # LangChain multi-expert system builder
@@ -106,6 +107,29 @@ Build production-ready Python interfaces for AWS SDK (boto3) using the Factory +
 **Key philosophy**: Single point of credential configuration, testable without real AWS calls, business logic separated from SDK details.
 
 See `skills/aws-interface-builder/SKILL.md` for full documentation.
+
+### better-boundaries
+
+Understand and apply Better Boundaries architecture through hands-on endpoint creation using proto-first development.
+
+**Usage**: Use when working with Better Boundaries architecture:
+- Creating new API endpoints in Scriptdash or Rails Engines
+- Understanding Module→Engine→Boxcar migration philosophy
+- Learning proto-first architecture patterns and code generation
+- Working with alto-workspace tooling (engine creation, dependencies, proto generation)
+- Investigating Core::API design patterns for service boundaries
+
+**What it provides**:
+- Complete 9-step workflow for creating FetchAll/FetchOne endpoints (v1.0)
+- Three deployment patterns (Engine-only, Intermediate, Two-layer)
+- Copy-paste ready reference implementations with tests
+- Comprehensive pattern documentation by layer (proto, implementation, controllers, testing)
+- alto-workspace integration guide (CLI, configs, dependency management)
+- Foundation for understanding broader Better Boundaries philosophy
+
+**Key philosophy**: Progressive service extraction through Module (Core::API boundaries) → Engine (proto contracts) → Boxcar (independent deployment). Proto files as source of truth, generating type-safe code across Ruby and TypeScript.
+
+See `skills/better-boundaries/SKILL.md` for full documentation.
 
 ### code-reviewer
 

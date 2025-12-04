@@ -1,29 +1,52 @@
 ---
-name: endpoint-creation
-description: Create FetchAll and FetchOne endpoints across Scriptdash and Rails Engines using proto-first architecture. Currently covers read operations (v1.0); will expand to Create/Update/Delete operations in future versions. Provides complete reference implementations and step-by-step workflow for autonomous endpoint creation.
+name: better-boundaries
+description: Understand and apply Better Boundaries architecture through hands-on endpoint creation. Covers proto-first API development, Module→Engine→Boxcar migration path, Core::API patterns, and alto-workspace tooling. Primary use case is building production-ready FetchAll/FetchOne endpoints for Scriptdash and Rails Engines.
 ---
 
-# Endpoint Creation
+# Better Boundaries
+
+> **Note**: This skill was previously named `endpoint-creation`. The rename reflects its broader scope as an architectural reference while maintaining focus on hands-on implementation.
 
 ## Overview
 
-Build production-ready API endpoints for Scriptdash and Rails Engines using **proto-first architecture**. This skill provides copy-paste ready code examples and comprehensive guidance for creating FetchAll and FetchOne endpoints with:
+**Better Boundaries** is an architectural philosophy for building scalable Rails applications through progressive service extraction. This skill teaches Better Boundaries principles through the practical lens of **building production-ready API endpoints** using proto-first architecture.
 
-- **Proto-first design**: Protocol Buffers drive code generation (Ruby, TypeScript)
-- **Service V2.0**: Automated controller, routes, and client generation
-- **Two-layer pattern**: Engine (business logic) + Scriptdash (permissions/frontend)
-- **Seamless upgrade path**: Local method calls → RPC calls via environment configuration
+**The Better Boundaries journey**:
+1. **Module** - Organize monolith code with public APIs (Core::API pattern)
+2. **Engine** - Extract to Rails Engine with proto-defined contracts
+3. **Boxcar** - Deploy as independent service with autonomous scaling
 
-**Current version**: v1.0 (FetchAll + FetchOne read operations)
+**Core architectural principles**:
+- **Proto-first design**: Protocol Buffers as source of truth, generating Ruby types, interfaces, controllers, routes, and TypeScript definitions
+- **Two-layer pattern**: Engine provides business logic, Scriptdash adds permissions/frontend integration
+- **Seamless migration**: Local method calls evolve to RPC calls via environment configuration
+- **Type safety**: Sorbet types throughout, enforced contracts across Ruby and TypeScript
 
-**When to use this skill**:
-- Creating new API endpoints in Scriptdash or Rails Engines
-- Currently: Read operations (FetchAll - fetch multiple records, FetchOne - fetch single record)
-- Future: Write operations (Create, Update, Delete, FetchBy, Search)
+**What this skill provides**:
+- Step-by-step workflow for creating FetchAll and FetchOne endpoints (v1.0)
+- Complete reference implementations with copy-paste ready code
+- Comprehensive pattern documentation by architectural layer
+- alto-workspace tooling integration (CLI, proto generation, dependency management)
+- Foundation for understanding broader Better Boundaries concepts
 
-## Core Philosophy: Proto-First Architecture
+**Current version**: v1.0 (FetchAll + FetchOne read operations) - See Extension Roadmap for v2.0/v3.0 plans
 
-The endpoint creation workflow follows **Better Boundaries** architectural principles:
+## When to Use This Skill
+
+Invoke this skill when:
+- **Creating new API endpoints** in Scriptdash or Rails Engines (primary use case)
+- Understanding the **Module→Engine→Boxcar migration philosophy**
+- Learning **proto-first architecture patterns** and code generation
+- Working with **alto-workspace tooling** (engine creation, dependency management, proto generation)
+- Investigating **Core::API design patterns** for service boundaries
+- Planning **service extraction** from monolith to independent deployment
+
+**Currently supports**: Read operations (FetchAll - multiple records, FetchOne - single record)
+**Future versions**: Write operations (Create, Update, Delete, FetchBy, Search)
+
+## Proto-First Architecture
+
+Better Boundaries implementation relies on **proto-first architecture**:
 
 **Module → Engine → Boxcar migration path**:
 1. **Module**: Organize with public APIs (Core::API)
@@ -356,6 +379,46 @@ Each example includes:
 - TypeScript code generation
 
 **Don't load for**: Basic endpoint creation - use the main workflow above.
+
+## Beyond Endpoints
+
+While endpoint creation is the primary entry point to Better Boundaries, the architecture encompasses broader concepts:
+
+### Core::API Design Pattern
+
+The Core::API pattern establishes public APIs within a monolith before extraction:
+- Clean boundaries between domains
+- Explicit API contracts via module interfaces
+- Foundation for Engine extraction
+
+**Deep dive**: See `references/better_boundaries_reference.md` for Core::API internals and configuration patterns.
+
+### Creating New Engines
+
+Rails Engines are the second step in the Better Boundaries journey:
+- Extract domain logic from monolith
+- Define proto-based contracts
+- Independent versioning and testing
+
+**Tooling**: Use `alto generate engine <name>` - see `references/alto-workspace-infrastructure.md` for complete engine creation workflow.
+
+### Migration Strategies
+
+Progressive migration from monolith to services:
+- Start with Module (Core::API boundaries)
+- Extract to Engine (proto contracts, local calls)
+- Deploy as Boxcar (RPC calls, independent scaling)
+
+**Guidance**: `references/better_boundaries_reference.md` documents migration paths and decision points.
+
+### Future Expansion
+
+As this skill evolves, expect coverage of:
+- **v2.0**: Write operations (Create, Update, Delete patterns)
+- **v3.0**: Advanced queries (FetchBy, Search, custom RPC methods)
+- **Beyond**: Boxcar deployment, service orchestration, event-driven patterns
+
+The proto-first foundation makes these additions straightforward - define in proto, regenerate, implement.
 
 ## Additional Notes
 

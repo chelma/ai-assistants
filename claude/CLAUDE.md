@@ -27,9 +27,9 @@ The documentation for Claude Code Plugins can be fetched from here:
 ### Claude Skills Documentation
 
 The documentation for Claude and Claude Code Skills can be fetched from here:
-- https://anthropic.mintlify.app/en/docs/agents-and-tools/agent-skills/overview
-- https://anthropic.mintlify.app/en/docs/agents-and-tools/agent-skills/quickstart
-- https://anthropic.mintlify.app/en/docs/agents-and-tools/agent-skills/best-practices
+- https://platform.claude.com/docs/en/agents-and-tools/agent-skills/overview
+- https://platform.claude.com/docs/en/agents-and-tools/agent-skills/quickstart
+- https://platform.claude.com/docs/en/agents-and-tools/agent-skills/best-practices
 
 ### Claude Slash Command Documentation
 

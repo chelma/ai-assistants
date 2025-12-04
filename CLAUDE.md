@@ -52,10 +52,11 @@ This creates bidirectional symlinks between `~/.claude/` and the repository's `c
 
 ## Claude Skills and Sub-agents
 
-This repository contains 7 custom Claude Code skills and 1 custom sub-agent. For detailed documentation including usage patterns, key philosophies, and what each provides, see `claude/README.md`.
+This repository contains 8 custom Claude Code skills and 1 custom sub-agent. For detailed documentation including usage patterns, key philosophies, and what each provides, see `claude/README.md`.
 
 **Skills**:
 - **aws-interface-builder** - AWS SDK interface patterns with Factory + Dependency Injection
+- **better-boundaries** - Better Boundaries architecture via proto-first API endpoint creation
 - **code-reviewer** - Code review assistance with context-efficient workflow
 - **extract-architecture** - Extract architectural patterns from codebases using checkpoint-driven workflow; composes with tag-team and codebase-researcher
 - **langchain-expert-builder** - LangChain multi-expert system builder using Expert-Task-Tool pattern
@@ -111,20 +112,26 @@ Architecture references in `.agents/references/` document reusable patterns extr
 - `.claude/agents/` - Engineer-specific working files, git-ignored (personal workspace)
 
 ### Installing as a Plugin
-This repository also functions as a Claude Code plugin marketplace, allowing others to install collaborative workflow tools without cloning the full repository:
+This repository also functions as a Claude Code plugin marketplace, allowing others to install tools without cloning the full repository:
 
 ```bash
 # Add the marketplace
 /plugin marketplace add chelma/ai-assistants
 
 # Install the collaborative workflows plugin
-/plugin install collaborative-workflows@ai-assistants
+/plugin install collaborative-workflows@chelma-ai-tools
+
+# Install the reference guides plugin
+/plugin install reference-guides@chelma-ai-tools
 ```
 
-**What gets shared:**
+**collaborative-workflows plugin includes:**
 - `tag-team` skill - Collaborative pair programming workflow
 - `extract-architecture` skill - Architecture pattern extraction
 - `codebase-researcher` agent - Deep codebase investigation
+
+**reference-guides plugin includes:**
+- `better-boundaries` skill - Better Boundaries architecture via proto-first API endpoint creation
 
 ## Key Patterns
 
