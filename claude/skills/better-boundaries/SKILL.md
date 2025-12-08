@@ -69,11 +69,52 @@ Better Boundaries implementation relies on **proto-first architecture**:
 
 **Trade-off**: Requires learning proto syntax, changes require regeneration. The upfront investment pays dividends in reliability, maintainability, and multi-language support.
 
+## Initial Assessment
+
+**Before starting endpoint creation**, ask these questions to avoid unnecessary work:
+
+### 1. Which repositories?
+Ask: **"Which repository/repositories are you working with?"** (e.g., `engine-partnerships`, `scriptdash`, or etc)
+
+Store the list - we'll need to initialize each one.
+
+### 2. Is workspace ready?
+Ask: **"Is your Alto workspace set up for `<repo-names>`?"**
+
+**If YES** (experienced engineer):
+- Offer quick verification for each repo: `scripts/verify_repo.sh <repo-name> --sorbet`
+- If all pass → Proceed to [Endpoint Creation Workflow](#endpoint-creation-workflow)
+- If any fail → Run setup below
+
+**If NO or UNSURE**:
+
+First-time workspace setup - ask: **"Do you want to sync all repositories to latest versions?"**
+
+- **Recommended for new setups**: Runs `alto up` to sync all 55+ repos to origin/master. Side effect: rebases any local branches behind master. If you don't have local feature branches checked out, this is safe and gets you fully up-to-date.
+
+- **If YES**: `scripts/init_workspace.sh --sync`
+- **If NO**: `scripts/init_workspace.sh` (just verifies, no sync)
+
+Then initialize each target repository:
+```bash
+scripts/init_repo.sh <repo-name>              # Install deps, generate protos, setup DB
+scripts/verify_repo.sh <repo-name> --sorbet   # Quick type check
+# Repeat for each repository
+```
+
+**On script failures**: See `references/workspace-setup.md` for troubleshooting.
+
+Then proceed to [Endpoint Creation Workflow](#endpoint-creation-workflow).
+
 ## Endpoint Creation Workflow
 
 Follow this workflow for autonomous endpoint creation. Reference implementations demonstrate each step.
 
 **Prerequisites**:
+
+Complete [Initial Assessment](#initial-assessment) to verify workspace setup.
+
+**Additional requirements**:
 - Rails Engine exists (or use `alto generate engine <name>` - see `references/alto-workspace-infrastructure.md`)
 - Database tables and models created
 - alto-workspace configured for your engine (see `references/alto-workspace-quick-reference.md` for config examples)
