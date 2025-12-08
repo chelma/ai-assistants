@@ -1,0 +1,50 @@
++++ b/app/services/billing/progyny/med_management/evaluate_iu_usage.rb
++          logger.limited_phi.info('Waiting until business hours to re-evaluate', { user_id: })
++++ b/app/services/data_checking/revalidate.rb
++++ b/app/services/intake/partner_preferences/evaluation_request/from_automatable.rb
++++ b/app/services/intake/partner_preferences/evaluation_request/mixins/provides_insurance_data.rb
++++ b/app/services/precheck/evaluation_modules/patient.rb
++++ b/app/services/precheck/evaluation_modules/prescription_data.rb
++++ b/app/services/precheck/evaluation_modules/prescription_data/ndc_validity.rb
++++ b/app/services/precheck/evaluation_modules/prescription_safety_clinical.rb
++++ b/app/services/precheck/evaluation_modules/provider.rb
++++ b/app/services/precheck/evaluation_modules/provider_verifications/prescriptive_authority.rb
++          verification_names = fetch_verification_names(evaluation_module_name:)
++        need_action_prior_auth_ids = reattempt_evaluate_action(prior_auth_ids:)
++          system_time:,
++          system_time:,
++++ b/app/services/procurement/supply_constraint_events/key_date_change_evaluator.rb
++++ b/app/services/procurement/supply_constraint_events/product_change_evaluator.rb
++++ b/app/services/procurement/supply_constraint_events/supply_constraint_rule_evaluator.rb
++        RphClarifications.actions.evaluate(rph_clarification_id:, is_escalation: true)
++        logger.limited_phi.info('Waiting until business hours to re-evaluate', { transfer_id: })
++        create_list(:dispensing_delivery_method, evaluator.delivery_methods_count, configuration:)
++        FactoryBot.create(:clinics_provider_user, { provider_user:, clinic_id: evaluator.clinic_provider.clinic_id })
++        create_list(:smart_pack_delivery, evaluator.deliveries_count, [:custom, :every_day].first, { smart_pack: })
++      create(:treatment_ratio, alternative_treatment:, product: evaluator.alternative_product)
++      create_list(:address, evaluator.address_count, { user: })
++      create_list(:insurance, evaluator.insurance_count, { user: })
++      create_list(:prescription, evaluator.prescription_count, { user: })
++      create_list(:shipment, evaluator.shipment_count, { user: })
++      create_list(:transfer, evaluator.transfer_count, { user: })
++      create_list(:device, evaluator.device_count, { user: })
++          company_facility_id = Facility.find_by(company_id:, id: evaluator.facility_id)&.id ||
++      described_class.should_skip_bill_coupon?(delivery:, coupon: coupon_to_evaluate)
++        expect(policy.new(prescription:).eligible_for_submission?(retrieval)).to eq(false)
++        expect(policy.new(prescription:).eligible_for_submission?(retrieval)).to eq(false)
++        expect(policy.new(prescription:).eligible_for_submission?(retrieval)).to eq(false)
++      result = described_class.existing_retrieval_cycle?(prescription:, cycle_type: iui)
++      result = described_class.existing_retrieval_cycle?(prescription:, cycle_type: retrieval)
++      result = described_class.existing_retrieval_cycle?(prescription:, cycle_type: retrieval)
++    subject { DataChecking.dur_checks.revalidate(data_check:) }
++++ b/spec/services/data_checking/revalidate_spec.rb
++++ b/spec/services/intake/partner_preferences/evaluate_spec.rb
++++ b/spec/services/orders/shipment_fees/system_force_waive_at_scheduling_spec.rb
++++ b/spec/services/precheck/evaluation_modules/prescription_data/ndc_validity_spec.rb
++++ b/spec/services/precheck/evaluation_modules/prescription_data_spec.rb
++++ b/spec/services/precheck/evaluation_modules/prescription_safety_clinical_spec.rb
++++ b/spec/services/precheck/evaluation_modules/provider_spec.rb
++++ b/spec/services/precheck/evaluation_modules/provider_verifications/prescriptive_authority_examples.rb
++      described_class.new(delivery_id: delivery.id, evaluation_module_names:).execute
++      described_class.new(delivery_id: delivery.id, evaluation_module_names:).execute
++      described_class.new(delivery_id: delivery.id, evaluation_module_names:).execute

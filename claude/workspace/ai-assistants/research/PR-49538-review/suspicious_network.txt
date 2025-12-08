@@ -1,0 +1,1 @@
++                                       { pharmacy:, image_url: 'https://example.com/image.png' })
