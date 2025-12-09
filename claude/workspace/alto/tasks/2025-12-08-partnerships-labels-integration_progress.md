@@ -102,32 +102,75 @@
 
 **Outcome**: ✅ Phase 4 partial complete! Comprehensive unit tests written for `Partnerships::Wunderbar::LabelsEndpoint` following established testing patterns. Tests cover authorization checks, successful delegation to PartnershipsEngine, permission denied scenarios, empty results, and error propagation. Test execution deferred due to environment initialization hang (likely database setup issue in test environment).
 
+## Architectural Realization (2025-12-09) 🔴 IMPORTANT
+
+**Discovery**: Original implementation was **architecturally incorrect** based on actual deployment model.
+
+### The Reality
+
+**LabelsEngine is mounted INSIDE scriptdash** (same process):
+- ❌ No need for Partnerships wrapper in scriptdash
+- ❌ No need for Wunderbar authorization layer
+- ✅ Scriptdash can access LabelsEngine directly (already mounted)
+
+**PartnershipsEngine is deployed SEPARATELY** (Boxcar):
+- ❌ Should NOT import labels_engine gem
+- ✅ Should use RPC client only (ENV['LABELS_API_BASE_URL'])
+
+### What Was Built Wrong
+
+**Scriptdash** (unnecessary - abandoned on branch `chelma-claude-skill-test`):
+- `Partnerships.labels` Core API wrapper
+- `Partnerships::Wunderbar::LabelsEndpoint`
+- Manual RBI files for labels integration
+- LabelsAPI permissions in ability.rb
+
+**PartnershipsEngine** (wrong approach - **FIXED** on branch `chelma-claude-skill-test`):
+- ✅ Removed `labels_engine` gem dependency (commit `2662fd3f`)
+- ✅ Removed local endpoint configuration
+- ✅ Now uses RPC client only
+- ✅ Sorbet passes
+
+**alto-workspace** (fixed - commit `3ef2017f`):
+- ✅ Removed labels_engine from partnerships config
+
+### Correct Architecture
+
+**For Scriptdash** (local access):
+```ruby
+# Frontend: Call LabelsEngine routes directly
+GET /labels/v1/labels/fetch_by_labelable?...
+
+# Backend: Call LabelsEngine directly
+LabelsEngine::V1::LabelsEndpoint.new.fetch_by_labelable(...)
+```
+
+**For PartnershipsEngine** (RPC access):
+```ruby
+# Uses RPC with ENV['LABELS_API_BASE_URL']
+PartnershipsEngine::Labels.fetch_by_labelable(...)
+```
+
+### Lessons Learned
+
+1. **Check deployment model first** before designing integration
+2. **Consult experienced engineers early** - saved ~8 hours of incorrect work
+3. **Two-Layer pattern doesn't apply** when engine is mounted locally
+
 ## Resume from Here
 
-**Current State**: ✅ Phase 4 (Testing) partial complete - Integration fully functional with unit tests written.
+**Current State**: ✅ PartnershipsEngine corrected for RPC access. Scriptdash changes abandoned (branch can be deleted).
 
-**Key Context**:
-- Labels engine already has the `fetch_by_labelable` endpoint fully implemented
-- Two-layer architecture complete: Scriptdash (permissions) → PartnershipsEngine → LabelsEngine
-- Fixed tapioca gem generation by loading ActionController early in bin/tapioca (partnerships engine)
-- Resolved DSL RBI technical debt by creating database and auto-generating types (partnerships engine)
-- Authorization configured for ops/manager/engineer roles (scriptdash)
-- Manual RBI files remain in scriptdash (tapioca hangs persistently, manual RBIs comprehensive)
-- RBI version updated to match partnerships_engine v1.369.0
+**What Works**:
+- PartnershipsEngine → RPC → LabelsEngine (via ENV['LABELS_API_BASE_URL'])
+- Scriptdash → Direct LabelsEngine access (mounted locally)
 
-**Integration Complete and Functional**:
-- `Partnerships.labels.fetch_by_labelable(labelable_type:, labelable_id:)` available
-- Authorization enforced via CanCan
-- Type-safe across Ruby and TypeScript (proto-generated)
-- Sorbet type checking passes: "No errors! Great job."
+**What's Clean**:
+- PartnershipsEngine: Properly configured for RPC (committed)
+- alto-workspace: Dependencies fixed (committed)
+- Scriptdash: No changes made to master (abandoned branch)
 
-**Next Priorities**:
-1. Optional: Run unit tests when test environment ready (currently hangs on initialization)
-2. Optional: Manual end-to-end testing
-3. Optional: Create PR when ready to merge
-
-**Open Questions**:
-- None currently
+**Next Steps**: None - integration approach corrected. Delete `chelma-claude-skill-test` branches when ready.
 
 ## Evolution and Adaptations
 
