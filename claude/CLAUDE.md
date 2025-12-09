@@ -12,7 +12,7 @@ Long-term preferences and instructions that should apply across all projects ind
 
 ### Git Repository Workspace
 
-When needing to clone or examine external Git repositories, use `/Users/chris.helma/workspace/claude` as the working directory. Never clone repositories into the current working directory unless explicitly instructed.
+Unless directed otherwise, use `/Users/chris.helma/workspace/claude` as the working directory when needing to clone or examine external Git repositories. Never clone repositories into the current working directory unless explicitly instructed.
 
 ### GitHub Access
 
