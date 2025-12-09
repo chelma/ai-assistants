@@ -170,7 +170,17 @@ PartnershipsEngine::Labels.fetch_by_labelable(...)
 - alto-workspace: Dependencies fixed (committed)
 - Scriptdash: No changes made to master (abandoned branch)
 
-**Next Steps**: None - integration approach corrected. Delete `chelma-claude-skill-test` branches when ready.
+**Branches to Clean Up**:
+- `scriptdash:chelma-claude-skill-test` - Contains incorrect implementation, abandon/delete
+- `engine-partnerships:chelma-claude-skill-test` - Contains correct RPC fixes, ready to merge or continue
+- `alto-workspace:chelma-claude-skill-test` - Contains dependency fix, ready to merge
+
+**Next Steps**:
+1. Review PartnershipsEngine changes on branch `chelma-claude-skill-test`
+2. Merge PartnershipsEngine + alto-workspace branches if approved
+3. Delete scriptdash branch (contains abandoned work)
+
+**To Resume**: Use tag-team skill to continue from checkpoint.
 
 ## Evolution and Adaptations
 
