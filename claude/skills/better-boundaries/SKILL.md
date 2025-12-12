@@ -27,19 +27,14 @@ description: Understand and apply Better Boundaries architecture through hands-o
 - alto-workspace tooling integration (CLI, proto generation, dependency management)
 - Foundation for understanding broader Better Boundaries concepts
 
-**Current version**: v1.0 (FetchAll + FetchOne read operations) - See Extension Roadmap for v2.0/v3.0 plans
-
 ## When to Use This Skill
 
 Invoke this skill when:
-- **Creating new API endpoints** in Scriptdash or Rails Engines (primary use case)
-- Understanding the **Module→Engine→Boxcar migration philosophy**
-- Learning **proto-first architecture patterns** and code generation
+- **Creating new or modifying existing API endpoints** in Scriptdash or Rails Engines (primary use case)
+- Understanding the **Better Boundaries philosophy and methodology**
 - Working with **alto-workspace tooling** (engine creation, dependency management, proto generation)
-- Investigating **Core::API design patterns** for service boundaries
-- Planning **service extraction** from monolith to independent deployment
 
-**Currently supports**: Read operations (FetchAll - multiple records, FetchOne - single record)
+**Currently covers**: Read operations (FetchAll - multiple records, FetchOne - single record)
 **Future versions**: Write operations (Create, Update, Delete, FetchBy, Search)
 
 ## Proto-First Architecture
@@ -74,12 +69,12 @@ Better Boundaries implementation relies on **proto-first architecture**:
 **Before starting endpoint creation**, ask these questions to avoid unnecessary work:
 
 ### 1. Which repositories?
-Ask: **"Which repository/repositories are you working with?"** (e.g., `engine-partnerships`, `scriptdash`, or etc)
+Ask: **"Which repositories are you working with?"** (`scriptdash`, `engine-partnerships`, etc)
 
-Store the list - we'll need to initialize each one.
+Remember the list - we'll need to initialize each one.
 
 ### 2. Is workspace ready?
-Ask: **"Is your Alto workspace set up for `<repo-names>`?"**
+Ask: **"Is your Alto workspace set up for `<list of repository names>`?"**
 
 **If YES** (experienced engineer):
 - Offer quick verification for each repo: `scripts/verify_repo.sh <repo-name> --sorbet`
@@ -90,7 +85,7 @@ Ask: **"Is your Alto workspace set up for `<repo-names>`?"**
 
 First-time workspace setup - ask: **"Do you want to sync all repositories to latest versions?"**
 
-- **Recommended for new setups**: Runs `alto up` to sync all 55+ repos to origin/master. Side effect: rebases any local branches behind master. If you don't have local feature branches checked out, this is safe and gets you fully up-to-date.
+- **Recommended for new setups**: Runs `alto up` to sync all 50+ repos to origin/master. Side effect: rebases any local branches behind master. If you don't have local feature branches checked out, this is safe and gets you fully up-to-date.
 
 - **If YES**: `scripts/init_workspace.sh --sync`
 - **If NO**: `scripts/init_workspace.sh` (just verifies, no sync)
@@ -103,6 +98,22 @@ scripts/verify_repo.sh <repo-name> --sorbet   # Quick type check
 ```
 
 **On script failures**: See `references/workspace-setup.md` for troubleshooting.
+
+### 3. Create feature branch
+
+**Before making any changes**, ask: **"Would you like me to create a new feature branch off of mainline for this work?"**
+
+**If YES**:
+- Ask for branch name: **"What would you like to name your feature branch?"** (e.g., `add-partnerships-fetch-all`, `feature/partnerships-api`)
+- For each repository, create and checkout the branch:
+  ```bash
+  cd $ALTO_WORKSPACE_REPO_ROOT/<repo-name>
+  git checkout main  # or master
+  git pull origin main
+  git checkout -b <branch-name>
+  ```
+
+**If NO**: Proceed (they're already on a feature branch or will handle it themselves)
 
 Then proceed to [Endpoint Creation Workflow](#endpoint-creation-workflow).
 
@@ -118,6 +129,51 @@ Complete [Initial Assessment](#initial-assessment) to verify workspace setup.
 - Rails Engine exists (or use `alto generate engine <name>` - see `references/alto-workspace-infrastructure.md`)
 - Database tables and models created
 - alto-workspace configured for your engine (see `references/alto-workspace-quick-reference.md` for config examples)
+
+### Step 0: Understand Deployment Topology
+
+**Before writing any code**, understand how the engines relate to each other and to Scriptdash.
+
+Ask: **"Which engines are involved in this feature?"** (e.g., PartnershipsEngine calls LabelsEngine, Scriptdash calls ActionsEngine)
+
+For each engine, determine deployment model:
+
+**Check scriptdash/config/routes.rb** to see what's mounted:
+```bash
+cd $ALTO_WORKSPACE_REPO_ROOT/scriptdash
+grep -A2 "mount.*Engine" config/routes.rb
+```
+
+**Deployment models**:
+- **Mounted in Scriptdash**: Engine runs in same process as Scriptdash (e.g., `mount LabelsEngine::Engine, at: '/labels'`)
+- **Boxcar**: Engine deployed separately (not in routes.rb, has own `.deploy/` directory)
+
+**Integration patterns based on topology**:
+
+1. **Consuming Engine is Boxcar, Target Engine mounted in Scriptdash**:
+   - Consuming Engine: Use RPC client only (via `*_API_BASE_URL` env var)
+   - Scriptdash: Can call target engine directly (already mounted, local access)
+   - Example: PartnershipsEngine (Boxcar) → LabelsEngine (mounted in Scriptdash)
+
+2. **Both engines are Boxcar**:
+   - Always use RPC client with env vars
+
+3. **Consuming Engine mounted in Scriptdash, Target Engine mounted in Scriptdash**:
+   - Direct local calls, no RPC needed
+
+**Key insight**: If target engine is already mounted in Scriptdash with HTTP endpoints, **Scriptdash doesn't need a wrapper** - it can access those endpoints directly. Only Boxcar engines need RPC integration.
+
+**This topology determines**:
+- Whether to add dependencies (RPC-only vs local gem)
+- Whether to create Scriptdash wrapper (usually not needed if target is mounted)
+- Which environment variables to configure
+
+**Example decision** (from PartnershipsEngine + LabelsEngine integration):
+- LabelsEngine mounted at `/labels` in Scriptdash → Scriptdash uses existing endpoints
+- PartnershipsEngine is Boxcar → Needs RPC client + `LABELS_API_BASE_URL` config
+- No Scriptdash wrapper needed (would be redundant)
+
+**Note**: This section will expand as more deployment patterns are discovered. When in doubt, ask an experienced engineer about the deployment model before proceeding.
 
 **Choose your deployment pattern**:
 
@@ -286,7 +342,31 @@ For Scriptdash wrapper with permissions:
 7. **Create controller** (same pattern as Engine)
 8. **Write tests** (mock Engine API, test permissions)
 
-### Step 9: Verify and Complete
+### Step 9: Configure Deployment Environments
+
+**If your Engine makes RPC calls to other Engines**, add environment variables to deployment configs:
+
+**Files to update**:
+- `.env.development` - Local development (e.g., `http://wunderbar.alto.local.alto.com:3000/<route>`)
+- `.deploy/<engine-name>/sandbox.yaml` - Sandbox (DevEnv) environment
+- `.deploy/<engine-name>/stg.yaml` - Staging environment
+- `.deploy/<engine-name>/prod.yaml` - Production environment
+
+**Pattern for sandbox/staging/production**:
+```yaml
+env:
+  <DOMAIN>_API_BASE_URL: internal-api-gateway.alto-deploy-api-gateway.svc.cluster.local/<route>
+```
+
+**Example** (PartnershipsEngine calling LabelsEngine):
+```yaml
+env:
+  LABELS_API_BASE_URL: internal-api-gateway.alto-deploy-api-gateway.svc.cluster.local/labels
+```
+
+**Where to find the route**: Check how the Engine is mounted in Scriptdash `config/routes.rb` (e.g., `mount LabelsEngine::Engine, at: '/labels'`)
+
+### Step 10: Verify and Complete
 
 You've created a production-ready endpoint following Better Boundaries architecture! Run tests to verify everything works as expected.
 
@@ -328,8 +408,15 @@ For quick fixes, see `references/troubleshooting.md`. Common issues:
 - See `references/alto-workspace-infrastructure.md` for dependency resolution
 
 **Sorbet type errors**:
-- Run `bin/tapioca gem` and `bin/tapioca dsl` after generating code
+- First check for pending migrations: `bundle exec rails db:migrate:status`
+- If migrations pending: `bundle exec rails db:create db:migrate` then regenerate RBIs
+- Run `bin/tapioca gem` and `bin/tapioca dsl` to regenerate RBI files
 - Check `override` signatures match AbstractEndpoint
+- Avoid manually creating RBI files - fix the root cause (migrations, dependencies) instead
+
+**Tapioca hangs in Scriptdash**:
+- First time setup: Install Auth0/S3 configs per `<scriptdash_root>/config/local/README.md`
+- If still hanging: Run `spring stop` then retry (clears stale Rails preloader)
 
 **Routes not found**:
 - Verify `extend {Domain}API::V{X}::{Resource}Endpoint::Routes` in config/routes.rb
