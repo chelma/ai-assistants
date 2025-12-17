@@ -23,6 +23,11 @@ Extract architectural patterns, design decisions, and reusable abstractions from
 - **AI consumption optimized**: File references, imperative form, progressive disclosure, priority classifications
 - **Resumable by design**: Comprehensive progress tracking enables multi-session work
 
+**Dependencies:**
+- **tag-team** (internal): Progress tracking and checkpoint pattern
+- **codebase-researcher** (internal): Large-scale investigation delegation
+- **skill-creator** (external, optional): For Claude Skill output format. From example-skills plugin (`/plugin install example-skills@anthropic-agent-skills`). If not available, skills can be created manually.
+
 ---
 
 ## Core Workflow
@@ -196,17 +201,20 @@ See `references/documentation_patterns.md` for detailed deliverable patterns.
 Present options to user:
 
 ```
-[1] Shared Reference (AI-agnostic format in .agents/)
-    - Works with any AI coding assistant
-    - Can be converted to Claude Skill later
-    - Checked into git for team sharing
-
-[2] Claude Skill (Claude Code-specific format)
+[1] Claude Skill (Recommended)
     - Immediately usable in Claude Code
     - Lives in ~/.claude/skills/ or .claude/skills/
+    - Uses skill-creator skill for proper formatting
+
+[2] Custom format (you provide a specification)
+    - You'll provide a format specification document
+    - Output will be transformed to match your requirements
+    - Useful for team-specific formats or other AI assistants
 
 Which would you prefer? [1/2]
 ```
+
+If user chooses [2], ask: "Please provide a path to your format specification document, or describe the output format you need."
 
 **Document choice in progress file** before proceeding to Phase 5.
 
@@ -308,16 +316,18 @@ Add "Phase Completion Summary" sections to progress file for major phases:
 
 #### 6.2 Format & Deliver Based on Phase 4 Choice
 
-**If Shared Reference** (Phase 4 choice):
-- Check for `.agents/FORMAT.md` (read if exists, offer to generate if missing)
-- Transform extraction output to match format specification
-- Organize into `.agents/<reference-name>/`
-- Inform user of location
-
-**If Claude Skill** (Phase 4 choice):
-- Invoke skill-creator skill
+**If Claude Skill** (Phase 4 choice - recommended):
+- Invoke `skill-creator` skill (from example-skills plugin)
 - Let skill-creator handle workflow (metadata, SKILL.md generation, organization)
 - Skill created and ready to use
+
+**Note**: The skill-creator skill is an external dependency. If not available, see the [Claude Skills documentation](https://platform.claude.com/docs/en/agents-and-tools/agent-skills/quickstart) for manual skill creation.
+
+**If Custom Format** (Phase 4 choice):
+- Read user's format specification document
+- Transform extraction output to match specification requirements
+- Organize into user-specified directory structure
+- Inform user of location
 
 See `references/extraction_workflow_detailed.md` for detailed format/delivery workflows.
 

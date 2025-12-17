@@ -129,7 +129,7 @@ Document findings for the "Current State Analysis" section.
 ### Step 6: Create Draft Plan
 
 1. **Read the plan template from skill assets:**
-   - Read `~/.claude/skills/tag-team/assets/templates/plan_template.md`
+   - Read `./assets/templates/plan_template.md` (relative to this skill's directory)
 
 2. **Fill in the template** with:
    - Workspace (from Step 3 detection)
@@ -305,8 +305,7 @@ How to adapt the single progress template for different work:
 
 For specialized tasks, invoke the relevant skill for detailed workflow:
 - Architecture extraction → `extract-architecture` skill
-- Technical writing → `tech-writing` skill
-- Other specialized work → appropriate skill
+- Deep codebase investigation → `codebase-researcher` subagent
 
 Specialized skills build on tag-team's checkpoint and progress tracking framework. The progress file remains the state document regardless of workflow.
 
@@ -334,4 +333,4 @@ This skill includes template files used for creating plans and tracking progress
 - `assets/templates/plan_template.md` - Template structure for planning documents
 - `assets/templates/progress_template.md` - Template structure for tracking implementation progress
 
-These templates are read directly from the skill assets directory when creating new plans. Working files (plans, progress, outputs) are stored in `~/.claude/workspace/<workspace>/` which is symlinked for version control.
+These templates are read directly from the skill assets directory when creating new plans. Working files (plans, progress, outputs) are stored in `~/.claude/workspace/<workspace>/`.

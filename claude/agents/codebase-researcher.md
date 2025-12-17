@@ -35,7 +35,6 @@ You are a specialized research sub-agent that performs extensive codebase invest
 ### 4. Skills Integration
 Load relevant skills based on task context:
 - **Python code** → python-style skill
-- **LangChain patterns** → langchain-expert-builder skill
 - **GitHub issues/PRs** → tech-writing skill
 - **Architecture extraction** → extract-architecture skill
 - **Other domains** → Ask user which skills to load
@@ -50,8 +49,6 @@ This sub-agent is designed to compose with other skills in your ecosystem:
 
 **Domain knowledge**:
 - Loads `python-style` for Python code analysis
-- Loads `langchain-expert-builder` for LangChain patterns
-- Loads `aws-interface-builder` for AWS SDK patterns
 
 **Documentation standards**:
 - Loads `tech-writing` for GitHub issue/PR creation
@@ -95,12 +92,6 @@ Based on task keywords, load appropriate skills:
 - Error handling patterns
 - Testing patterns
 
-**LangChain patterns**: Load `langchain-expert-builder` skill for:
-- Expert-Task-Tool patterns
-- Multi-expert architectures
-- Structured output patterns
-- Validation pipelines
-
 **GitHub issue/PR creation**: Load `tech-writing` skill for:
 - Issue structure and style
 - Problem statement formatting
@@ -108,14 +99,9 @@ Based on task keywords, load appropriate skills:
 - Code formatting in markdown
 
 **Architecture extraction**: Load `extract-architecture` skill for:
-- Pattern documentation format (Step 3.2)
-- Priority classification guidance (CRITICAL/PREFERRED/OBSERVED)
-- Pattern categories and trade-off structure
-
-**AWS SDK patterns**: Load `aws-interface-builder` skill for:
-- Client provider patterns
-- Factory + dependency injection
-- Testing patterns for AWS services
+- Investigating architectural patterns for extraction tasks
+- Need to understand expected pattern documentation format
+- Creating comprehensive architecture and reference guides with priority classification of patterns and approaches
 
 If unclear which skills to load, ask the user.
 
@@ -584,36 +570,6 @@ Invoke codebase-researcher again with: "Resume research from ~/.claude/workspace
 All progress has been saved and investigation can be resumed without loss of context.
 ```
 
-## Skills Loading Guidance
-
-### Python Code Investigations
-Load `python-style` skill to understand:
-- Code organization patterns
-- Type system usage
-- Documentation expectations
-- Error handling patterns
-- Testing patterns
-
-### LangChain Investigations
-Load `langchain-expert-builder` skill to understand:
-- Expert-Task-Tool patterns
-- Multi-expert architectures
-- Structured output patterns
-- Validation pipelines
-
-### GitHub Issue/PR Creation
-Load `tech-writing` skill for:
-- Issue structure and style
-- Problem statement formatting
-- Acceptance criteria patterns
-- Code formatting in markdown
-
-### Architecture Extraction
-Load `extract-architecture` skill when:
-- Investigating architectural patterns
-- Understanding design decisions
-- Creating comprehensive architecture docs
-
 ## Tool Usage for Autonomous Operation
 
 **CRITICAL**: To maintain autonomy without requiring user approval, follow these tool usage rules:
@@ -760,7 +716,7 @@ When direct reading is necessary:
 6. Recommend v3 implementation approach
 7. Return summary with architecture doc location
 
-**Context managed**: Used Explore heavily, minimal direct reading, all findings saved
+**Context managed**: Main session just sees the architecture.md doc and can dig into the findings.md if necessary
 
 ### Example 3: Large-Scale Pattern Extraction
 
