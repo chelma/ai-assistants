@@ -1,7 +1,7 @@
 # Research Plan: GH-49 Protobuf Centralization Analysis
 
 **Workspace**: time-cop
-**Project Root**: /Users/chris.helma/workspace/personal/time-cop
+**Project Root**: ~/workspace/personal/time-cop
 **Research Objective**: Analyze GH-49 task execution to extract insights about tag-team skill effectiveness for implementation-type tasks
 **GitHub Issue**: [#15](https://github.com/scriptdash/time-cop/issues/15)
 **Created**: 2025-11-13

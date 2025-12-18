@@ -1,7 +1,7 @@
 # Research Progress: GH-49 Protobuf Centralization Analysis
 
 **Workspace**: time-cop
-**Project Root**: /Users/chris.helma/workspace/personal/time-cop
+**Project Root**: ~/workspace/personal/time-cop
 **Status**: completed
 **Started**: 2025-11-13 11:24:39
 **Completed**: 2025-11-13 11:36:00

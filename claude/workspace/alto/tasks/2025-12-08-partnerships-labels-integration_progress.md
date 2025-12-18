@@ -1,7 +1,7 @@
 # Implementation: 2025-12-08-partnerships-labels-integration
 
 **Workspace**: alto
-**Project Root**: /Users/chris.helma/workspace/alto
+**Project Root**: ~/workspace/alto
 **Status**: in_progress
 **Plan**: 2025-12-08-partnerships-labels-integration_plan.md
 **Output Directory**: `~/.claude/workspace/alto/output/2025-12-08-partnerships-labels-integration/`
@@ -424,7 +424,7 @@ None
 ## Notes
 
 - Following Better Boundaries two-layer pattern
-- All file paths are relative to project root: /Users/chris.helma/workspace/alto
+- All file paths are relative to project root: ~/workspace/alto
 - **Feature branches created**: `chelma-claude-skill-test` in alto-workspace, engine-partnerships, and scriptdash
   - This ensures all changes are isolated and can be reviewed before merging
 

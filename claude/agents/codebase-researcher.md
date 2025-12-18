@@ -79,6 +79,11 @@ PROJECT_ROOT=$(git rev-parse --show-toplevel 2>/dev/null)
 # If empty, use current working directory
 ```
 
+**Path Portability**: If the project root is under `$HOME`, convert to tilde notation for portability across machines:
+- `/Users/username/workspace/project` → `~/workspace/project`
+- `/home/username/workspace/project` → `~/workspace/project`
+- Paths outside home directory remain absolute
+
 Store both values - they will be included in research file headers and used for all file operations.
 
 **1.3 Load Relevant Skills**
@@ -138,7 +143,7 @@ Before writing, create directory: `mkdir -p ~/.claude/workspace/<workspace>/rese
 
 Create `plan.md` with:
 - **Workspace**: <workspace-name>
-- **Project Root**: /absolute/path/to/project
+- **Project Root**: ~/workspace/project-name (use tilde for paths under $HOME)
 - **Research Objective**: What needs to be understood
 - **Key Questions**: Specific questions to answer
 - **Investigation Scope**: Files/modules to examine
@@ -152,7 +157,7 @@ Create `progress.md` from this template:
 # Research Progress: <task-name>
 
 **Workspace**: <workspace-name>
-**Project Root**: /absolute/path/to/project
+**Project Root**: ~/workspace/project-name (use tilde for paths under $HOME)
 **Status**: in_progress
 **Started**: <timestamp>
 **Research Directory**: `~/.claude/workspace/<workspace>/research/<directory-name>/`

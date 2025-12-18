@@ -248,7 +248,7 @@ Create `get_*_expert()` functions that:
 
 The invocation workflow has five distinct steps that wire together all the abstractions:
 
-**Complete invocation pattern** (reference: `/Users/chris.helma/workspace/personal/ocsf-playground/playground/playground_api/views.py:303-325`):
+**Complete invocation pattern** (reference: `~/workspace/personal/ocsf-playground/playground/playground_api/views.py:303-325`):
 
 ```python
 from langchain_core.messages import HumanMessage

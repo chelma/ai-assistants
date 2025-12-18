@@ -4,7 +4,7 @@
 **Files analyzed**: plan.md (246 lines, ~13K tokens) + progress.md (347 lines, ~18K tokens)
 **Total context**: ~31K tokens (smallest of 5 investigations)
 **Investigation date**: 2025-11-13
-**Research directory**: `/Users/chris.helma/.claude/workspace/time-cop/research/20251113-112439-protobuf-centralization-analysis/`
+**Research directory**: `~/.claude/workspace/time-cop/research/20251113-112439-protobuf-centralization-analysis/`
 
 ---
 
@@ -715,11 +715,11 @@ Track which planned risks occurred and how they were handled:
 
 For category-by-category detailed analysis with specific examples and line references:
 
-- **Categories 1-3** (Planning Quality, Checkpoint Effectiveness, Progress File Usage): See `/Users/chris.helma/.claude/workspace/time-cop/research/20251113-112439-protobuf-centralization-analysis/findings_part1.md`
+- **Categories 1-3** (Planning Quality, Checkpoint Effectiveness, Progress File Usage): See `~/.claude/workspace/time-cop/research/20251113-112439-protobuf-centralization-analysis/findings_part1.md`
 
-- **Categories 4-7** (Deviation Handling, Human Collaboration, Resumability, Documentation Depth): See `/Users/chris.helma/.claude/workspace/time-cop/research/20251113-112439-protobuf-centralization-analysis/findings_part2.md`
+- **Categories 4-7** (Deviation Handling, Human Collaboration, Resumability, Documentation Depth): See `~/.claude/workspace/time-cop/research/20251113-112439-protobuf-centralization-analysis/findings_part2.md`
 
-- **Categories 8-10** (Task Adaptations, Meta-Observations, Template Utilization): See `/Users/chris.helma/.claude/workspace/time-cop/research/20251113-112439-protobuf-centralization-analysis/findings_part3.md`
+- **Categories 8-10** (Task Adaptations, Meta-Observations, Template Utilization): See `~/.claude/workspace/time-cop/research/20251113-112439-protobuf-centralization-analysis/findings_part3.md`
 
 ---
 

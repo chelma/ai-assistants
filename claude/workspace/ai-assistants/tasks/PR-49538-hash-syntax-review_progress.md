@@ -1,7 +1,7 @@
 # Implementation: PR-49538-hash-syntax-review
 
 **Workspace**: ai-assistants
-**Project Root**: /Users/chris.helma/workspace/personal/ai-assistants
+**Project Root**: ~/workspace/personal/ai-assistants
 **Status**: completed
 **Plan**: `~/.claude/workspace/ai-assistants/tasks/PR-49538-hash-syntax-review_plan.md`
 **Output Directory**: `~/.claude/workspace/ai-assistants/output/PR-49538-hash-syntax-review/`
@@ -15,7 +15,7 @@
 - [✅] Checkout PR branch: fetched as `pr-49538-review`
 - [✅] Verify file count and change statistics match PR description
 
-**Outcome**: Environment setup complete. Verified PR contains exactly 2 commits (df7d799fb41 + a4e39d0a109) with stats matching PR description: 4,816 files changed (+28,370 / -28,378). Repository located at `/Users/chris.helma/workspace/claude/scriptdash`.
+**Outcome**: Environment setup complete. Verified PR contains exactly 2 commits (df7d799fb41 + a4e39d0a109) with stats matching PR description: 4,816 files changed (+28,370 / -28,378). Repository located at `~/workspace/claude/scriptdash`.
 
 ### Phase 2: High-Risk Files Review ✅
 - [✅] Locate and read CI workflow file

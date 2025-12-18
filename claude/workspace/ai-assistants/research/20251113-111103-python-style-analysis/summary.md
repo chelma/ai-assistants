@@ -3,7 +3,7 @@
 **Task**: 2024-10-30 Python style analysis (ANALYSIS task, multi-repo)
 **Files analyzed**: plan.md + progress.md (~49K total tokens)
 **Investigation date**: 2025-11-13
-**Research directory**: `/Users/chris.helma/.claude/workspace/ai-assistants/research/20251113-111103-python-style-analysis/`
+**Research directory**: `~/.claude/workspace/ai-assistants/research/20251113-111103-python-style-analysis/`
 
 ---
 

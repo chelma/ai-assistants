@@ -1,7 +1,7 @@
 # Plan: 2025-12-15-port-skills-to-agentic-toolbox
 
 **Workspace**: agentic-toolbox
-**Project Root**: /Users/chris.helma/workspace/alto/agentic-toolbox
+**Project Root**: ~/workspace/alto/agentic-toolbox
 **Status**: approved
 **GitHub Issue**: N/A
 **Created**: 2025-12-15
@@ -78,7 +78,7 @@ reference-plugin/
 
 ### Target Repository
 
-`/Users/chris.helma/workspace/alto/agentic-toolbox` - currently empty (just .git)
+`~/workspace/alto/agentic-toolbox` - currently empty (just .git)
 
 ## Proposed Solution
 

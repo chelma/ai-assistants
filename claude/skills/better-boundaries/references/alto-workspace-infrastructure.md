@@ -88,7 +88,7 @@ alto-workspace/
 
 ### Entry Point
 
-**File**: `/Users/chris.helma/workspace/alto/alto-workspace/bin/alto`
+**File**: `~/workspace/alto/alto-workspace/bin/alto`
 
 ```ruby
 #!/usr/bin/env ruby

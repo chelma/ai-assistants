@@ -181,7 +181,7 @@ Use Read tool to analyze files in the batch:
 Create or update patterns document in `~/.claude/workspace/<workspace>/output/<task_name>/`:
 
 **Initial iterations**: Create `patterns.md` or `architecture_patterns.md`
-- Include project root in header: `**Project Root**: /absolute/path/to/project`
+- Include project root in header: `**Project Root**: ~/workspace/project-name` (use tilde for paths under $HOME)
 - Create output directory with lazy creation: `mkdir -p ~/.claude/workspace/<workspace>/output/<task_name>/`
 
 **Subsequent iterations**: Append findings to existing document
@@ -189,7 +189,7 @@ Create or update patterns document in `~/.claude/workspace/<workspace>/output/<t
 **File Reference Requirements**:
 - Use paths **relative to project root** for all code references
 - Example: `ruby_worker/app/workflows/workflow_demo_mixed.rb:15-30`
-- NOT: `/Users/chris.helma/workspace/personal/time-cop/ruby_worker/...`
+- NOT: `~/workspace/personal/time-cop/ruby_worker/...`
 - Enables portability across machines and Claude sessions
 
 **Pattern documentation format:**

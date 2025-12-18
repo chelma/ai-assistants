@@ -1,7 +1,7 @@
 # Building Cross-Language Temporal Workflows: A Prescriptive Guide
 
 **Extracted from**: Time Cop WorkflowDemoMixed implementation
-**Project Root**: /Users/chris.helma/workspace/personal/time-cop
+**Project Root**: ~/workspace/personal/time-cop
 **Last Updated**: 2025-11-10
 
 ---

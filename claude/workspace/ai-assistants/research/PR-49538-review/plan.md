@@ -1,7 +1,7 @@
 # Research Plan: PR #49538 Security Review
 
 **Workspace**: scriptdash
-**Project Root**: /Users/chris.helma/workspace/claude/scriptdash
+**Project Root**: ~/workspace/claude/scriptdash
 **Research Objective**: Comprehensive security review of mass hash syntax conversion commit
 **Started**: 2025-12-04
 

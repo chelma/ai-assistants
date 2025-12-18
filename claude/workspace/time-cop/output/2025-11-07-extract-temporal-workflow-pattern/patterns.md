@@ -1,6 +1,6 @@
 # Temporal Workflow Orchestration Patterns
 
-**Project Root**: /Users/chris.helma/workspace/personal/time-cop
+**Project Root**: ~/workspace/personal/time-cop
 
 **Extraction Date**: 2025-11-10
 

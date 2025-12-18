@@ -1,7 +1,7 @@
 # Research Plan: Summary Generator LLM Work Analysis
 
 **Workspace**: ai-assistants
-**Project Root**: /Users/chris.helma/workspace/personal/ai-assistants
+**Project Root**: ~/workspace/personal/ai-assistants
 **Created**: 2025-11-05 04:38:54
 **Research Directory**: `~/.claude/workspace/ai-assistants/research/20251105-043854-summary-generator-llm-work/`
 
@@ -21,7 +21,7 @@ Analyze the summary_generator_tool_def.py file to identify work currently being 
 ## Investigation Scope
 
 **Primary file**:
-- `/Users/chris.helma/workspace/personal/time-cop/python_worker/time_cop_worker/activities/summarize_patient_events/summary_generator_tool_def.py`
+- `~/workspace/personal/time-cop/python_worker/time_cop_worker/activities/summarize_patient_events/summary_generator_tool_def.py`
 
 **Context files** (if needed):
 - Related expert definition files

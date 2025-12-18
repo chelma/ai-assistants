@@ -42,7 +42,7 @@ The major finding is that deviations WERE handled well, but not in the "Deviatio
 **Deviation 2: Descriptive Patterns → Prescriptive Guide**
 
 **Planned** (plan.md lines 147-151):
-> "Extract/Refine architectural patterns observed... Write/Edit `/Users/chris.helma/workspace/personal/ai-assistants/.agents/output/langchain_architecture_extraction/langchain_patterns.md`"
+> "Extract/Refine architectural patterns observed... Write/Edit `~/workspace/personal/ai-assistants/.agents/output/langchain_architecture_extraction/langchain_patterns.md`"
 
 **Executed** (progress.md lines 250-296):
 > "Problem Identified: `langchain_patterns.md` reads like an archaeological report ('here's what we found') rather than a constructive guide ('here's how to build')"
@@ -82,7 +82,7 @@ The major finding is that deviations WERE handled well, but not in the "Deviatio
 > "After Phase 4 completion, Chris identified that `core/validators.py` contained domain-specific exceptions (PythonLogic*) that were only used by the JSON Transformer Expert, making `core/` less generic and reusable."
 
 **Phase 6** (lines 674-679):
-> "User identified this gap and referenced `/Users/chris.helma/workspace/personal/ocsf-playground/playground/playground_api/views.py:303-325` as the canonical invocation pattern."
+> "User identified this gap and referenced `~/workspace/personal/ocsf-playground/playground/playground_api/views.py:303-325` as the canonical invocation pattern."
 
 **Phase 7** (lines 737-745):
 > "User identified four key design principles from production experience that weren't captured in the documentation: 1. Narrow scope philosophy, 2. Tool-forcing rationale, 3. Multi-tool expert pattern, 4. ValidationReport observability"
@@ -474,7 +474,7 @@ This provides enough detail that someone resuming could understand the change wi
 
 **EXAMPLE OF POOR PRESERVATION** (Phase 6, lines 674-679):
 
-> "User identified this gap and referenced `/Users/chris.helma/workspace/personal/ocsf-playground/playground/playground_api/views.py:303-325` as the canonical invocation pattern."
+> "User identified this gap and referenced `~/workspace/personal/ocsf-playground/playground/playground_api/views.py:303-325` as the canonical invocation pattern."
 
 This doesn't preserve WHAT the gap was - need to read Phase 6 deep-dive to understand. Could be improved:
 
@@ -685,7 +685,7 @@ Documentation depth increased over time and became more sophisticated, balancing
 **File paths**: ✅ Consistently provided
 - Example (line 25): "in `langchain_patterns.md`"
 - Example (line 369): "`reference_implementation/core/experts.py`"
-- Example (line 674): "referenced `/Users/chris.helma/workspace/personal/ocsf-playground/playground/playground_api/views.py:303-325`"
+- Example (line 674): "referenced `~/workspace/personal/ocsf-playground/playground/playground_api/views.py:303-325`"
 
 **Metrics**: ✅ Frequently provided
 - File counts: "33 files" (line 25), "13 files" (line 21), "20 files" (line 22)

@@ -1,7 +1,7 @@
 # Plan: LangChain Architecture Extraction
 
 **Workspace**: ai-assistants
-**Project Root**: /Users/chris.helma/workspace/personal/ai-assistants
+**Project Root**: ~/workspace/personal/ai-assistants
 **Status**: draft
 **GitHub Issue**: N/A
 **Created**: 2025-10-30
@@ -16,7 +16,7 @@ Currently, there's no systematic way to capture and transfer Chris's LangChain a
 - [ ] **Pattern examples**: Each pattern includes file references and code examples from ocsf-playground
 - [ ] **Actionable guidance**: Guidelines are specific enough to guide future LangChain implementations
 - [ ] **Portable patterns**: Focus on LLM/inference patterns independent of application framework (Django, Temporal, etc.)
-- [ ] **Output format**: Final guide at `/Users/chris.helma/workspace/personal/ai-assistants/.agents/output/langchain_architecture_extraction/langchain_patterns.md`
+- [ ] **Output format**: Final guide at `~/workspace/personal/ai-assistants/.agents/output/langchain_architecture_extraction/langchain_patterns.md`
 - [ ] **Chris-approved**: Guidelines successfully represent Chris's LangChain architecture philosophy
 
 ---
@@ -24,7 +24,7 @@ Currently, there's no systematic way to capture and transfer Chris's LangChain a
 ## Current State Analysis
 
 ### Repository to Analyze
-**ocsf-playground** (`/Users/chris.helma/workspace/personal/ocsf-playground`)
+**ocsf-playground** (`~/workspace/personal/ocsf-playground`)
 - Purpose: Django backend API that receives requests and performs LLM inference using AWS Bedrock via LangChain
 - Domain: OCSF (Open Cybersecurity Schema Framework) analysis and transformation
 
@@ -144,7 +144,7 @@ A three-phase approach modeled after the successful Python coding style analysis
 1. **Read** next batch of files (based on iteration plan)
 2. **Analyze** files against the 7-category framework
 3. **Extract/Refine** architectural patterns observed
-4. **Write/Edit** `/Users/chris.helma/workspace/personal/ai-assistants/.agents/output/langchain_architecture_extraction/langchain_patterns.md`:
+4. **Write/Edit** `~/workspace/personal/ai-assistants/.agents/output/langchain_architecture_extraction/langchain_patterns.md`:
    - Add new patterns discovered
    - Refine existing patterns with additional evidence
    - Include file references and code snippets

@@ -308,7 +308,7 @@ extractions to learn from this workflow.
 **Evidence**:
 
 **Workspace-specific elements** (minimal):
-1. **Project Root** (progress line 17): `/Users/chris.helma/workspace/personal/time-cop`
+1. **Project Root** (progress line 17): `~/workspace/personal/time-cop`
 2. **Output Directory** (progress line 20): `~/.claude/workspace/time-cop/output/...`
 3. **File references** (throughout): `ruby_worker/app/workflows/...`, `protos/...`
 

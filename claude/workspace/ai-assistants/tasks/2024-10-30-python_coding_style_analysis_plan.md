@@ -1,7 +1,7 @@
 # Plan: Python Coding Style Analysis
 
 **Workspace**: ai-assistants
-**Project Root**: /Users/chris.helma/workspace/personal/ai-assistants
+**Project Root**: ~/workspace/personal/ai-assistants
 **Status**: complete
 **GitHub Issue**: N/A
 **Created**: 2025-10-29
@@ -21,7 +21,7 @@ There is currently no systematic way to capture and transfer Chris's Python codi
 - ✅ **Phase 2 Complete**: All prioritized files analyzed across 12 categories
 - ✅ **Guidelines Comprehensive**: Document covers all 12 analysis categories with specific patterns
 - ✅ **Guidelines Actionable**: Patterns include file references, code examples, and priority levels
-- ✅ **Output Format**: Final style guide at `/Users/chris.helma/workspace/personal/ai-assistants/python_style.md`
+- ✅ **Output Format**: Final style guide at `~/workspace/personal/ai-assistants/python_style.md`
 - ✅ **Phase 3 Complete**: Chris-approved polished guide ready for production use
 - ✅ **Engineering Fingerprint Captured**: Guidelines successfully represent Chris's coding philosophy and can inform future Claude sessions
 
@@ -30,11 +30,11 @@ There is currently no systematic way to capture and transfer Chris's Python codi
 ## Current State Analysis
 
 ### Repositories to Analyze
-1. **ocsf-playground** (`/Users/chris.helma/workspace/personal/ocsf-playground`)
+1. **ocsf-playground** (`~/workspace/personal/ocsf-playground`)
    - Purpose: [To be determined during exploration]
    - Language: Python
 
-2. **aws-aio** (`/Users/chris.helma/workspace/personal/aws-aio`)
+2. **aws-aio** (`~/workspace/personal/aws-aio`)
    - Purpose: [To be determined during exploration]
    - Language: Python
 
@@ -187,7 +187,7 @@ A three-phase approach that balances context efficiency with comprehensive analy
    - API Design
    - Meta Patterns
 3. **Extract/Refine** patterns observed in this batch
-4. **Write/Edit** `/Users/chris.helma/workspace/personal/ai-assistants/python_style.md`:
+4. **Write/Edit** `~/workspace/personal/ai-assistants/python_style.md`:
    - Add new patterns discovered
    - Refine existing patterns with additional evidence
    - Include file references and code snippets for traceability
@@ -226,7 +226,7 @@ A three-phase approach that balances context efficiency with comprehensive analy
 3. Claude edits `python_style.md` based on feedback
 4. Final version ready for deployment
 
-**Output**: Polished `/Users/chris.helma/workspace/personal/ai-assistants/python_style.md` ready to inform future Claude sessions
+**Output**: Polished `~/workspace/personal/ai-assistants/python_style.md` ready to inform future Claude sessions
 
 ## Implementation Steps
 
@@ -255,7 +255,7 @@ A three-phase approach that balances context efficiency with comprehensive analy
 ### Phase 3: Human-Led Refinement
 8. **Comprehensive review** - Chris reviews complete `python_style.md`
 9. **Refinement session** - Collaborative editing and polishing
-10. **Finalize** - Complete production-ready style guide at `/Users/chris.helma/workspace/personal/ai-assistants/python_style.md`
+10. **Finalize** - Complete production-ready style guide at `~/workspace/personal/ai-assistants/python_style.md`
 
 ## Risks and Considerations
 

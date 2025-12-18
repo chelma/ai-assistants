@@ -1,7 +1,7 @@
 # Plan: Centralize Protobuf Type Generation
 
 **Workspace**: time-cop
-**Project Root**: /Users/chris.helma/workspace/personal/time-cop
+**Project Root**: ~/workspace/personal/time-cop
 **Status**: draft
 **GitHub Issue**: [#15](https://github.com/scriptdash/time-cop/issues/15)
 **Created**: 2025-10-22

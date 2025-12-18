@@ -1,7 +1,7 @@
 # Scriptdash FetchAll and FetchOne Endpoint Patterns - Comprehensive Inventory
 
 **Generated:** November 20, 2025
-**Repository:** /Users/chris.helma/workspace/claude/scriptdash
+**Repository:** ~/workspace/claude/scriptdash
 **Thoroughness Level:** Very Thorough
 
 ---

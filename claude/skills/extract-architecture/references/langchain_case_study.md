@@ -352,7 +352,7 @@ Original Step 7 showed minimal invocation example but didn't explain:
 **After**: 58 lines (complete workflow + insights + rationale)
 
 ### Reference Source
-- File: `/Users/chris.helma/workspace/personal/ocsf-playground/playground/playground_api/views.py:303-325`
+- File: `~/workspace/personal/ocsf-playground/playground/playground_api/views.py:303-325`
 - Method: `TransformerEntitiesV1_1_0AnalyzeView._analyze()`
 - Pattern: Complete invocation workflow from production Django REST API
 

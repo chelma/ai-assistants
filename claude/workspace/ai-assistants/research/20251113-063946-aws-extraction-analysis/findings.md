@@ -1512,7 +1512,7 @@ This research analyzes the AWS Client Provider extraction task (2025-11-01 to 20
    - Shows quantification obsession
 
 2. **File references with line numbers**:
-   - Line 66: "`/Users/chris.helma/workspace/personal/aws-aio/manage_arkime/aws_interactions/aws_client_provider.py` (137 lines)"
+   - Line 66: "`~/workspace/personal/aws-aio/manage_arkime/aws_interactions/aws_client_provider.py` (137 lines)"
    - Line 154: All 11 implementation files with ✅ marks + line counts
    - Line 516: "aws_sdk_pattern_guide.md (552 lines)"
    - Can navigate directly to specific files

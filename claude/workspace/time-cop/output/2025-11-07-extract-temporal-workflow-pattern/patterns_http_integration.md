@@ -1,6 +1,6 @@
 # HTTP Integration Patterns
 
-**Project Root**: /Users/chris.helma/workspace/personal/time-cop
+**Project Root**: ~/workspace/personal/time-cop
 
 **Pattern Coverage**: Patterns 16-20 from WorkflowDemoMixed extraction
 

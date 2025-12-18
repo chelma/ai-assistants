@@ -1,7 +1,7 @@
 # Plan: Extract Endpoint Creation Patterns
 
 **Workspace**: ai-assistants
-**Project Root**: /Users/chris.helma/workspace/personal/ai-assistants
+**Project Root**: ~/workspace/personal/ai-assistants
 **Status**: Ready for implementation
 **GitHub Issue**: N/A
 **Created**: 2025-11-20

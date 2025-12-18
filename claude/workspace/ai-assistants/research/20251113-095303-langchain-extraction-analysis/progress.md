@@ -1,7 +1,7 @@
 # Research Progress: LangChain Extraction Analysis
 
 **Workspace**: ai-assistants
-**Project Root**: /Users/chris.helma/workspace/personal/ai-assistants
+**Project Root**: ~/workspace/personal/ai-assistants
 **Status**: complete
 **Started**: 2025-11-13 09:53:03
 **Completed**: 2025-11-13 10:45:00 (approximate)
@@ -101,5 +101,5 @@
 **Comprehensive**: ✅ All 10 categories analyzed thoroughly
 
 ## Source File Locations
-- Plan: `/Users/chris.helma/.claude/workspace/ai-assistants/tasks/2024-10-30-langchain_architecture_extraction_plan.md`
-- Progress: `/Users/chris.helma/.claude/workspace/ai-assistants/tasks/2024-10-30-langchain_architecture_extraction_progress.md`
+- Plan: `~/.claude/workspace/ai-assistants/tasks/2024-10-30-langchain_architecture_extraction_plan.md`
+- Progress: `~/.claude/workspace/ai-assistants/tasks/2024-10-30-langchain_architecture_extraction_progress.md`

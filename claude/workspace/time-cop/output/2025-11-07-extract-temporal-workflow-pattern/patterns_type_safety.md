@@ -1,6 +1,6 @@
 # Type Safety Patterns
 
-**Project Root**: /Users/chris.helma/workspace/personal/time-cop
+**Project Root**: ~/workspace/personal/time-cop
 
 **Pattern Coverage**: Patterns 9-15 from WorkflowDemoMixed extraction
 

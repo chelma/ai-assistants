@@ -1,7 +1,7 @@
 # Research Plan: Temporal Workflow Extraction - Tag-Team Analysis
 
 **Workspace**: time-cop
-**Project Root**: /Users/chris.helma/workspace/personal/ai-assistants
+**Project Root**: ~/workspace/personal/ai-assistants
 **Research Objective**: Analyze Temporal Workflow extraction task to extract insights about tag-team skill effectiveness
 **Task Type**: Investigation 3 of 5 - Most recent extraction (mature process)
 **Created**: 2025-11-13

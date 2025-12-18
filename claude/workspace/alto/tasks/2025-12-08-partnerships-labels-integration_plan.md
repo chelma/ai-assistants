@@ -1,7 +1,7 @@
 # Plan: 2025-12-08-partnerships-labels-integration
 
 **Workspace**: alto
-**Project Root**: /Users/chris.helma/workspace/alto
+**Project Root**: ~/workspace/alto
 **Status**: draft
 **GitHub Issue**: N/A
 **Created**: 2025-12-08

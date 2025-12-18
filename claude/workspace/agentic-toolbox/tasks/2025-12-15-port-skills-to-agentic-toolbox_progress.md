@@ -11,7 +11,7 @@ CRITICAL: Update this file IMMEDIATELY after EACH phase/step completion (not in 
 -->
 
 **Workspace**: agentic-toolbox
-**Project Root**: /Users/chris.helma/workspace/alto/agentic-toolbox
+**Project Root**: ~/workspace/alto/agentic-toolbox
 **Status**: complete
 **Plan**: `~/.claude/workspace/agentic-toolbox/tasks/2025-12-15-port-skills-to-agentic-toolbox_plan.md`
 **Output Directory**: N/A (changes made directly to target repo)
@@ -88,7 +88,7 @@ Dependencies section added to Overview documenting skill-creator as external opt
 **Current State**: All phases complete. Ready for final review.
 
 **Key Context**:
-- Target repo: `/Users/chris.helma/workspace/alto/agentic-toolbox`
+- Target repo: `~/workspace/alto/agentic-toolbox`
 - All skills ported with internal references only
 - External dependency (skill-creator) documented
 - Fuze branding applied throughout

@@ -1,11 +1,11 @@
 # Research Progress: Temporal Workflow Extraction Analysis
 
 **Workspace**: time-cop
-**Project Root**: /Users/chris.helma/workspace/personal/ai-assistants
+**Project Root**: ~/workspace/personal/ai-assistants
 **Status**: complete
 **Started**: 2025-11-13
 **Completed**: 2025-11-13
-**Research Directory**: `/Users/chris.helma/.claude/workspace/time-cop/research/20251113-104622-temporal-extraction-analysis/`
+**Research Directory**: `~/.claude/workspace/time-cop/research/20251113-104622-temporal-extraction-analysis/`
 
 ## Phases
 - [x] Phase 1: Setup & Planning

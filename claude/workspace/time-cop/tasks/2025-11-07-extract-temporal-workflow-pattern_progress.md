@@ -14,7 +14,7 @@ See .agents/README.md sections "Resumability" and "Documenting Phase Outcomes" f
 -->
 
 **Workspace**: time-cop
-**Project Root**: /Users/chris.helma/workspace/personal/time-cop
+**Project Root**: ~/workspace/personal/time-cop
 **Status**: in_progress (Phase 7: Token optimization)
 **Plan**: [2025-11-07-extract-temporal-workflow-pattern_plan.md](./2025-11-07-extract-temporal-workflow-pattern_plan.md)
 **Output Directory**: `~/.claude/workspace/time-cop/output/2025-11-07-extract-temporal-workflow-pattern/`

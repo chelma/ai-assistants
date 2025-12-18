@@ -219,7 +219,7 @@ Flexibility allowed discoveries to shape deliverable rather than forcing fit to 
 - **Rationale**: Improve code organization for better pattern clarity
 
 **Phase 6: EMERGED FROM CHRIS'S GAP IDENTIFICATION** (line 674)
-> "User identified this gap and referenced `/Users/chris.helma/workspace/personal/ocsf-playground/playground/playground_api/views.py:303-325`"
+> "User identified this gap and referenced `~/workspace/personal/ocsf-playground/playground/playground_api/views.py:303-325`"
 
 - **Why new phase needed**: Invocation workflow not adequately documented
 - **Emergence trigger**: Chris identifying missing critical content

@@ -1,7 +1,7 @@
 # Research Progress: PR #49538 Security Review
 
 **Workspace**: scriptdash
-**Project Root**: /Users/chris.helma/workspace/claude/scriptdash
+**Project Root**: ~/workspace/claude/scriptdash
 **Status**: complete
 **Started**: 2025-12-04
 **Completed**: 2025-12-04

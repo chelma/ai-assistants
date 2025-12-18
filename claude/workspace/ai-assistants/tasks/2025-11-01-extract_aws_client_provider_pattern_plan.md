@@ -1,7 +1,7 @@
 # Plan: 2025-11-01-extract_aws_client_provider_pattern
 
 **Workspace**: ai-assistants
-**Project Root**: /Users/chris.helma/workspace/personal/ai-assistants
+**Project Root**: ~/workspace/personal/ai-assistants
 **Status**: draft
 **GitHub Issue**: N/A
 **Created**: 2025-11-01
@@ -29,7 +29,7 @@ Extract the AWS SDK interaction pattern from the aws-aio repository that uses an
 
 ### Repository Context
 
-The aws-aio repository (`/Users/chris.helma/workspace/personal/aws-aio`) is a production AWS infrastructure management solution for deploying Arkime clusters. The codebase contains **1,203 lines** of AWS interaction code across **11 service modules** with **1,687 lines** of test coverage.
+The aws-aio repository (`~/workspace/personal/aws-aio`) is a production AWS infrastructure management solution for deploying Arkime clusters. The codebase contains **1,203 lines** of AWS interaction code across **11 service modules** with **1,687 lines** of test coverage.
 
 **Technology Stack:**
 - Python 3.9+

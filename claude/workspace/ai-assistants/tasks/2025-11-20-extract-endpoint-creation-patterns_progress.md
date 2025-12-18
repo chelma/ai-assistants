@@ -12,7 +12,7 @@ Batched updates cause context strain and reduce resumability effectiveness.
 -->
 
 **Workspace**: ai-assistants
-**Project Root**: /Users/chris.helma/workspace/personal/ai-assistants
+**Project Root**: ~/workspace/personal/ai-assistants
 **Status**: in_progress
 **Plan**: `~/.claude/workspace/ai-assistants/tasks/2025-11-20-extract-endpoint-creation-patterns_plan.md`
 **Output Directory**: `~/.claude/workspace/ai-assistants/output/2025-11-20-extract-endpoint-creation-patterns/`

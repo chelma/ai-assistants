@@ -16,7 +16,7 @@ These sections should be added to the standard tag-team progress template when p
 - The standard progress template (from tag-team) includes Workspace and Project Root fields
 - All file paths in these architecture extraction sections should be **relative to project root**
 - Example: `ruby_worker/app/workflows/workflow_demo_mixed.rb:15-30`
-- NOT: `/Users/chris.helma/workspace/personal/time-cop/ruby_worker/...`
+- NOT: `~/workspace/personal/time-cop/ruby_worker/...`
 - This ensures portability across machines and Claude sessions
 
 ---

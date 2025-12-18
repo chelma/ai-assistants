@@ -1,7 +1,7 @@
 # Research Progress: Fusion Reusability Assessment
 
 **Workspace**: alto-workspace
-**Project Root**: /Users/chris.helma/workspace/alto/alto-workspace
+**Project Root**: ~/workspace/alto/alto-workspace
 **Status**: complete
 **Started**: 2025-11-19 09:07:59
 **Completed**: 2025-11-19 09:30:00

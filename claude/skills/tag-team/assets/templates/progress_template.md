@@ -17,7 +17,7 @@ See .agents/README.md sections "Resumability" and "Documenting Phase Outcomes" f
 -->
 
 **Workspace**: [workspace-name]
-**Project Root**: [/absolute/path/to/project/root]
+**Project Root**: [~/workspace/project-name or /path/outside/home]
 **Status**: in_progress
 **Plan**: [Link to corresponding _plan.md file]
 **Output Directory**: `~/.claude/workspace/[workspace-name]/output/[task_name]/`

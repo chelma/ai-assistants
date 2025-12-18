@@ -1,7 +1,7 @@
 # Implementation: Centralize Protobuf Type Generation
 
 **Workspace**: time-cop
-**Project Root**: /Users/chris.helma/workspace/personal/time-cop
+**Project Root**: ~/workspace/personal/time-cop
 **Status**: completed
 **Plan**: [centralize_protobuf_generation_plan.md](./centralize_protobuf_generation_plan.md)
 **Started**: 2025-10-28

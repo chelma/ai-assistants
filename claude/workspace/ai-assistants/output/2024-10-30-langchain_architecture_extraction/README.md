@@ -144,7 +144,7 @@ Search for `<!-- COMMENTARY NEEDED -->` in `langchain_guide.md`.
 
 ## Source Information
 
-**Original Repository**: ocsf-playground (`/Users/chris.helma/workspace/personal/ocsf-playground`)
+**Original Repository**: ocsf-playground (`~/workspace/personal/ocsf-playground`)
 - **LLM Provider**: AWS Bedrock (Claude 3.5 Sonnet)
 - **Framework**: LangChain + Django backend
 - **Domain**: OCSF (Open Cybersecurity Schema Framework) analysis

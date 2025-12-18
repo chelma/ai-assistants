@@ -1,7 +1,7 @@
 # Research Progress: Summary Generator LLM Work Analysis
 
 **Workspace**: ai-assistants
-**Project Root**: /Users/chris.helma/workspace/personal/ai-assistants
+**Project Root**: ~/workspace/personal/ai-assistants
 **Status**: complete
 **Started**: 2025-11-05 04:38:54
 **Completed**: 2025-11-05 04:45:00

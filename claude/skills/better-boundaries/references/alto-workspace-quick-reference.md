@@ -2,7 +2,7 @@
 
 **Purpose**: Quick lookup for endpoint-creation skill development
 **Token Cost**: ~1k (use full reference for detailed context)
-**Location**: `/Users/chris.helma/workspace/alto/alto-workspace/`
+**Location**: `~/workspace/alto/alto-workspace/`
 
 ## Key Commands
 

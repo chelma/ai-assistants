@@ -1,7 +1,7 @@
 # Plan: PR-49538-hash-syntax-review
 
 **Workspace**: ai-assistants
-**Project Root**: /Users/chris.helma/workspace/personal/ai-assistants
+**Project Root**: ~/workspace/personal/ai-assistants
 **Status**: completed
 **GitHub Issue**: https://github.com/scriptdash/scriptdash/pull/49538
 **Created**: 2025-12-04
@@ -84,7 +84,7 @@ Focus report on:
 
 ### Phase 1: Setup & Clone
 1. Create output directory: `~/.claude/workspace/ai-assistants/output/PR-49538-hash-syntax-review/`
-2. Clone scriptdash/scriptdash repository to `/Users/chris.helma/workspace/claude/scriptdash`
+2. Clone scriptdash/scriptdash repository to `~/workspace/claude/scriptdash`
 3. Checkout PR branch: `sierra.sc-3963-hash-syntax`
 4. Verify file count and change statistics match PR description
 

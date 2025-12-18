@@ -76,6 +76,11 @@ PROJECT_ROOT=$(git rev-parse --show-toplevel 2>/dev/null)
 # If empty, use current working directory
 ```
 
+**Path Portability**: If the project root is under `$HOME`, convert to tilde notation for portability across machines:
+- `/Users/username/workspace/project` → `~/workspace/project`
+- `/home/username/workspace/project` → `~/workspace/project`
+- Paths outside home directory remain absolute
+
 Store both values - they will be included in plan file header and used for all file operations.
 
 ### Step 4: Confirm Task Name
@@ -155,7 +160,7 @@ Document findings for the "Current State Analysis" section.
 4. **File reference requirements:**
    - All file paths in the plan should be **relative to project root**
    - Example: `ruby_worker/app/workflows/workflow_demo_mixed.rb:15-30`
-   - NOT: `/Users/chris.helma/workspace/personal/time-cop/ruby_worker/...`
+   - NOT: `~/workspace/personal/time-cop/ruby_worker/...`
    - When Claude reads plan files later, it combines Project Root + relative path to resolve files
 
 5. **Inform the user:**
@@ -323,7 +328,7 @@ Specialized skills build on tag-team's checkpoint and progress tracking framewor
 **File reference requirements:**
 - Use paths **relative to project root** in all plan and progress files
 - Example: `ruby_worker/app/workflows/workflow.rb:15-30`
-- NOT: `/Users/chris.helma/workspace/personal/...`
+- NOT: `~/workspace/personal/...`
 - Enables portability across machines and sessions
 
 ## Assets

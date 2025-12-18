@@ -1,7 +1,7 @@
 # Investigation 4 Findings - Part 3: Categories 8-10
 # Python Coding Style Analysis Task (ANALYSIS type)
 
-**Research Directory**: `/Users/chris.helma/.claude/workspace/ai-assistants/research/20251113-111103-python-style-analysis/`
+**Research Directory**: `~/.claude/workspace/ai-assistants/research/20251113-111103-python-style-analysis/`
 **Continuing analysis from findings_part1.md and findings_part2.md**
 
 ---
@@ -46,7 +46,7 @@
 
 **THIS ANALYSIS task** (Plan lines 190-208):
 ```
-4. **Write/Edit** `/Users/chris.helma/workspace/personal/ai-assistants/python_style.md`:
+4. **Write/Edit** `~/workspace/personal/ai-assistants/python_style.md`:
    - Add new patterns discovered
    - Refine existing patterns with additional evidence
    - Include file references and code snippets for traceability

@@ -1,7 +1,7 @@
 # Implementation: 2025-11-01-extract_aws_client_provider_pattern
 
 **Workspace**: ai-assistants
-**Project Root**: /Users/chris.helma/workspace/personal/ai-assistants
+**Project Root**: ~/workspace/personal/ai-assistants
 **Status**: complete
 **Plan**: [2025-11-01-extract_aws_client_provider_pattern_plan.md](./2025-11-01-extract_aws_client_provider_pattern_plan.md)
 **Output Directory**: `~/.claude/workspace/ai-assistants/output/2025-11-01-extract_aws_client_provider_pattern/`
@@ -63,67 +63,67 @@ Key strengths include **separation of concerns** (AWS SDK calls isolated from bu
 ### Complete File Inventory
 
 #### Core Abstractions (2 files, 156 lines)
-- [✅] `/Users/chris.helma/workspace/personal/aws-aio/manage_arkime/aws_interactions/aws_client_provider.py` (137 lines) - Factory class for creating boto3 clients with profile/region/role management
-- [✅] `/Users/chris.helma/workspace/personal/aws-aio/manage_arkime/aws_interactions/aws_environment.py` (19 lines) - Dataclass encapsulating AWS account/region context
+- [✅] `~/workspace/personal/aws-aio/manage_arkime/aws_interactions/aws_client_provider.py` (137 lines) - Factory class for creating boto3 clients with profile/region/role management
+- [✅] `~/workspace/personal/aws-aio/manage_arkime/aws_interactions/aws_environment.py` (19 lines) - Dataclass encapsulating AWS account/region context
 
 #### AWS Service Wrappers (9 files, 1,047 lines)
 
 **EC2 & VPC Operations** (1 file, 193 lines)
-- [✅] `/Users/chris.helma/workspace/personal/aws-aio/manage_arkime/aws_interactions/ec2_interactions.py` (193 lines) - VPC details, ENI management, traffic mirroring
+- [✅] `~/workspace/personal/aws-aio/manage_arkime/aws_interactions/ec2_interactions.py` (193 lines) - VPC details, ENI management, traffic mirroring
 
 **S3 Operations** (1 file, 238 lines)
-- [✅] `/Users/chris.helma/workspace/personal/aws-aio/manage_arkime/aws_interactions/s3_interactions.py` (238 lines) - Bucket/object operations, KMS encryption, enum-based status
+- [✅] `~/workspace/personal/aws-aio/manage_arkime/aws_interactions/s3_interactions.py` (238 lines) - Bucket/object operations, KMS encryption, enum-based status
 
 **CloudWatch Operations** (1 file, 215 lines)
-- [✅] `/Users/chris.helma/workspace/personal/aws-aio/manage_arkime/aws_interactions/cloudwatch_interactions.py` (215 lines) - Metrics emission with multi-outcome support
+- [✅] `~/workspace/personal/aws-aio/manage_arkime/aws_interactions/cloudwatch_interactions.py` (215 lines) - Metrics emission with multi-outcome support
 
 **EventBridge Operations** (1 file, 135 lines)
-- [✅] `/Users/chris.helma/workspace/personal/aws-aio/manage_arkime/aws_interactions/events_interactions.py` (135 lines) - Event publishing patterns
+- [✅] `~/workspace/personal/aws-aio/manage_arkime/aws_interactions/events_interactions.py` (135 lines) - Event publishing patterns
 
 **SSM Parameter Store** (1 file, 81 lines)
-- [✅] `/Users/chris.helma/workspace/personal/aws-aio/manage_arkime/aws_interactions/ssm_operations.py` (81 lines) - Parameter store read/write operations
+- [✅] `~/workspace/personal/aws-aio/manage_arkime/aws_interactions/ssm_operations.py` (81 lines) - Parameter store read/write operations
 
 **IAM Operations** (1 file, 57 lines)
-- [✅] `/Users/chris.helma/workspace/personal/aws-aio/manage_arkime/aws_interactions/iam_interactions.py` (57 lines) - IAM role lifecycle management
+- [✅] `~/workspace/personal/aws-aio/manage_arkime/aws_interactions/iam_interactions.py` (57 lines) - IAM role lifecycle management
 
 **ACM Operations** (1 file, 54 lines)
-- [✅] `/Users/chris.helma/workspace/personal/aws-aio/manage_arkime/aws_interactions/acm_interactions.py` (54 lines) - Certificate management
+- [✅] `~/workspace/personal/aws-aio/manage_arkime/aws_interactions/acm_interactions.py` (54 lines) - Certificate management
 
 **OpenSearch Domain Lifecycle** (1 file, 42 lines)
-- [✅] `/Users/chris.helma/workspace/personal/aws-aio/manage_arkime/aws_interactions/destroy_os_domain.py` (42 lines) - OpenSearch domain cleanup
+- [✅] `~/workspace/personal/aws-aio/manage_arkime/aws_interactions/destroy_os_domain.py` (42 lines) - OpenSearch domain cleanup
 
 **ECS Operations** (1 file, 32 lines)
-- [✅] `/Users/chris.helma/workspace/personal/aws-aio/manage_arkime/aws_interactions/ecs_interactions.py` (32 lines) - Container service operations
+- [✅] `~/workspace/personal/aws-aio/manage_arkime/aws_interactions/ecs_interactions.py` (32 lines) - Container service operations
 
 #### OpenSearch REST API Wrappers (4 files, 372 lines)
 
 **OpenSearch REST Client** (4 files, 372 lines)
-- [⊘] `/Users/chris.helma/workspace/personal/aws-aio/manage_arkime/opensearch_interactions/opensearch_client.py` (194 lines) - Abstract base class for OpenSearch HTTP client (out of scope - HTTP client abstraction)
-- [⊘] `/Users/chris.helma/workspace/personal/aws-aio/manage_arkime/opensearch_interactions/rest_ops.py` (101 lines) - REST API operations (out of scope - HTTP client abstraction)
-- [⊘] `/Users/chris.helma/workspace/personal/aws-aio/manage_arkime/opensearch_interactions/ism_interactions.py` (47 lines) - Index State Management interactions (out of scope)
-- [⊘] `/Users/chris.helma/workspace/personal/aws-aio/manage_arkime/opensearch_interactions/ism_policies.py` (30 lines) - ISM policy definitions (out of scope)
+- [⊘] `~/workspace/personal/aws-aio/manage_arkime/opensearch_interactions/opensearch_client.py` (194 lines) - Abstract base class for OpenSearch HTTP client (out of scope - HTTP client abstraction)
+- [⊘] `~/workspace/personal/aws-aio/manage_arkime/opensearch_interactions/rest_ops.py` (101 lines) - REST API operations (out of scope - HTTP client abstraction)
+- [⊘] `~/workspace/personal/aws-aio/manage_arkime/opensearch_interactions/ism_interactions.py` (47 lines) - Index State Management interactions (out of scope)
+- [⊘] `~/workspace/personal/aws-aio/manage_arkime/opensearch_interactions/ism_policies.py` (30 lines) - ISM policy definitions (out of scope)
 
 #### Test Coverage (47 files, 15,777 lines)
 
 **Core Tests** (1 file, 151 lines)
-- [✅] `/Users/chris.helma/workspace/personal/aws-aio/test_manage_arkime/aws_interactions/test_aws_client_provider.py` (151 lines) - Factory mocking patterns, session management
+- [✅] `~/workspace/personal/aws-aio/test_manage_arkime/aws_interactions/test_aws_client_provider.py` (151 lines) - Factory mocking patterns, session management
 
 **AWS Service Tests** (9 files, 1,536 lines)
-- [✅] `/Users/chris.helma/workspace/personal/aws-aio/test_manage_arkime/aws_interactions/test_s3_interactions.py` (380 lines) - S3 operations and error handling
-- [✅] `/Users/chris.helma/workspace/personal/aws-aio/test_manage_arkime/aws_interactions/test_ec2_interactions.py` (323 lines) - EC2 and VPC operations
-- [✅] `/Users/chris.helma/workspace/personal/aws-aio/test_manage_arkime/aws_interactions/test_cloudwatch_interactions.py` (281 lines) - Metrics and event structures
-- [✅] `/Users/chris.helma/workspace/personal/aws-aio/test_manage_arkime/aws_interactions/test_ssm_operations.py` (173 lines) - Parameter store operations
-- [✅] `/Users/chris.helma/workspace/personal/aws-aio/test_manage_arkime/aws_interactions/test_iam_interactions.py` (113 lines) - IAM role management
-- [✅] `/Users/chris.helma/workspace/personal/aws-aio/test_manage_arkime/aws_interactions/test_ecs_interactions.py` (100 lines) - ECS deployment operations
-- [✅] `/Users/chris.helma/workspace/personal/aws-aio/test_manage_arkime/aws_interactions/test_acm_interactions.py` (79 lines) - Certificate operations
-- [✅] `/Users/chris.helma/workspace/personal/aws-aio/test_manage_arkime/aws_interactions/test_destroy_os_domain.py` (46 lines) - OpenSearch domain cleanup
-- [✅] `/Users/chris.helma/workspace/personal/aws-aio/test_manage_arkime/aws_interactions/test_events_interactions.py` (41 lines) - EventBridge events
+- [✅] `~/workspace/personal/aws-aio/test_manage_arkime/aws_interactions/test_s3_interactions.py` (380 lines) - S3 operations and error handling
+- [✅] `~/workspace/personal/aws-aio/test_manage_arkime/aws_interactions/test_ec2_interactions.py` (323 lines) - EC2 and VPC operations
+- [✅] `~/workspace/personal/aws-aio/test_manage_arkime/aws_interactions/test_cloudwatch_interactions.py` (281 lines) - Metrics and event structures
+- [✅] `~/workspace/personal/aws-aio/test_manage_arkime/aws_interactions/test_ssm_operations.py` (173 lines) - Parameter store operations
+- [✅] `~/workspace/personal/aws-aio/test_manage_arkime/aws_interactions/test_iam_interactions.py` (113 lines) - IAM role management
+- [✅] `~/workspace/personal/aws-aio/test_manage_arkime/aws_interactions/test_ecs_interactions.py` (100 lines) - ECS deployment operations
+- [✅] `~/workspace/personal/aws-aio/test_manage_arkime/aws_interactions/test_acm_interactions.py` (79 lines) - Certificate operations
+- [✅] `~/workspace/personal/aws-aio/test_manage_arkime/aws_interactions/test_destroy_os_domain.py` (46 lines) - OpenSearch domain cleanup
+- [✅] `~/workspace/personal/aws-aio/test_manage_arkime/aws_interactions/test_events_interactions.py` (41 lines) - EventBridge events
 
 **OpenSearch Tests** (4 files, 14,090 lines - includes large test fixtures)
-- [⊘] `/Users/chris.helma/workspace/personal/aws-aio/test_manage_arkime/opensearch_interactions/test_opensearch_client.py` (92 lines) - Abstract client testing (out of scope)
-- [⊘] `/Users/chris.helma/workspace/personal/aws-aio/test_manage_arkime/opensearch_interactions/test_rest_ops.py` (256 lines) - REST operations testing (out of scope)
-- [⊘] `/Users/chris.helma/workspace/personal/aws-aio/test_manage_arkime/opensearch_interactions/test_ism_interactions.py` (89 lines) - ISM testing (out of scope)
-- [⊘] `/Users/chris.helma/workspace/personal/aws-aio/test_manage_arkime/opensearch_interactions/test_ism_policies.py` (13,653 lines) - ISM policy fixtures (out of scope)
+- [⊘] `~/workspace/personal/aws-aio/test_manage_arkime/opensearch_interactions/test_opensearch_client.py` (92 lines) - Abstract client testing (out of scope)
+- [⊘] `~/workspace/personal/aws-aio/test_manage_arkime/opensearch_interactions/test_rest_ops.py` (256 lines) - REST operations testing (out of scope)
+- [⊘] `~/workspace/personal/aws-aio/test_manage_arkime/opensearch_interactions/test_ism_interactions.py` (89 lines) - ISM testing (out of scope)
+- [⊘] `~/workspace/personal/aws-aio/test_manage_arkime/opensearch_interactions/test_ism_policies.py` (13,653 lines) - ISM policy fixtures (out of scope)
 
 ---
 
@@ -150,19 +150,19 @@ Key strengths include **separation of concerns** (AWS SDK calls isolated from bu
 **Files to analyze** (11 files, 1,203 lines):
 
 **Core Abstractions** (2 files, 156 lines):
-- ✅ `/Users/chris.helma/workspace/personal/aws-aio/manage_arkime/aws_interactions/aws_client_provider.py` (137 lines) - Factory pattern, session management, credential handling
-- ✅ `/Users/chris.helma/workspace/personal/aws-aio/manage_arkime/aws_interactions/aws_environment.py` (19 lines) - Context dataclass pattern
+- ✅ `~/workspace/personal/aws-aio/manage_arkime/aws_interactions/aws_client_provider.py` (137 lines) - Factory pattern, session management, credential handling
+- ✅ `~/workspace/personal/aws-aio/manage_arkime/aws_interactions/aws_environment.py` (19 lines) - Context dataclass pattern
 
 **AWS Service Wrappers** (9 files, 1,047 lines):
-- ✅ `/Users/chris.helma/workspace/personal/aws-aio/manage_arkime/aws_interactions/ec2_interactions.py` (193 lines) - VPC operations, ENI management, traffic mirroring
-- ✅ `/Users/chris.helma/workspace/personal/aws-aio/manage_arkime/aws_interactions/s3_interactions.py` (238 lines) - Bucket/object operations, enum-based status classification
-- ✅ `/Users/chris.helma/workspace/personal/aws-aio/manage_arkime/aws_interactions/cloudwatch_interactions.py` (215 lines) - Metrics emission, multi-outcome support
-- ✅ `/Users/chris.helma/workspace/personal/aws-aio/manage_arkime/aws_interactions/events_interactions.py` (135 lines) - Event publishing to EventBridge
-- ✅ `/Users/chris.helma/workspace/personal/aws-aio/manage_arkime/aws_interactions/ssm_operations.py` (81 lines) - Parameter store operations
-- ✅ `/Users/chris.helma/workspace/personal/aws-aio/manage_arkime/aws_interactions/iam_interactions.py` (57 lines) - IAM role lifecycle
-- ✅ `/Users/chris.helma/workspace/personal/aws-aio/manage_arkime/aws_interactions/acm_interactions.py` (54 lines) - Certificate management
-- ✅ `/Users/chris.helma/workspace/personal/aws-aio/manage_arkime/aws_interactions/destroy_os_domain.py` (42 lines) - OpenSearch domain cleanup via boto3
-- ✅ `/Users/chris.helma/workspace/personal/aws-aio/manage_arkime/aws_interactions/ecs_interactions.py` (32 lines) - ECS service operations
+- ✅ `~/workspace/personal/aws-aio/manage_arkime/aws_interactions/ec2_interactions.py` (193 lines) - VPC operations, ENI management, traffic mirroring
+- ✅ `~/workspace/personal/aws-aio/manage_arkime/aws_interactions/s3_interactions.py` (238 lines) - Bucket/object operations, enum-based status classification
+- ✅ `~/workspace/personal/aws-aio/manage_arkime/aws_interactions/cloudwatch_interactions.py` (215 lines) - Metrics emission, multi-outcome support
+- ✅ `~/workspace/personal/aws-aio/manage_arkime/aws_interactions/events_interactions.py` (135 lines) - Event publishing to EventBridge
+- ✅ `~/workspace/personal/aws-aio/manage_arkime/aws_interactions/ssm_operations.py` (81 lines) - Parameter store operations
+- ✅ `~/workspace/personal/aws-aio/manage_arkime/aws_interactions/iam_interactions.py` (57 lines) - IAM role lifecycle
+- ✅ `~/workspace/personal/aws-aio/manage_arkime/aws_interactions/acm_interactions.py` (54 lines) - Certificate management
+- ✅ `~/workspace/personal/aws-aio/manage_arkime/aws_interactions/destroy_os_domain.py` (42 lines) - OpenSearch domain cleanup via boto3
+- ✅ `~/workspace/personal/aws-aio/manage_arkime/aws_interactions/ecs_interactions.py` (32 lines) - ECS service operations
 
 **Key Patterns to Extract**:
 - **Factory Pattern**: AwsClientProvider design, getter method structure, session/credential management
@@ -189,18 +189,18 @@ Key strengths include **separation of concerns** (AWS SDK calls isolated from bu
 **Files to analyze** (10 files, 1,687 lines):
 
 **Core Tests** (1 file, 151 lines):
-- ✅ `/Users/chris.helma/workspace/personal/aws-aio/test_manage_arkime/aws_interactions/test_aws_client_provider.py` (151 lines) - Factory mocking patterns, session management testing
+- ✅ `~/workspace/personal/aws-aio/test_manage_arkime/aws_interactions/test_aws_client_provider.py` (151 lines) - Factory mocking patterns, session management testing
 
 **AWS Service Tests** (9 files, 1,536 lines):
-- ✅ `/Users/chris.helma/workspace/personal/aws-aio/test_manage_arkime/aws_interactions/test_s3_interactions.py` (380 lines) - S3 testing, error scenario coverage
-- ✅ `/Users/chris.helma/workspace/personal/aws-aio/test_manage_arkime/aws_interactions/test_ec2_interactions.py` (323 lines) - EC2/VPC testing patterns
-- ✅ `/Users/chris.helma/workspace/personal/aws-aio/test_manage_arkime/aws_interactions/test_cloudwatch_interactions.py` (281 lines) - Metrics testing, event structure validation
-- ✅ `/Users/chris.helma/workspace/personal/aws-aio/test_manage_arkime/aws_interactions/test_ssm_operations.py` (173 lines) - Parameter store operation testing
-- ✅ `/Users/chris.helma/workspace/personal/aws-aio/test_manage_arkime/aws_interactions/test_iam_interactions.py` (113 lines) - IAM role management testing
-- ✅ `/Users/chris.helma/workspace/personal/aws-aio/test_manage_arkime/aws_interactions/test_ecs_interactions.py` (100 lines) - ECS deployment testing
-- ✅ `/Users/chris.helma/workspace/personal/aws-aio/test_manage_arkime/aws_interactions/test_acm_interactions.py` (79 lines) - Certificate operation testing
-- ✅ `/Users/chris.helma/workspace/personal/aws-aio/test_manage_arkime/aws_interactions/test_destroy_os_domain.py` (46 lines) - OpenSearch domain cleanup testing
-- ✅ `/Users/chris.helma/workspace/personal/aws-aio/test_manage_arkime/aws_interactions/test_events_interactions.py` (41 lines) - EventBridge event testing
+- ✅ `~/workspace/personal/aws-aio/test_manage_arkime/aws_interactions/test_s3_interactions.py` (380 lines) - S3 testing, error scenario coverage
+- ✅ `~/workspace/personal/aws-aio/test_manage_arkime/aws_interactions/test_ec2_interactions.py` (323 lines) - EC2/VPC testing patterns
+- ✅ `~/workspace/personal/aws-aio/test_manage_arkime/aws_interactions/test_cloudwatch_interactions.py` (281 lines) - Metrics testing, event structure validation
+- ✅ `~/workspace/personal/aws-aio/test_manage_arkime/aws_interactions/test_ssm_operations.py` (173 lines) - Parameter store operation testing
+- ✅ `~/workspace/personal/aws-aio/test_manage_arkime/aws_interactions/test_iam_interactions.py` (113 lines) - IAM role management testing
+- ✅ `~/workspace/personal/aws-aio/test_manage_arkime/aws_interactions/test_ecs_interactions.py` (100 lines) - ECS deployment testing
+- ✅ `~/workspace/personal/aws-aio/test_manage_arkime/aws_interactions/test_acm_interactions.py` (79 lines) - Certificate operation testing
+- ✅ `~/workspace/personal/aws-aio/test_manage_arkime/aws_interactions/test_destroy_os_domain.py` (46 lines) - OpenSearch domain cleanup testing
+- ✅ `~/workspace/personal/aws-aio/test_manage_arkime/aws_interactions/test_events_interactions.py` (41 lines) - EventBridge event testing
 
 **Key Patterns to Extract**:
 - **Mock/Patch Patterns**: How to mock AwsClientProvider and individual boto3 clients

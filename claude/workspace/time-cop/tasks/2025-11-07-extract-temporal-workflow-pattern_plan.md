@@ -1,7 +1,7 @@
 # Plan: 2025-11-07-extract-temporal-workflow-pattern
 
 **Workspace**: time-cop
-**Project Root**: /Users/chris.helma/workspace/personal/time-cop
+**Project Root**: ~/workspace/personal/time-cop
 **Status**: draft
 **GitHub Issue**: N/A
 **Created**: 2025-11-07

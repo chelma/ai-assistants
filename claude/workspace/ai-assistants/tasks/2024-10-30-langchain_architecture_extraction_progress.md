@@ -1,7 +1,7 @@
 # Implementation: LangChain Architecture Extraction
 
 **Workspace**: ai-assistants
-**Project Root**: /Users/chris.helma/workspace/personal/ai-assistants
+**Project Root**: ~/workspace/personal/ai-assistants
 **Status**: in_progress
 **Plan**: [langchain_architecture_extraction_plan.md](./langchain_architecture_extraction_plan.md)
 **Output Directory**: `~/.claude/workspace/ai-assistants/output/2024-10-30-langchain_architecture_extraction/`
@@ -671,7 +671,7 @@ The original Step 7 showed a minimal invocation example but didn't explain:
 - How work items are populated (invoke_expert sets via task.set_work_item())
 - The complete five-step workflow that ties Expert → Task → Tool together
 
-User identified this gap and referenced `/Users/chris.helma/workspace/personal/ocsf-playground/playground/playground_api/views.py:303-325` as the canonical invocation pattern.
+User identified this gap and referenced `~/workspace/personal/ocsf-playground/playground/playground_api/views.py:303-325` as the canonical invocation pattern.
 
 ### Enhancement Performed
 
@@ -691,7 +691,7 @@ User identified this gap and referenced `/Users/chris.helma/workspace/personal/o
 **After**: 58 lines (complete workflow + insights + rationale)
 
 #### Reference File Used
-- Source: `/Users/chris.helma/workspace/personal/ocsf-playground/playground/playground_api/views.py:303-325`
+- Source: `~/workspace/personal/ocsf-playground/playground/playground_api/views.py:303-325`
 - Example method: `TransformerEntitiesV1_1_0AnalyzeView._analyze()`
 - Pattern extracted: Complete invocation workflow showing all five steps in real Django REST API context
 
@@ -928,9 +928,9 @@ Following the skill-creator's recommended workflow:
 
 **Command executed:**
 ```bash
-python3 /Users/chris.helma/.claude/plugins/marketplaces/anthropic-agent-skills/skill-creator/scripts/init_skill.py \
+python3 ~/.claude/plugins/marketplaces/anthropic-agent-skills/skill-creator/scripts/init_skill.py \
   langchain-expert-builder \
-  --path /Users/chris.helma/workspace/personal/ai-assistants/claude/skills
+  --path ~/workspace/personal/ai-assistants/claude/skills
 ```
 
 **Result:**
@@ -999,8 +999,8 @@ rmdir claude/skills/langchain-expert-builder/scripts
 
 **Command executed:**
 ```bash
-python3 /Users/chris.helma/.claude/plugins/marketplaces/anthropic-agent-skills/skill-creator/scripts/package_skill.py \
-  /Users/chris.helma/workspace/personal/ai-assistants/claude/skills/langchain-expert-builder
+python3 ~/.claude/plugins/marketplaces/anthropic-agent-skills/skill-creator/scripts/package_skill.py \
+  ~/workspace/personal/ai-assistants/claude/skills/langchain-expert-builder
 ```
 
 **Validation performed automatically:**
@@ -1010,7 +1010,7 @@ python3 /Users/chris.helma/.claude/plugins/marketplaces/anthropic-agent-skills/s
 - ✅ File organization and resource references
 
 **Package created:**
-- Location: `/Users/chris.helma/workspace/personal/ai-assistants/langchain-expert-builder.zip`
+- Location: `~/workspace/personal/ai-assistants/langchain-expert-builder.zip`
 - Contents: 19 files (1 SKILL.md, 1 references/, 17 assets/)
 - Size: Includes complete Python implementation ready for copy-paste
 
@@ -1085,4 +1085,4 @@ python3 /Users/chris.helma/.claude/plugins/marketplaces/anthropic-agent-skills/s
 - **Started**: 2025-10-31
 - **Completed**: 2025-10-31
 - **Status**: completed
-- **Deliverable**: `/Users/chris.helma/workspace/personal/ai-assistants/langchain-expert-builder.zip`
+- **Deliverable**: `~/workspace/personal/ai-assistants/langchain-expert-builder.zip`

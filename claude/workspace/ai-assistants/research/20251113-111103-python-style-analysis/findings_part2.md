@@ -1,7 +1,7 @@
 # Investigation 4 Findings - Part 2: Categories 4-7
 # Python Coding Style Analysis Task (ANALYSIS type)
 
-**Research Directory**: `/Users/chris.helma/.claude/workspace/ai-assistants/research/20251113-111103-python-style-analysis/`
+**Research Directory**: `~/.claude/workspace/ai-assistants/research/20251113-111103-python-style-analysis/`
 **Continuing analysis from findings_part1.md**
 
 ---
@@ -58,7 +58,7 @@ None yet.
 ```
 
 **Deviation**: Deliverable was split into skill structure
-- Plan line 24: "**Output Format**: Final style guide at `/Users/chris.helma/workspace/personal/ai-assistants/python_style.md`"
+- Plan line 24: "**Output Format**: Final style guide at `~/workspace/personal/ai-assistants/python_style.md`"
 - Actual: First created as single file, then split into skill with references/
 - **Documented in Progress?**: YES (lines 695-708)
 - **Documented in Deviations section?**: NO

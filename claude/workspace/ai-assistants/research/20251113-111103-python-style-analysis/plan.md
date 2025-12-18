@@ -1,7 +1,7 @@
 # Research Plan: Python Coding Style Analysis - Tag-Team Effectiveness Study
 
 **Workspace**: ai-assistants
-**Project Root**: /Users/chris.helma/workspace/personal/ai-assistants
+**Project Root**: ~/workspace/personal/ai-assistants
 **Research Objective**: Analyze tag-team skill effectiveness for ANALYSIS tasks (not extraction)
 **Investigation Type**: Post-task analysis of completed tag-team task
 **Started**: 2025-11-13
@@ -26,8 +26,8 @@ This is Investigation 4 of 5 for validating and improving the tag-team skill. Th
 ## Investigation Scope
 
 **Files to Analyze** (total ~49K tokens):
-1. `/Users/chris.helma/.claude/workspace/ai-assistants/tasks/2024-10-30-python_coding_style_analysis_plan.md` (~14K tokens)
-2. `/Users/chris.helma/.claude/workspace/ai-assistants/tasks/2024-10-30-python_coding_style_analysis_progress.md` (~35K tokens)
+1. `~/.claude/workspace/ai-assistants/tasks/2024-10-30-python_coding_style_analysis_plan.md` (~14K tokens)
+2. `~/.claude/workspace/ai-assistants/tasks/2024-10-30-python_coding_style_analysis_progress.md` (~35K tokens)
 
 **Task Characteristics**:
 - Duration: 2024-10-30 (single day, but Phase 3 continued to 2025-10-30)

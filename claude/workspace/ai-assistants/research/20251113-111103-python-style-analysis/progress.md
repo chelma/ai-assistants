@@ -1,11 +1,11 @@
 # Research Progress: Python Coding Style Analysis - Tag-Team Study
 
 **Workspace**: ai-assistants
-**Project Root**: /Users/chris.helma/workspace/personal/ai-assistants
+**Project Root**: ~/workspace/personal/ai-assistants
 **Status**: complete
 **Started**: 2025-11-13 11:11:03
 **Completed**: 2025-11-13 11:30:00 (estimated)
-**Research Directory**: `/Users/chris.helma/.claude/workspace/ai-assistants/research/20251113-111103-python-style-analysis/`
+**Research Directory**: `~/.claude/workspace/ai-assistants/research/20251113-111103-python-style-analysis/`
 
 ## Phases
 - [x] Phase 1: Setup & Planning
@@ -129,7 +129,7 @@ Tag-team adapts well to analysis tasks through natural adaptations (file invento
 
 ## Deliverables
 
-All files in: `/Users/chris.helma/.claude/workspace/ai-assistants/research/20251113-111103-python-style-analysis/`
+All files in: `~/.claude/workspace/ai-assistants/research/20251113-111103-python-style-analysis/`
 
 1. **plan.md** (162 lines) - Research plan with 10 analysis categories
 2. **progress.md** (THIS FILE, ~140 lines) - Investigation progress tracking

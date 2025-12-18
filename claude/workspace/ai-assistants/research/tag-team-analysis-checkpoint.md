@@ -2,7 +2,7 @@
 
 **Status**: ✅ ALL INVESTIGATIONS COMPLETE - Ready for skill updates
 **Workspace**: ai-assistants
-**Project Root**: /Users/chris.helma/workspace/personal/ai-assistants
+**Project Root**: ~/workspace/personal/ai-assistants
 **Created**: 2025-11-13
 **Completed**: 2025-11-13
 **Session**: Analysis of tag-team skill effectiveness based on real usage
@@ -684,31 +684,31 @@ Read all 5 findings documents produced by subagents (~15-25k tokens estimated)
   - [x] Invoke codebase-researcher subagent
   - [x] Review findings document
   - [x] Key insights: Priority classification 9/10, resumability excellent, token optimization quantified
-  - **Deliverables**: `/Users/chris.helma/.claude/workspace/ai-assistants/research/20251113-063946-aws-extraction-analysis/findings.md`
+  - **Deliverables**: `~/.claude/workspace/ai-assistants/research/20251113-063946-aws-extraction-analysis/findings.md`
 
 - [x] Investigation 2: LangChain Architecture Extraction (64K)
   - [x] Invoke codebase-researcher subagent
   - [x] Review findings document
   - [x] Key insights: Organic 3→8 phase evolution healthy, resumability weak for cold starts, template mismatch
-  - **Deliverables**: `/Users/chris.helma/.claude/workspace/ai-assistants/research/20251113-095303-langchain-extraction-analysis/` (summary.md + findings_part1-3.md)
+  - **Deliverables**: `~/.claude/workspace/ai-assistants/research/20251113-095303-langchain-extraction-analysis/` (summary.md + findings_part1-3.md)
 
 - [x] Investigation 3: Temporal Workflow Extraction (64K)
   - [x] Invoke codebase-researcher subagent
   - [x] Review findings document
   - [x] Key insights: ~90% process maturity, reactive→proactive evolution, batched updates caused strain
-  - **Deliverables**: `/Users/chris.helma/.claude/workspace/time-cop/research/20251113-104622-temporal-extraction-analysis/` (summary.md + findings_part1-3.md)
+  - **Deliverables**: `~/.claude/workspace/time-cop/research/20251113-104622-temporal-extraction-analysis/` (summary.md + findings_part1-3.md)
 
 - [x] Investigation 4: Python Coding Style Analysis (49K)
   - [x] Invoke codebase-researcher subagent
   - [x] Review findings document
   - [x] Key insights: Two-mode collaboration effective, living document critical, contingency sections unused
-  - **Deliverables**: `/Users/chris.helma/.claude/workspace/ai-assistants/research/20251113-111103-python-style-analysis/` (summary.md + findings_part1-3.md)
+  - **Deliverables**: `~/.claude/workspace/ai-assistants/research/20251113-111103-python-style-analysis/` (summary.md + findings_part1-3.md)
 
 - [x] Investigation 5: GH-49 Protobuf Centralization (31K)
   - [x] Invoke codebase-researcher subagent
   - [x] Review findings document
   - [x] Key insights: Implementation needs linear steps, high fact density, testing as progressive validation
-  - **Deliverables**: `/Users/chris.helma/.claude/workspace/time-cop/research/20251113-112439-protobuf-centralization-analysis/` (summary.md + findings_part1-3.md)
+  - **Deliverables**: `~/.claude/workspace/time-cop/research/20251113-112439-protobuf-centralization-analysis/` (summary.md + findings_part1-3.md)
 
 ### Synthesis Phase ✅ COMPLETE
 - [x] Read all 5 findings documents (summaries)

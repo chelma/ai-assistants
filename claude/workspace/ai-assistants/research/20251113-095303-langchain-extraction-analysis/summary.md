@@ -564,12 +564,12 @@ Progress file excellent for continuous work (same Claude instance). Weak for col
 ## Detailed Findings
 
 **Category-by-category analysis** with evidence and examples:
-- **Categories 1-3**: `/Users/chris.helma/.claude/workspace/ai-assistants/research/20251113-095303-langchain-extraction-analysis/findings_part1.md`
-- **Categories 4-7**: `/Users/chris.helma/.claude/workspace/ai-assistants/research/20251113-095303-langchain-extraction-analysis/findings_part2.md`
-- **Categories 8-10**: `/Users/chris.helma/.claude/workspace/ai-assistants/research/20251113-095303-langchain-extraction-analysis/findings_part3.md`
+- **Categories 1-3**: `~/.claude/workspace/ai-assistants/research/20251113-095303-langchain-extraction-analysis/findings_part1.md`
+- **Categories 4-7**: `~/.claude/workspace/ai-assistants/research/20251113-095303-langchain-extraction-analysis/findings_part2.md`
+- **Categories 8-10**: `~/.claude/workspace/ai-assistants/research/20251113-095303-langchain-extraction-analysis/findings_part3.md`
 
-**Research plan**: `/Users/chris.helma/.claude/workspace/ai-assistants/research/20251113-095303-langchain-extraction-analysis/plan.md`
-**Research progress**: `/Users/chris.helma/.claude/workspace/ai-assistants/research/20251113-095303-langchain-extraction-analysis/progress.md`
+**Research plan**: `~/.claude/workspace/ai-assistants/research/20251113-095303-langchain-extraction-analysis/plan.md`
+**Research progress**: `~/.claude/workspace/ai-assistants/research/20251113-095303-langchain-extraction-analysis/progress.md`
 
 ---
 

@@ -1,7 +1,7 @@
 # Research Plan: SimpleCov :nocov: and Yardowners @owners Interaction Patterns
 
 **Workspace**: engine-partnerships
-**Project Root**: /Users/chris.helma/workspace/alto/engine-partnerships
+**Project Root**: ~/workspace/alto/engine-partnerships
 **Started**: 2025-12-10 09:03:53
 
 ## Research Objective

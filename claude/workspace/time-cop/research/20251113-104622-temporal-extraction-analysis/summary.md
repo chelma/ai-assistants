@@ -3,7 +3,7 @@
 **Task**: 2025-11-07 Temporal extraction (MATURE process, different workspace)
 **Files analyzed**: plan.md (369 lines) + progress.md (888 lines) = ~64K tokens total
 **Investigation date**: 2025-11-13
-**Research directory**: `/Users/chris.helma/.claude/workspace/time-cop/research/20251113-104622-temporal-extraction-analysis/`
+**Research directory**: `~/.claude/workspace/time-cop/research/20251113-104622-temporal-extraction-analysis/`
 
 ---
 
@@ -356,7 +356,7 @@ The Temporal Workflow extraction (third major extraction task) demonstrates a **
 ### Portability Assessment
 
 **Workspace-specific elements** (~5%):
-1. Project Root: `/Users/chris.helma/workspace/personal/time-cop`
+1. Project Root: `~/workspace/personal/time-cop`
 2. Output Directory: `~/.claude/workspace/time-cop/output/...`
 3. File references: `ruby_worker/...`, `protos/...`, `helm-chart/...`
 
@@ -680,13 +680,13 @@ The Temporal Workflow extraction (third major extraction task) demonstrates a **
 
 For category-by-category investigation with specific examples and evidence:
 
-- **Categories 1-3**: See `/Users/chris.helma/.claude/workspace/time-cop/research/20251113-104622-temporal-extraction-analysis/findings_part1.md`
+- **Categories 1-3**: See `~/.claude/workspace/time-cop/research/20251113-104622-temporal-extraction-analysis/findings_part1.md`
   - Planning Quality, Checkpoint Effectiveness, Progress File Usage
 
-- **Categories 4-7**: See `/Users/chris.helma/.claude/workspace/time-cop/research/20251113-104622-temporal-extraction-analysis/findings_part2.md`
+- **Categories 4-7**: See `~/.claude/workspace/time-cop/research/20251113-104622-temporal-extraction-analysis/findings_part2.md`
   - Deviation Handling, Human Collaboration, Resumability, Documentation Depth
 
-- **Categories 8-10**: See `/Users/chris.helma/.claude/workspace/time-cop/research/20251113-104622-temporal-extraction-analysis/findings_part3.md`
+- **Categories 8-10**: See `~/.claude/workspace/time-cop/research/20251113-104622-temporal-extraction-analysis/findings_part3.md`
   - Task-Specific Adaptations, Meta-Observations, Template Utilization
 
 ---

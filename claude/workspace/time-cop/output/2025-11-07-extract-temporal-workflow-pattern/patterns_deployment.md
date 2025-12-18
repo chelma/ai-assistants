@@ -1,6 +1,6 @@
 # Deployment Patterns
 
-**Project Root**: /Users/chris.helma/workspace/personal/time-cop
+**Project Root**: ~/workspace/personal/time-cop
 
 **Pattern Coverage**: Patterns 21-25 from WorkflowDemoMixed extraction
 

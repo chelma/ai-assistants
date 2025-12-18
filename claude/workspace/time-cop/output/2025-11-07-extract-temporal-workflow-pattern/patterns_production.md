@@ -1,6 +1,6 @@
 # Production Readiness Patterns
 
-**Project Root**: /Users/chris.helma/workspace/personal/time-cop
+**Project Root**: ~/workspace/personal/time-cop
 
 **Pattern Coverage**: Patterns 7-8 from WorkflowDemoMixed extraction
 

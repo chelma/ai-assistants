@@ -1,7 +1,7 @@
 # Research Plan: LangChain Architecture Extraction - Tag-Team Analysis
 
 **Workspace**: ai-assistants
-**Project Root**: /Users/chris.helma/workspace/personal/ai-assistants
+**Project Root**: ~/workspace/personal/ai-assistants
 **Research Objective**: Analyze completed LangChain extraction task to validate tag-team skill effectiveness
 **Research Directory**: `~/.claude/workspace/ai-assistants/research/20251113-095303-langchain-extraction-analysis/`
 **Created**: 2025-11-13

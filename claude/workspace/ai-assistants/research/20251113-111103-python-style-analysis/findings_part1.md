@@ -1,7 +1,7 @@
 # Investigation 4 Findings - Part 1: Categories 1-3
 # Python Coding Style Analysis Task (ANALYSIS type)
 
-**Research Directory**: `/Users/chris.helma/.claude/workspace/ai-assistants/research/20251113-111103-python-style-analysis/`
+**Research Directory**: `~/.claude/workspace/ai-assistants/research/20251113-111103-python-style-analysis/`
 **Source Files Analyzed**:
 - Plan: `~/.claude/workspace/ai-assistants/tasks/2024-10-30-python_coding_style_analysis_plan.md` (327 lines)
 - Progress: `~/.claude/workspace/ai-assistants/tasks/2024-10-30-python_coding_style_analysis_progress.md` (717 lines)
